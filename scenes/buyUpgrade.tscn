@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://2dq0d5c14wsy"]
+
+[ext_resource type="Script" uid="uid://dx03rfxf3wkxb" path="res://scripts/buyUpgrade.gd" id="1_q4wna"]
+
+[node name="BuyUpgrade" type="Button" unique_id=17814390]
+custom_minimum_size = Vector2(100, 0)
+propagate_maximum_size = true
+anchors_preset = -1
+anchor_right = 0.08680555
+anchor_bottom = 0.047839507
+offset_right = -62.0
+text = "Buy"
+script = ExtResource("1_q4wna")
+metadata/_edit_use_anchors_ = true
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

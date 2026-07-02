@@ -3,11 +3,12 @@ class_name CounterComponent
 
 signal milestone_reached
 
-
 @export var counter_name: String = "Gold"
 @export var milestone_target: int = 100
 @export var base_passive_increment: int = 5
 @export var base_timer_wait_time: float = 1.0
+@export var upgrade_buttons: Array[BuyUpgrade]
+
 
 
 var counter_value: int = 0
@@ -20,6 +21,10 @@ var ms_1: float = 0.0
 func _ready() -> void:
 	timer.wait_time = base_timer_wait_time
 	timer.start()
+	
+	for upgrade_button in upgrade_buttons:
+		if upgrade_button != null:
+			upgrade_button.was_pressed.connect(_on_button_pressed)
 
 func update_ui() -> void:
 	ms_1 = float(base_passive_increment) / timer.wait_time
@@ -39,7 +44,6 @@ func check_milestone() -> void:
 		for i in range(milestones_passed):
 			milestone_reached.emit()
 
-
 func _on_manual_click_button_pressed() -> void:
 	counter_value += 10
 	update_ui()
@@ -51,10 +55,12 @@ func _on_timer_timeout() -> void:
 func _on_increase_speed_pressed() -> void:
 	if snapped(timer.wait_time, 0.1) > 0.1:
 		timer.wait_time = snapped(timer.wait_time - 0.1, 0.1)
-		timer.start()
 		update_ui()
-
 
 func _on_increase_passive_pressed() -> void:
 	base_passive_increment += 1
 	update_ui()
+	
+	
+func _on_button_pressed() -> void:
+	pass

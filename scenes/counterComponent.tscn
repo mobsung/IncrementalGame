@@ -1,16 +1,31 @@
 [gd_scene format=3 uid="uid://da8stveie8yo"]
 
 [ext_resource type="Script" uid="uid://bd1uhsv7akekg" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
+[ext_resource type="PackedScene" uid="uid://2dq0d5c14wsy" path="res://scenes/buyUpgrade.tscn" id="2_6bnwf"]
+
+[sub_resource type="GDScript" id="GDScript_6bnwf"]
+script/source = "extends Control
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
 
 [node name="CounterComponent" type="Control" unique_id=2104405447]
-custom_minimum_size = Vector2(250, 200)
+custom_minimum_size = Vector2(200, 200)
 layout_mode = 3
-anchors_preset = 0
-offset_right = 234.0
-offset_bottom = 200.0
+anchor_right = 0.2170139
+anchor_bottom = 0.30864197
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_s0xjf")
+metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="." unique_id=1787928864]
 autostart = true
@@ -35,20 +50,33 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "bonk"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=1404986321]
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer" unique_id=1701551757]
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="IncreaseSpeed" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1170352851]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/VBoxContainer2" unique_id=1404986321]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "+ speed1 bonk"
+size_flags_vertical = 3
 
-[node name="IncreasePassive" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=70127164]
+[node name="Speed1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=1656336173 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-size_flags_horizontal = 3
-text = "+ auto1 bonk"
+script = SubResource("GDScript_6bnwf")
+
+[node name="AutoIncrement1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=2011580671 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
+script = SubResource("GDScript_6bnwf")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer2" unique_id=488803785]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="GlobalValue1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=322025457 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
+script = SubResource("GDScript_6bnwf")
+
+[node name="Crit1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=1109252632 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
+script = SubResource("GDScript_6bnwf")
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/IncreaseSpeed" to="." method="_on_increase_speed_pressed"]
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/IncreasePassive" to="." method="_on_increase_passive_pressed"]
