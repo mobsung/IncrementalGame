@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://byjy4ft7qper2"]
+
+[ext_resource type="PackedScene" uid="uid://da8stveie8yo" path="res://scenes/counterComponent.tscn" id="1_80nbo"]
+[ext_resource type="Script" uid="uid://bx1were0ydu4x" path="res://scripts/game.gd" id="1_e2o6t"]
+[ext_resource type="PackedScene" uid="uid://6e0s6mu7e774" path="res://scenes/Currency.tscn" id="3_feb5d"]
+
+[node name="Game" type="Node2D" unique_id=975015288]
+script = ExtResource("1_e2o6t")
+
+[node name="CounterComponent" parent="." unique_id=2104405447 instance=ExtResource("1_80nbo")]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 258.0
+offset_bottom = 208.0
+grow_horizontal = 1
+grow_vertical = 1
+counter_name = "Silver"
+
+[node name="CounterComponent2" parent="." unique_id=1156436197 instance=ExtResource("1_80nbo")]
+offset_left = 264.0
+offset_top = 8.0
+offset_right = 514.0
+offset_bottom = 208.0
+grow_horizontal = 1
+grow_vertical = 1
+milestone_target = 80
+base_passive_increment = 3
+base_timer_wait_time = 2.0
+
+[node name="CounterComponent3" parent="." unique_id=1796525954 instance=ExtResource("1_80nbo")]
+offset_left = 520.0
+offset_top = 8.0
+offset_right = 770.0
+offset_bottom = 208.0
+grow_horizontal = 1
+grow_vertical = 1
+counter_name = "Diamond"
+milestone_target = 50
+base_passive_increment = 2
+base_timer_wait_time = 3.0
+
+[node name="MainCurrency" parent="." unique_id=839257024 node_paths=PackedStringArray("counter_components") instance=ExtResource("3_feb5d")]
+offset_left = 949.0
+offset_top = 6.0
+offset_right = 1149.0
+offset_bottom = 56.0
+counter_components = [NodePath("../CounterComponent"), NodePath("../CounterComponent2"), NodePath("../CounterComponent3")]

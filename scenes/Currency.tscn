@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://6e0s6mu7e774"]
+
+[ext_resource type="Script" uid="uid://cjsjunrjrpes0" path="res://scripts/currency.gd" id="1_fkyde"]
+
+[node name="Control" type="Control" unique_id=839257024]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 50.0
+script = ExtResource("1_fkyde")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=165540705]
+custom_minimum_size = Vector2(200, 50)
+layout_mode = 1
+offset_right = 200.0
+offset_bottom = 50.0
+
+[node name="MainLabel" type="Label" parent="VBoxContainer" unique_id=1612240431]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 6
+text = "Money: "
