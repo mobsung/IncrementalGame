@@ -3,20 +3,6 @@
 [ext_resource type="Script" uid="uid://bd1uhsv7akekg" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
 [ext_resource type="PackedScene" uid="uid://2dq0d5c14wsy" path="res://scenes/buyUpgrade.tscn" id="2_6bnwf"]
 
-[sub_resource type="GDScript" id="GDScript_6bnwf"]
-script/source = "extends Control
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	pass # Replace with function body.
-
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-"
-
 [node name="CounterComponent" type="Control" unique_id=2104405447]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 3
@@ -32,11 +18,13 @@ autostart = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1348365546]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
+anchor_top = -0.012499998
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 1.0125
 grow_horizontal = 2
 grow_vertical = 2
+metadata/_edit_use_anchors_ = true
 
 [node name="Label" type="Label" parent="VBoxContainer" unique_id=1618765966]
 unique_name_in_owner = true
@@ -58,25 +46,36 @@ size_flags_vertical = 3
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Speed1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=1656336173 instance=ExtResource("2_6bnwf")]
+[node name="Speed1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=17814390 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-script = SubResource("GDScript_6bnwf")
+upgrade_name = "Speed1"
+upgrade_value = 0.1
 
-[node name="AutoIncrement1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=2011580671 instance=ExtResource("2_6bnwf")]
+[node name="Value1" parent="VBoxContainer/VBoxContainer2/HBoxContainer" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-script = SubResource("GDScript_6bnwf")
+upgrade_name = "Value1"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/VBoxContainer2" unique_id=488803785]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="GlobalValue1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=322025457 instance=ExtResource("2_6bnwf")]
+[node name="Convert1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=1089699865 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-script = SubResource("GDScript_6bnwf")
+upgrade_name = "Convert1"
 
-[node name="Crit1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=1109252632 instance=ExtResource("2_6bnwf")]
+[node name="Crit1" parent="VBoxContainer/VBoxContainer2/HBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-script = SubResource("GDScript_6bnwf")
+upgrade_name = "Crit1"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="VBoxContainer/VBoxContainer2" unique_id=836637339]
+layout_mode = 2
+
+[node name="BuyUpgrade" parent="VBoxContainer/VBoxContainer2/HBoxContainer3" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
+[connection signal="was_pressed" from="VBoxContainer/VBoxContainer2/HBoxContainer/Speed1" to="." method="_on_speed_1_was_pressed"]
+[connection signal="was_pressed" from="VBoxContainer/VBoxContainer2/HBoxContainer/Value1" to="." method="_on_value_1_was_pressed"]
+[connection signal="was_pressed" from="VBoxContainer/VBoxContainer2/HBoxContainer2/Convert1" to="." method="_on_convert_1_was_pressed"]
+[connection signal="was_pressed" from="VBoxContainer/VBoxContainer2/HBoxContainer2/Crit1" to="." method="_on_crit_1_was_pressed"]

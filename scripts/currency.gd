@@ -5,7 +5,7 @@ signal currency_changed(new_amount: int)
 
 @export var counter_components: Array[CounterComponent]
 @onready var mainLabel: Label = %MainLabel
-@onready var current_currency: int = 0
+var current_currency: int = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -14,7 +14,9 @@ func _ready() -> void:
 			counter.milestone_reached.connect(_on_milestone_reached)
 		else:
 			push_warning("You have an empty slot in your counter_components array!")
-
+			
+	update_ui()
+	
 func add_currency(amount: int ) -> void:
 	current_currency += amount
 	currency_changed.emit(current_currency)

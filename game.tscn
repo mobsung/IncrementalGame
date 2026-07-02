@@ -39,7 +39,7 @@ milestone_target = 50
 base_passive_increment = 2
 base_timer_wait_time = 3.0
 
-[node name="MainCurrency" parent="." unique_id=839257024 node_paths=PackedStringArray("counter_components") instance=ExtResource("3_feb5d")]
+[node name="MainCurrency" parent="." unique_id=839257024 node_paths=PackedStringArray("counter_components") groups=["bank"] instance=ExtResource("3_feb5d")]
 offset_left = 949.0
 offset_top = 6.0
 offset_right = 1149.0
