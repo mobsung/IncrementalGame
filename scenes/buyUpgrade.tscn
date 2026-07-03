@@ -3,11 +3,11 @@
 [ext_resource type="Script" uid="uid://dx03rfxf3wkxb" path="res://scripts/buyUpgrade.gd" id="1_q4wna"]
 
 [node name="BuyUpgrade" type="Button" unique_id=17814390]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(0, 35)
+custom_maximum_size = Vector2(-1, 35)
 anchors_preset = -1
 anchor_right = 0.08680555
-anchor_bottom = 0.047839507
-offset_right = -62.0
+anchor_bottom = 0.054012347
 size_flags_horizontal = 3
 text = "Buy"
 script = ExtResource("1_q4wna")

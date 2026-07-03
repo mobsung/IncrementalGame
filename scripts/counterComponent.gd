@@ -4,8 +4,8 @@ class_name CounterComponent
 signal milestone_reached
 
 @export var counter_name: String = "Gold"
-@export var milestone_target: int = 100
-@export var base_passive_increment: int = 5
+@export var conversion: int = 100
+@export var increment_value: int = 5
 @export var base_timer_wait_time: float = 1.0
 
 
@@ -22,15 +22,17 @@ func _ready() -> void:
 	
 
 func update_ui() -> void:
-	ms_1 = float(base_passive_increment) / timer.wait_time
+	ms_1 = float(increment_value) / timer.wait_time
 	counter_label.text = """%s: %d
-M/s: %.1f
-Speed: %.1f""" % [counter_name, counter_value, ms_1, timer.wait_time]
+Value: %d
+Conversion: %d
+Speed: %.1f
+M/s: %.1f""" % [counter_name, counter_value, increment_value, conversion, timer.wait_time, ms_1]
 	
 	check_milestone()
 
 func check_milestone() -> void:
-	var current_milestone: int = counter_value / milestone_target
+	var current_milestone: int = counter_value / conversion
 	
 	if current_milestone > last_milestone:
 		var milestones_passed = current_milestone - last_milestone
@@ -44,7 +46,7 @@ func _on_manual_click_button_pressed() -> void:
 	update_ui()
 
 func _on_timer_timeout() -> void:
-	counter_value += base_passive_increment
+	counter_value += increment_value
 	update_ui()
 
 func _on_speed_1_was_pressed() -> void:
@@ -54,12 +56,12 @@ func _on_speed_1_was_pressed() -> void:
 
 
 func _on_value_1_was_pressed() -> void:
-	base_passive_increment += 1
+	increment_value += 1
 	update_ui()
 
 
 func _on_convert_1_was_pressed() -> void:
-	milestone_target -= 1
+	conversion -= 1
 	update_ui()
 	
 	

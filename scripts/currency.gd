@@ -26,6 +26,7 @@ func spend_currency(cost: int) -> bool:
 	if current_currency >= cost:
 		current_currency -= cost
 		currency_changed.emit(current_currency)
+		update_ui()
 		return true
 	else:
 		return false
