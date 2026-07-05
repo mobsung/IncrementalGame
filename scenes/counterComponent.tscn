@@ -42,9 +42,11 @@ custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="Label" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1618765966]
+[node name="Counter_label" type="RichTextLabel" parent="PanelContainer/VBoxContainer" unique_id=2115334519]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
 text = "Counter: 0
 Value: 0
 Conversion: 0
@@ -64,7 +66,7 @@ size_flags_vertical = 3
 [node name="Speed1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=17814390 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
 upgrade_name = "Speed1"
-upgrade_value = 0.1
+next_upgrade_cost = 5
 
 [node name="Value1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
@@ -77,9 +79,12 @@ upgrade_name = "Convert1"
 [node name="Crit1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
 upgrade_name = "Crit1"
+next_upgrade_cost = 5
 
-[node name="BuyUpgrade" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
+[node name="CritPower1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
+upgrade_cost = 50
+next_upgrade_cost = 50
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="PanelContainer/VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
@@ -87,3 +92,4 @@ layout_mode = 2
 [connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Value1" to="." method="_on_value_1_was_pressed"]
 [connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Convert1" to="." method="_on_convert_1_was_pressed"]
 [connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Crit1" to="." method="_on_crit_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/CritPower1" to="." method="_on_crit_power_1_was_pressed"]

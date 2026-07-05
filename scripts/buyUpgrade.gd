@@ -6,7 +6,7 @@ signal was_pressed
 @export var currencyManager: CurrencyManager
 @export var upgrade_cost: int = 1
 @export var upgrade_name: String = "Default"
-@export var upgrade_value: float = 1.0
+@export var next_upgrade_cost: int = 1
 
 var upgrade_level: int = 0
 
@@ -16,13 +16,15 @@ func _ready() -> void:
 	
 	currencyManager = get_tree().get_first_node_in_group("bank")
 	
-	text = upgrade_name
+	_update_ui()
 	pressed.connect(_on_pressed)
 	
 	if currencyManager != null:
 		currencyManager.currency_changed.connect(_on_currency_got)
 		_on_currency_got(currencyManager.current_currency)
 
+func _update_ui() -> void:
+	text = upgrade_name + " (Lvl " + str(upgrade_level) + ")" + " (Cost " + str(upgrade_cost) + ")"
 
 func _on_currency_got(current_amount: int) -> void:
 	if current_amount >= upgrade_cost:
@@ -36,8 +38,8 @@ func _on_pressed() -> void:
 	
 	if approved == true:
 		upgrade_level += 1
-		upgrade_cost += 5
-		text = upgrade_name + " (Lvl " + str(upgrade_level) + ")"
+		upgrade_cost += next_upgrade_cost
+		_update_ui()
 		was_pressed.emit()
-	
+		_on_currency_got(currencyManager.current_currency)
 	
