@@ -1,36 +1,7 @@
 [gd_scene format=3 uid="uid://6e0s6mu7e774"]
 
-[ext_resource type="Script" uid="uid://cjsjunrjrpes0" path="res://scripts/currency.gd" id="1_fkyde"]
+[ext_resource type="Script" uid="uid://cjsjunrjrpes0" path="res://scripts/currencyManager.gd" id="1_fkyde"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fkyde"]
-bg_color = Color(0.53121364, 0.6011435, 0.7437051, 1)
-corner_detail = 5
-expand_margin_left = 5.0
-expand_margin_top = 5.0
-expand_margin_right = 5.0
-expand_margin_bottom = 5.0
-anti_aliasing = false
-
-[node name="Control" type="Control" unique_id=839257024]
-custom_minimum_size = Vector2(150, 30)
-layout_mode = 3
-anchor_right = 0.13020833
-anchor_bottom = 0.046296295
+[node name="CurrencyManager" type="Node" unique_id=1020977809]
 script = ExtResource("1_fkyde")
 metadata/_edit_use_anchors_ = true
-
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=92251455]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_fkyde")
-
-[node name="MainLabel" type="Label" parent="PanelContainer" unique_id=1612240431]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 35)
-layout_mode = 2
-size_flags_vertical = 6
-text = "Money: "

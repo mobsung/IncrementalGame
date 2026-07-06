@@ -3,6 +3,17 @@
 [ext_resource type="Script" uid="uid://bd1uhsv7akekg" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
 [ext_resource type="PackedScene" uid="uid://2dq0d5c14wsy" path="res://scenes/buyUpgrade.tscn" id="2_6bnwf"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxh8y"]
+content_margin_left = 15.0
+content_margin_top = 15.0
+content_margin_right = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0, 0.44455254, 0.36039633, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dpsgk"]
 bg_color = Color(0.096785925, 0.677311, 0.73034793, 1)
 corner_radius_top_left = 5
@@ -13,36 +24,45 @@ expand_margin_left = 5.0
 expand_margin_top = 5.0
 expand_margin_right = 5.0
 expand_margin_bottom = 5.0
+shadow_color = Color(0, 0.39566627, 0, 0.6)
+shadow_size = 5
+shadow_offset = Vector2(2, 0)
 
 [node name="CounterComponent" type="Control" unique_id=2104405447]
-custom_minimum_size = Vector2(200, 370)
+custom_minimum_size = Vector2(200, 500)
 layout_mode = 3
-anchor_left = 0.0026041667
-anchor_top = -0.0030864198
-anchor_right = 0.1779514
-anchor_bottom = 0.56790125
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
 script = ExtResource("1_s0xjf")
 metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="." unique_id=1787928864]
 autostart = true
 
-[node name="PanelContainer" type="PanelContainer" parent="." unique_id=479265953]
+[node name="PanelContainer2" type="PanelContainer" parent="." unique_id=598028461]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_lxh8y")
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer2" unique_id=479265953]
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_dpsgk")
 metadata/_edit_use_anchors_ = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1348365546]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/PanelContainer" unique_id=1348365546]
 custom_minimum_size = Vector2(200, 200)
 layout_mode = 2
 metadata/_edit_use_anchors_ = true
 
-[node name="Counter_label" type="RichTextLabel" parent="PanelContainer/VBoxContainer" unique_id=2115334519]
+[node name="Counter_label" type="RichTextLabel" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=2115334519]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -53,43 +73,57 @@ Conversion: 0
 Speed: 0
 M/s: 0"
 
-[node name="Button" type="Button" parent="PanelContainer/VBoxContainer" unique_id=584971701]
+[node name="Button" type="Button" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=584971701]
 custom_minimum_size = Vector2(0, 35)
 custom_maximum_size = Vector2(-1, 35)
 layout_mode = 2
 text = "bonk"
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1701551757]
+[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=1701551757]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Speed1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=17814390 instance=ExtResource("2_6bnwf")]
+[node name="Speed1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=17814390 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-upgrade_name = "Speed1"
 next_upgrade_cost = 5
 
-[node name="Value1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
+[node name="Value1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-upgrade_name = "Value1"
+upgrade_name = 1
 
-[node name="Convert1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1089699865 instance=ExtResource("2_6bnwf")]
+[node name="Convert1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1089699865 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-upgrade_name = "Convert1"
+upgrade_name = 2
 
-[node name="Crit1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
+[node name="Crit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-upgrade_name = "Crit1"
+upgrade_name = 3
 next_upgrade_cost = 5
 
-[node name="CritPower1" parent="PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
+[node name="CritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
 upgrade_cost = 50
+upgrade_name = 4
 next_upgrade_cost = 50
 
+[node name="SCrit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=800348870 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
+upgrade_cost = 20
+upgrade_name = 5
+next_upgrade_cost = 10
+
+[node name="SCritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1206876336 instance=ExtResource("2_6bnwf")]
+layout_mode = 2
+upgrade_cost = 200
+upgrade_name = 6
+next_upgrade_cost = 200
+
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="pressed" from="PanelContainer/VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
-[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Speed1" to="." method="_on_speed_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Value1" to="." method="_on_value_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Convert1" to="." method="_on_convert_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/Crit1" to="." method="_on_crit_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer/VBoxContainer/VBoxContainer2/CritPower1" to="." method="_on_crit_power_1_was_pressed"]
+[connection signal="pressed" from="PanelContainer2/PanelContainer/VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Speed1" to="." method="_on_speed_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Value1" to="." method="_on_value_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Convert1" to="." method="_on_convert_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Crit1" to="." method="_on_crit_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/CritPower1" to="." method="_on_crit_power_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/SCrit1" to="." method="_on_super_crit_1_was_pressed"]
+[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/SCritPower1" to="." method="_on_super_crit_power_1_was_pressed"]
