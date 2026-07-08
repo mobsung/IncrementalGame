@@ -85,7 +85,8 @@ size_flags_vertical = 3
 
 [node name="Speed1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=17814390 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-next_upgrade_cost = 5
+upgrade_cost = 5
+growth_factor = 1.2
 
 [node name="Value1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
@@ -93,30 +94,33 @@ upgrade_name = 1
 
 [node name="Convert1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1089699865 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
+upgrade_cost = 10
 upgrade_name = 2
+growth_factor = 1.15
 
 [node name="Crit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
+upgrade_cost = 20
 upgrade_name = 3
-next_upgrade_cost = 5
+growth_factor = 1.5
 
 [node name="CritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
 upgrade_cost = 50
 upgrade_name = 4
-next_upgrade_cost = 50
+growth_factor = 2.0
 
 [node name="SCrit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=800348870 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
-upgrade_cost = 20
+upgrade_cost = 50
 upgrade_name = 5
-next_upgrade_cost = 10
+growth_factor = 1.5
 
 [node name="SCritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1206876336 instance=ExtResource("2_6bnwf")]
 layout_mode = 2
 upgrade_cost = 200
 upgrade_name = 6
-next_upgrade_cost = 200
+growth_factor = 2.0
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="PanelContainer2/PanelContainer/VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
