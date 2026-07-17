@@ -1,45 +1,10 @@
 [gd_scene format=3 uid="uid://byjy4ft7qper2"]
 
-[ext_resource type="PackedScene" uid="uid://da8stveie8yo" path="res://scenes/counterComponent.tscn" id="1_80nbo"]
 [ext_resource type="Script" uid="uid://bx1were0ydu4x" path="res://scripts/game.gd" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://dr4h015exo7le" path="res://scenes/CurrencyLabel.tscn" id="3_feb5d"]
 
 [node name="Game" type="Node2D" unique_id=975015288]
 script = ExtResource("1_e2o6t")
-
-[node name="CounterComponent" parent="." unique_id=2104405447 instance=ExtResource("1_80nbo")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 17.0
-offset_top = 42.0
-offset_right = 294.0
-offset_bottom = 542.0
-grow_horizontal = 1
-grow_vertical = 1
-counter_name = "Silver"
-
-[node name="CounterComponent2" parent="." unique_id=1156436197 instance=ExtResource("1_80nbo")]
-offset_left = 317.0
-offset_top = 42.0
-offset_right = 594.0
-offset_bottom = 542.0
-conversion = 80
-base_timer_wait_time = 2.0
-
-[node name="CounterComponent3" parent="." unique_id=1796525954 instance=ExtResource("1_80nbo")]
-anchors_preset = 0
-anchor_right = 0.0
-anchor_bottom = 0.0
-offset_left = 611.0
-offset_top = 43.0
-offset_right = 888.0
-offset_bottom = 543.0
-grow_horizontal = 1
-grow_vertical = 1
-counter_name = "Diamond"
-conversion = 50
-base_timer_wait_time = 3.0
 
 [node name="Control" parent="." unique_id=1393963228 instance=ExtResource("3_feb5d")]
 anchors_preset = 0
@@ -51,3 +16,24 @@ offset_right = 1131.0
 offset_bottom = 77.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="CounterGridContainer" type="GridContainer" parent="." unique_id=1138367529]
+custom_minimum_size = Vector2(800, 600)
+custom_maximum_size = Vector2(800, 600)
+offset_left = 93.0
+offset_top = 26.0
+offset_right = 893.0
+offset_bottom = 626.0
+theme_override_constants/h_separation = 50
+theme_override_constants/v_separation = 10
+columns = 3
+metadata/_edit_use_anchors_ = true
+
+[node name="BuyCounter" type="Button" parent="." unique_id=552313218]
+offset_left = 1035.0
+offset_top = 605.0
+offset_right = 1140.0
+offset_bottom = 636.0
+text = "Buy Counter"
+
+[connection signal="pressed" from="BuyCounter" to="." method="_on_buy_counter_pressed"]
