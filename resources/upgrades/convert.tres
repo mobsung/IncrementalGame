@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrade_definition.gd" id="1_i6lu1"]
+
+[resource]
+script = ExtResource("1_i6lu1")
+id = "convert_1"
+display_name = "Convert"
+base_cost = 10.0
+cost_multiplier_or_step = 1.15
+effect_type = 2

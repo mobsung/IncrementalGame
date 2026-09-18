@@ -1,133 +1,378 @@
 [gd_scene format=3 uid="uid://da8stveie8yo"]
 
 [ext_resource type="Script" uid="uid://bd1uhsv7akekg" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
-[ext_resource type="PackedScene" uid="uid://2dq0d5c14wsy" path="res://scenes/buyUpgrade.tscn" id="2_6bnwf"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lxh8y"]
-content_margin_left = 15.0
-content_margin_top = 15.0
-content_margin_right = 15.0
-content_margin_bottom = 15.0
-bg_color = Color(0, 0.44455254, 0.36039633, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
+content_margin_left = 14.0
+content_margin_top = 14.0
+content_margin_right = 14.0
+content_margin_bottom = 14.0
+bg_color = Color(0.101960786, 0.11372549, 0.15294118, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18039216, 0.20392157, 0.27450982, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.25)
+shadow_size = 6
+shadow_offset = Vector2(0, 3)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dpsgk"]
-bg_color = Color(0.096785925, 0.677311, 0.73034793, 1)
-corner_radius_top_left = 5
-corner_radius_top_right = 5
-corner_radius_bottom_right = 5
-corner_radius_bottom_left = 5
-expand_margin_left = 5.0
-expand_margin_top = 5.0
-expand_margin_right = 5.0
-expand_margin_bottom = 5.0
-shadow_color = Color(0, 0.39566627, 0, 0.6)
-shadow_size = 5
-shadow_offset = Vector2(2, 0)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+bg_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.21960784, 0.2509804, 0.3529412, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
+bg_color = Color(0.06666667, 0.07450981, 0.101960786, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
+bg_color = Color(0.23137255, 0.50980395, 0.9647059, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_bg"]
+bg_color = Color(0.06666667, 0.07450981, 0.101960786, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_fill"]
+bg_color = Color(0.9843137, 0.7490196, 0.14117648, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_normal"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.28, 0.38, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_hover"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.18, 0.21, 0.30, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.40, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_pressed"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+bg_color = Color(0.12, 0.14, 0.19, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.40, 0.55, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stat_pill"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.07450981, 0.08235294, 0.11372549, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_normal"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.18039216, 0.38039216, 0.8509804, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_hover"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.23921569, 0.45882353, 0.98039216, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_pressed"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.14117648, 0.29803923, 0.7019608, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="CounterComponent" type="Control" unique_id=2104405447]
-custom_minimum_size = Vector2(200, 500)
+custom_minimum_size = Vector2(280, 520)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_s0xjf")
-metadata/_edit_use_anchors_ = true
 
 [node name="Timer" type="Timer" parent="." unique_id=1787928864]
 autostart = true
 
-[node name="PanelContainer2" type="PanelContainer" parent="." unique_id=598028461]
+[node name="CardPanel" type="PanelContainer" parent="." unique_id=598028461]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lxh8y")
+theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer2" unique_id=479265953]
+[node name="VBoxContainer" type="VBoxContainer" parent="CardPanel" unique_id=1348365546]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_dpsgk")
-metadata/_edit_use_anchors_ = true
+theme_override_constants/separation = 10
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer2/PanelContainer" unique_id=1348365546]
-custom_minimum_size = Vector2(200, 200)
+[node name="HeaderBox" type="HBoxContainer" parent="CardPanel/VBoxContainer" unique_id=101]
 layout_mode = 2
-metadata/_edit_use_anchors_ = true
 
-[node name="Counter_label" type="RichTextLabel" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=2115334519]
+[node name="CounterNameLabel" type="Label" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=102]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92156863, 0.9411765, 0.98039216, 1)
+theme_override_font_sizes/font_size = 15
+text = "Bronze Counter"
+
+[node name="Spacer" type="Control" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=103]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StarButton" type="Button" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=130]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_star_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_star_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_star_btn_normal")
+text = "☆"
+
+[node name="TierBadgePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=104]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
+
+[node name="TierBadge" type="Label" parent="CardPanel/VBoxContainer/HeaderBox/TierBadgePanel" unique_id=105]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.55, 0.6, 0.72, 1)
+theme_override_font_sizes/font_size = 10
+text = "TIER"
+
+[node name="HeroBox" type="VBoxContainer" parent="CardPanel/VBoxContainer" unique_id=106]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HeroValueLabel" type="RichTextLabel" parent="CardPanel/VBoxContainer/HeroBox" unique_id=2115334519]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+text = "[center][b]0[/b][/center]"
+
+[node name="ConversionProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox" unique_id=107]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 6)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
+show_percentage = false
+
+[node name="ConversionLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox" unique_id=108]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.53, 0.64, 1)
+theme_override_font_sizes/font_size = 10
+text = "0 / 100 to convert"
+horizontal_alignment = 1
+
+[node name="XPProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox" unique_id=131]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_xp_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_xp_fill")
+show_percentage = false
+
+[node name="XPLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox" unique_id=132]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.65, 0.35, 1)
+theme_override_font_sizes/font_size = 9
+text = "XP: 0 / 10"
+horizontal_alignment = 1
+
+[node name="StatsGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=109]
+layout_mode = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+columns = 2
+
+[node name="StatYieldPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=110]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
+
+[node name="StatYieldLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatYieldPanel" unique_id=111]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.63, 0.66, 0.75, 1)
+theme_override_font_sizes/font_size = 11
+text = "Yield: +5"
+
+[node name="StatSpeedPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=112]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
+
+[node name="StatSpeedLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatSpeedPanel" unique_id=113]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.63, 0.66, 0.75, 1)
+theme_override_font_sizes/font_size = 11
+text = "Speed: 1.0s"
+
+[node name="StatRatePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=114]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
+
+[node name="StatRateLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatRatePanel" unique_id=115]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.65, 0.98, 1)
+theme_override_font_sizes/font_size = 11
+text = "Rate: 5.0/s"
+
+[node name="StatCritPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=116]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
+
+[node name="StatCritLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatCritPanel" unique_id=117]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
+theme_override_font_sizes/font_size = 11
+text = "Crit: 0% (x2)"
+
+[node name="ManualClickButton" type="Button" parent="CardPanel/VBoxContainer" unique_id=584971701]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_action_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_normal")
+text = "Collect (+5)"
+
+[node name="DividerBox" type="HBoxContainer" parent="CardPanel/VBoxContainer" unique_id=118]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="HSeparator" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox" unique_id=119]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradesTitle" type="Label" parent="CardPanel/VBoxContainer/DividerBox" unique_id=120]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.45, 0.5, 0.6, 1)
+theme_override_font_sizes/font_size = 10
+text = "UPGRADES"
+
+[node name="HSeparator2" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox" unique_id=121]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=1701551757]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-bbcode_enabled = true
-text = "Counter: 0
-Value: 0
-Conversion: 0
-Speed: 0
-M/s: 0"
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+columns = 2
 
-[node name="Button" type="Button" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=584971701]
-custom_minimum_size = Vector2(0, 35)
-custom_maximum_size = Vector2(-1, 35)
-layout_mode = 2
-text = "bonk"
-
-[node name="VBoxContainer2" type="VBoxContainer" parent="PanelContainer2/PanelContainer/VBoxContainer" unique_id=1701551757]
+[node name="StarUpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=133]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_vertical = 3
-
-[node name="Speed1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=17814390 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 5
-growth_factor = 1.2
-
-[node name="Value1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1411859558 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_name = 1
-
-[node name="Convert1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1089699865 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 10
-upgrade_name = 2
-growth_factor = 1.15
-
-[node name="Crit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=755492391 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 20
-upgrade_name = 3
-growth_factor = 1.5
-
-[node name="CritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=2105965146 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 50
-upgrade_name = 4
-growth_factor = 2.0
-
-[node name="SCrit1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=800348870 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 50
-upgrade_name = 5
-growth_factor = 1.5
-
-[node name="SCritPower1" parent="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2" unique_id=1206876336 instance=ExtResource("2_6bnwf")]
-layout_mode = 2
-upgrade_cost = 200
-upgrade_name = 6
-growth_factor = 2.0
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 6
+columns = 2
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="pressed" from="PanelContainer2/PanelContainer/VBoxContainer/Button" to="." method="_on_manual_click_button_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Speed1" to="." method="_on_speed_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Value1" to="." method="_on_value_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Convert1" to="." method="_on_convert_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/Crit1" to="." method="_on_crit_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/CritPower1" to="." method="_on_crit_power_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/SCrit1" to="." method="_on_super_crit_1_was_pressed"]
-[connection signal="was_pressed" from="PanelContainer2/PanelContainer/VBoxContainer/VBoxContainer2/SCritPower1" to="." method="_on_super_crit_power_1_was_pressed"]
+[connection signal="pressed" from="CardPanel/VBoxContainer/HeaderBox/StarButton" to="." method="_on_star_button_pressed"]
+[connection signal="pressed" from="CardPanel/VBoxContainer/ManualClickButton" to="." method="_on_manual_click_button_pressed"]

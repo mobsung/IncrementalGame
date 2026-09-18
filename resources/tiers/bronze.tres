@@ -1,0 +1,87 @@
+[gd_resource type="Resource" script_class="TierDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrade_definition.gd" id="1_sqy5r"]
+[ext_resource type="Script" path="res://scripts/tier_definition.gd" id="2_50ghs"]
+
+[sub_resource type="Resource" id="Resource_nn84i"]
+script = ExtResource("1_sqy5r")
+id = "speed_1"
+display_name = "Speed"
+base_cost = 5.0
+cost_multiplier_or_step = 1.2
+effect_type = 0
+effect_value = 0.1
+
+[sub_resource type="Resource" id="Resource_fv6ut"]
+script = ExtResource("1_sqy5r")
+id = "value_1"
+display_name = "Yield"
+
+[sub_resource type="Resource" id="Resource_b72cv"]
+script = ExtResource("1_sqy5r")
+id = "convert_1"
+display_name = "Convert"
+base_cost = 10.0
+cost_multiplier_or_step = 1.15
+effect_type = 2
+
+[sub_resource type="Resource" id="Resource_v8spa"]
+script = ExtResource("1_sqy5r")
+id = "crit_1"
+display_name = "Crit %"
+base_cost = 20.0
+cost_multiplier_or_step = 1.5
+effect_type = 3
+effect_value = 0.1
+
+[sub_resource type="Resource" id="Resource_7cr55"]
+script = ExtResource("1_sqy5r")
+id = "crit_power_1"
+display_name = "Crit Pwr"
+base_cost = 50.0
+cost_multiplier_or_step = 2.0
+effect_type = 4
+
+[sub_resource type="Resource" id="Resource_wkl62"]
+script = ExtResource("1_sqy5r")
+id = "scrit_1"
+display_name = "Super %"
+base_cost = 50.0
+cost_multiplier_or_step = 1.5
+effect_type = 5
+effect_value = 0.1
+
+[sub_resource type="Resource" id="Resource_ludi4"]
+script = ExtResource("1_sqy5r")
+id = "scrit_power_1"
+display_name = "Super Pwr"
+base_cost = 200.0
+cost_multiplier_or_step = 2.0
+effect_type = 6
+
+[sub_resource type="Resource" id="Resource_oa2aj"]
+script = ExtResource("1_sqy5r")
+id = "mega_yield"
+display_name = "Mega Yield"
+category = 1
+cost_type = 1
+cost_growth_type = 1
+cost_multiplier_or_step = 1.0
+effect_type = 7
+effect_value = 100.0
+
+[sub_resource type="Resource" id="Resource_2oats"]
+script = ExtResource("1_sqy5r")
+id = "xp_wisdom"
+display_name = "Wisdom"
+category = 1
+cost_type = 1
+base_cost = 3.0
+cost_growth_type = 1
+cost_multiplier_or_step = 2.0
+effect_type = 8
+
+[resource]
+script = ExtResource("2_50ghs")
+max_conversion = 10.0
+available_upgrades = Array[ExtResource("1_sqy5r")]([SubResource("Resource_nn84i"), SubResource("Resource_fv6ut"), SubResource("Resource_b72cv"), SubResource("Resource_v8spa"), SubResource("Resource_7cr55"), SubResource("Resource_wkl62"), SubResource("Resource_ludi4"), SubResource("Resource_oa2aj"), SubResource("Resource_2oats")])

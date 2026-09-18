@@ -2,8 +2,24 @@
 
 [ext_resource type="Script" uid="uid://1dawfwteyt7w" path="res://scripts/currency_label.gd" id="1_ftd7x"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_currency"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.09019608, 0.101960786, 0.13725491, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18039216, 0.20392157, 0.27450982, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
 [node name="MainLabelControl" type="Control" unique_id=1393963228]
-custom_minimum_size = Vector2(200, 35)
+custom_minimum_size = Vector2(220, 38)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +27,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ftd7x")
-metadata/_edit_use_anchors_ = true
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1111101331]
 layout_mode = 1
@@ -20,9 +35,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_use_anchors_ = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_currency")
 
 [node name="MainLabel" type="RichTextLabel" parent="PanelContainer" unique_id=238150397]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Money: "
+bbcode_enabled = true
+fit_content = true
+text = "Money: 0"

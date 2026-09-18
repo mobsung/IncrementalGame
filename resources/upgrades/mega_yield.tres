@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrade_definition.gd" id="1_807vn"]
+
+[resource]
+script = ExtResource("1_807vn")
+id = "mega_yield"
+display_name = "Mega Yield"
+category = 1
+cost_type = 1
+cost_growth_type = 1
+cost_multiplier_or_step = 1.0
+effect_type = 7
+effect_value = 100.0

@@ -9,9 +9,7 @@ func _ready() -> void:
 	update_ui()
 
 func update_ui() -> void:
-	main_label.text = "Money: " + str(CurrencyManager.current_currency)
-	
-	
-func _on_currency_changed(_current_currency: int) -> void:
+	main_label.text = "[b]Coins:[/b] [color=#10b981]%s[/color]" % Global_data.format_number(CurrencyManager.current_currency)
+
+func _on_currency_changed(_current_currency: float) -> void:
 	update_ui()
-	

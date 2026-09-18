@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="UpgradeDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrade_definition.gd" id="1_0jkrl"]
+
+[resource]
+script = ExtResource("1_0jkrl")
+id = "scrit_1"
+display_name = "Super %"
+base_cost = 50.0
+cost_multiplier_or_step = 1.5
+effect_type = 5
+effect_value = 0.1
