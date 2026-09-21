@@ -2,6 +2,40 @@
 
 [ext_resource type="Script" uid="uid://bx1were0ydu4x" path="res://scripts/game.gd" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://dr4h015exo7le" path="res://scenes/CurrencyLabel.tscn" id="2_feb5d"]
+[ext_resource type="PackedScene" uid="uid://cxvh8y42n7q51" path="res://scenes/prestige_modal.tscn" id="3_prestige_modal"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_normal"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.4, 0.18, 0.72, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_hover"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.5, 0.25, 0.85, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_pressed"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.32, 0.12, 0.6, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bc_focus"]
 
@@ -133,6 +167,17 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_bc_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_bc_normal")
 text = "Buy Counter"
 
+[node name="PrestigeButton" type="Button" parent="MarginContainer/VBoxContainer/TopBar" unique_id=987654321]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/focus = SubResource("StyleBoxEmpty_bc_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_prestige_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_prestige_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_prestige_normal")
+text = "✦ 0 PP"
+
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1005]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -147,3 +192,13 @@ size_flags_vertical = 3
 theme_override_constants/h_separation = 25
 theme_override_constants/v_separation = 25
 columns = 3
+
+[node name="PrestigeModal" parent="." unique_id=987654322 instance=ExtResource("3_prestige_modal")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

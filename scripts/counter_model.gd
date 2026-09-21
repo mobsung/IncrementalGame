@@ -112,7 +112,7 @@ func check_milestone() -> void:
 		CurrencyManager.add_currency(diff)
 		last_milestone = current_milestone
 		milestone_reached.emit(diff)
-		add_xp(diff * xp_per_conversion)
+		add_xp(diff * xp_per_conversion * CurrencyManager.global_xp_multiplier)
 
 func add_xp(amount: float) -> void:
 	current_xp += amount
@@ -284,7 +284,7 @@ func simulate_offline_time(seconds: float) -> Dictionary:
 	counter_value += value_gained
 	check_milestone()
 	var milestones_gained: float = last_milestone - old_milestone
-	var xp_gained: float = milestones_gained * xp_per_conversion
+	var xp_gained: float = milestones_gained * xp_per_conversion * CurrencyManager.global_xp_multiplier
 	
 	_notify_value_changed()
 	return {

@@ -1,0 +1,444 @@
+[gd_scene format=3 uid="uid://cxvh8y42n7q51"]
+
+[ext_resource type="Script" path="res://scripts/prestige_modal.gd" id="1_modal_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_backdrop"]
+bg_color = Color(0.04, 0.045, 0.06, 0.78)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_panel"]
+content_margin_left = 22.0
+content_margin_top = 20.0
+content_margin_right = 22.0
+content_margin_bottom = 20.0
+bg_color = Color(0.09019608, 0.101960786, 0.13725491, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.58, 0.32, 0.92, 0.8)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stats_panel"]
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.0627451, 0.07058824, 0.09803922, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.22, 0.3, 0.6)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_confirm_panel"]
+content_margin_left = 16.0
+content_margin_top = 14.0
+content_margin_right = 16.0
+content_margin_bottom = 14.0
+bg_color = Color(0.13, 0.07, 0.08, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.85, 0.25, 0.35, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upg_card"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.075, 0.085, 0.115, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.2, 0.28, 0.7)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_btn_normal"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.48, 0.22, 0.82, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_btn_hover"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.58, 0.3, 0.94, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_btn_disabled"]
+content_margin_left = 16.0
+content_margin_top = 10.0
+content_margin_right = 16.0
+content_margin_bottom = 10.0
+bg_color = Color(0.12, 0.13, 0.18, 0.7)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.18, 0.2, 0.27, 0.5)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upg_btn_normal"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.35, 0.2, 0.65, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upg_btn_hover"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.44, 0.26, 0.78, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_upg_btn_disabled"]
+content_margin_left = 14.0
+content_margin_top = 8.0
+content_margin_right = 14.0
+content_margin_bottom = 8.0
+bg_color = Color(0.1, 0.11, 0.15, 0.6)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.16, 0.18, 0.24, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prog_bg"]
+bg_color = Color(0.12, 0.13, 0.18, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prog_fill"]
+bg_color = Color(0.6, 0.32, 0.95, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="PrestigeModal" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_modal_script")
+
+[node name="BackdropButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_backdrop")
+theme_override_styles/hover = SubResource("StyleBoxFlat_backdrop")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_backdrop")
+theme_override_styles/focus = SubResource("StyleBoxFlat_backdrop")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(580, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_panel")
+
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.72, 1, 1)
+theme_override_font_sizes/font_size = 17
+text = "✦ PRESTIGIO & RELIQUIE"
+
+[node name="Spacer" type="Control" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CurrentPointsLabel" type="RichTextLabel" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 26)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+text = "[b]Punti Prestigio:[/b] [color=#c084fc]✦ 0 PP[/color]"
+
+[node name="CloseButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(30, 30)
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "✕"
+
+[node name="StatsPanel" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_stats_panel")
+
+[node name="StatsVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Row1HBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox"]
+layout_mode = 2
+
+[node name="RunCurrencyLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox/Row1HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.85, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+text = "Monete Run Attuale: 0"
+
+[node name="Spacer" type="Control" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox/Row1HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ClaimablePointsLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox/Row1HBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.52, 1, 1)
+theme_override_font_sizes/font_size = 15
+text = "+0 PP"
+
+[node name="PrestigeProgressBar" type="ProgressBar" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_prog_bg")
+theme_override_styles/fill = SubResource("StyleBoxFlat_prog_fill")
+show_percentage = false
+
+[node name="NextPointLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.65, 0.75, 1)
+theme_override_font_sizes/font_size = 11
+text = "Prossimo punto a: 100k monete"
+
+[node name="PrestigeClaimButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/StatsPanel/StatsVBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_styles/normal = SubResource("StyleBoxFlat_prestige_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_prestige_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_prestige_btn_disabled")
+text = "✦ Esegui Prestigio (+0 PP)"
+
+[node name="ConfirmContainer" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_confirm_panel")
+
+[node name="ConfirmVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ConfirmContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ConfirmLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ConfirmContainer/ConfirmVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.85, 1)
+theme_override_font_sizes/font_size = 12
+text = "Sei sicuro di voler effettuare il Prestigio?"
+autowrap_mode = 2
+
+[node name="ConfirmButtonsHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ConfirmContainer/ConfirmVBox"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="ConfirmNoButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/ConfirmContainer/ConfirmVBox/ConfirmButtonsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Annulla"
+
+[node name="ConfirmYesButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/ConfirmContainer/ConfirmVBox/ConfirmButtonsHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 32)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Conferma Prestigio"
+
+[node name="ShopSectionLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.65, 0.95, 1)
+theme_override_font_sizes/font_size = 13
+text = "✦ SHOP SPECIALE (RELIQUIE PERMANENTI)"
+
+[node name="ShopVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="CurrencyCard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_upg_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/CurrencyCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="InfoVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/CurrencyCard/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="CurrencyUpgTitle" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/CurrencyCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Moltiplicatore Valuta [Liv. 0]"
+
+[node name="CurrencyUpgDesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/CurrencyCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+text = "Attuale: x1.0 monete ➔ Prossimo: x2.0 monete"
+
+[node name="CurrencyUpgBtn" type="Button" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/CurrencyCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_upg_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_upg_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_upg_btn_disabled")
+text = "Migliora [✦ 1 PP]"
+
+[node name="XpCard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_upg_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/XpCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="InfoVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/XpCard/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="XpUpgTitle" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/XpCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Saggezza Globale XP [Liv. 0]"
+
+[node name="XpUpgDesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/XpCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+text = "Attuale: x1.0 XP contatori ➔ Prossimo: x2.0 XP"
+
+[node name="XpUpgBtn" type="Button" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/XpCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_upg_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_upg_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_upg_btn_disabled")
+text = "Migliora [✦ 1 PP]"
+
+[node name="SlotsCard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_upg_card")
+
+[node name="HBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/SlotsCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="InfoVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/SlotsCard/HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="SlotsUpgTitle" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/SlotsCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.92, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Espansione Spazio Contatori [Liv. 0]"
+
+[node name="SlotsUpgDesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/SlotsCard/HBox/InfoVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 11
+text = "Attuale: +0 slot extra ➔ Prossimo: +1 slot"
+
+[node name="SlotsUpgBtn" type="Button" parent="CenterContainer/ModalPanel/MainVBox/ShopVBox/SlotsCard/HBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 36)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_upg_btn_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_upg_btn_hover")
+theme_override_styles/disabled = SubResource("StyleBoxFlat_upg_btn_disabled")
+text = "Migliora [✦ 2 PP]"

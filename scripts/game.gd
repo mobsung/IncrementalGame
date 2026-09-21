@@ -8,6 +8,8 @@ const TierDefinition = preload("res://scripts/tier_definition.gd")
 @onready var counter_grid: GridContainer = %CounterGridContainer
 @onready var buy_counter_button: Button = %BuyCounter
 @onready var slots_badge_label: Label = %SlotsBadgeLabel
+@onready var prestige_button: Button = %PrestigeButton
+@onready var prestige_modal: PrestigeModal = %PrestigeModal
 
 @export var base_max_counters: int = 3
 var bonus_max_counters: int = 0
@@ -17,16 +19,23 @@ var counter_cost_multiplier: float = 2.0
 
 func _ready() -> void:
 	CurrencyManager.currency_changed.connect(_on_currency_changed)
+	CurrencyManager.prestige_points_changed.connect(_on_prestige_points_changed)
+	CurrencyManager.prestige_upgrades_changed.connect(_on_prestige_upgrades_changed)
+	CurrencyManager.prestige_performed.connect(_on_prestige_performed)
+	
 	buy_counter_button.pressed.connect(_on_buy_counter_pressed)
+	if prestige_button != null:
+		prestige_button.pressed.connect(_on_prestige_button_pressed)
 	
 	# Spawn initial starting counter if none exist
 	if counter_grid.get_child_count() == 0:
 		_spawn_counter(0)
 	
 	_update_buy_button()
+	_update_prestige_button()
 
 func get_max_counters() -> int:
-	return base_max_counters + bonus_max_counters
+	return base_max_counters + bonus_max_counters + CurrencyManager.get_bonus_slots()
 
 func has_available_slots() -> bool:
 	return counters_count < get_max_counters()
@@ -59,8 +68,43 @@ func _update_buy_button() -> void:
 	buy_counter_button.text = "Buy %s [%s]" % [next_tier_data["name"], Global_data.format_number(cost)]
 	buy_counter_button.disabled = not CurrencyManager.can_afford(cost)
 
+func _update_prestige_button() -> void:
+	if prestige_button == null:
+		return
+	var claimable: int = CurrencyManager.get_claimable_prestige_points()
+	var current_pp: int = CurrencyManager.prestige_points
+	if claimable > 0:
+		prestige_button.text = "✦ %d PP (+%d)" % [current_pp, claimable]
+		prestige_button.modulate = Color(1.2, 1.0, 1.35, 1.0)
+	else:
+		prestige_button.text = "✦ %d PP" % current_pp
+		prestige_button.modulate = Color.WHITE
+
 func _on_currency_changed(_amount: float) -> void:
 	_update_buy_button()
+	_update_prestige_button()
+
+func _on_prestige_points_changed(_amount: int) -> void:
+	_update_prestige_button()
+
+func _on_prestige_upgrades_changed() -> void:
+	_update_buy_button()
+	counter_slots_changed.emit(counters_count, get_max_counters())
+
+func _on_prestige_button_pressed() -> void:
+	if prestige_modal != null:
+		prestige_modal.open_modal()
+
+func _on_prestige_performed(_points_gained: int) -> void:
+	# Destroy all active counters
+	for child in counter_grid.get_children():
+		child.queue_free()
+	counters_count = 0
+	
+	# Spawn 1 initial starting Bronze counter
+	_spawn_counter(0)
+	_update_buy_button()
+	_update_prestige_button()
 
 func _on_buy_counter_pressed() -> void:
 	if not has_available_slots():
