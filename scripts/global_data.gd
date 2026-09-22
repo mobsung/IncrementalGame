@@ -1,7 +1,5 @@
-class_name Global_data
-
-const UpgradeDefinition = preload("res://scripts/upgrade_definition.gd")
-const TierDefinition = preload("res://scripts/tier_definition.gd")
+class_name GlobalData
+extends RefCounted
 
 const SUFFIXES: Array[String] = [
 	"", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc",
@@ -10,71 +8,88 @@ const SUFFIXES: Array[String] = [
 	"Tg", "Utg", "Dtg", "Gg"
 ]
 
-const TIER_RESOURCE_PATHS: Array[String] = [
-	"res://resources/tiers/bronze.tres",
-	"res://resources/tiers/silver.tres",
-	"res://resources/tiers/gold.tres",
-	"res://resources/tiers/platinum.tres",
-	"res://resources/tiers/diamond.tres",
-	"res://resources/tiers/obsidian.tres"
-]
+const CREATURE_PATHS: Dictionary = {
+	"mana_wisp": "res://resources/creatures/mana_wisp.tres",
+	# Stage 1
+	"pyro_sprite": "res://resources/creatures/pyro_sprite.tres",
+	"aqua_nymph": "res://resources/creatures/aqua_nymph.tres",
+	"terra_gnome": "res://resources/creatures/terra_gnome.tres",
+	# Stage 2 (Fire)
+	"flame_ifrit": "res://resources/creatures/flame_ifrit.tres",
+	"magma_drake": "res://resources/creatures/magma_drake.tres",
+	"spark_phoenix": "res://resources/creatures/spark_phoenix.tres",
+	# Stage 2 (Water)
+	"tidal_siren": "res://resources/creatures/tidal_siren.tres",
+	"glacial_nixie": "res://resources/creatures/glacial_nixie.tres",
+	"abyssal_kelpie": "res://resources/creatures/abyssal_kelpie.tres",
+	# Stage 2 (Earth)
+	"stone_golem": "res://resources/creatures/stone_golem.tres",
+	"crystal_warden": "res://resources/creatures/crystal_warden.tres",
+	"shadow_behemoth": "res://resources/creatures/shadow_behemoth.tres",
+	# Stage 3 Apex
+	"solar_colossus": "res://resources/creatures/solar_colossus.tres",
+	"volcanic_hydra": "res://resources/creatures/volcanic_hydra.tres",
+	"calamity_inferno": "res://resources/creatures/calamity_inferno.tres",
+	"tectonic_beast": "res://resources/creatures/tectonic_beast.tres",
+	"tempest_phoenix": "res://resources/creatures/tempest_phoenix.tres",
+	"oceanic_leviathan": "res://resources/creatures/oceanic_leviathan.tres",
+	"abyssal_archon": "res://resources/creatures/abyssal_archon.tres",
+	"rime_storm_serpent": "res://resources/creatures/rime_storm_serpent.tres",
+	"shadow_cataclysm": "res://resources/creatures/shadow_cataclysm.tres",
+	"gaia_prime_colossus": "res://resources/creatures/gaia_prime_colossus.tres",
+	"continental_turtle": "res://resources/creatures/continental_turtle.tres",
+	"dusk_titan": "res://resources/creatures/dusk_titan.tres"
+}
 
-const UPGRADE_RESOURCE_PATHS: Array[String] = [
-	"res://resources/upgrades/speed.tres",
-	"res://resources/upgrades/yield.tres",
-	"res://resources/upgrades/convert.tres",
-	"res://resources/upgrades/crit_chance.tres",
-	"res://resources/upgrades/crit_power.tres",
-	"res://resources/upgrades/super_crit_chance.tres",
-	"res://resources/upgrades/super_crit_power.tres",
-	"res://resources/upgrades/mega_yield.tres",
-	"res://resources/upgrades/xp_wisdom.tres"
-]
+static func get_starting_creature() -> CreatureDefinition:
+	var path: String = CREATURE_PATHS.get("mana_wisp", "")
+	if ResourceLoader.exists(path):
+		var def: CreatureDefinition = load(path) as CreatureDefinition
+		if def != null:
+			return def
+	# Fallback
+	var fallback := CreatureDefinition.new()
+	fallback.id = "mana_wisp"
+	fallback.display_name = "Mana Wisp"
+	fallback.primary_element = "Neutral"
+	fallback.element_color = Color(0.35, 0.75, 1.0, 1.0)
+	fallback.base_yield = 5.0
+	fallback.base_conversion = 100.0
+	fallback.channel_interval = 1.0
+	return fallback
 
-static func load_default_upgrades() -> Array[UpgradeDefinition]:
+static func get_creature_definition(id: String) -> CreatureDefinition:
+	var path: String = CREATURE_PATHS.get(id, "")
+	if ResourceLoader.exists(path):
+		var def: CreatureDefinition = load(path) as CreatureDefinition
+		if def != null:
+			return def
+	return null
+
+static func get_creature_by_id(id: String) -> CreatureDefinition:
+	var def: CreatureDefinition = get_creature_definition(id)
+	return def if def != null else get_starting_creature()
+
+static func get_default_upgrades() -> Array[UpgradeDefinition]:
 	var list: Array[UpgradeDefinition] = []
-	for p in UPGRADE_RESOURCE_PATHS:
+	var paths: Array[String] = [
+		"res://resources/upgrades/speed.tres",
+		"res://resources/upgrades/yield.tres",
+		"res://resources/upgrades/convert.tres",
+		"res://resources/upgrades/crit_chance.tres",
+		"res://resources/upgrades/crit_power.tres",
+		"res://resources/upgrades/super_crit_chance.tres",
+		"res://resources/upgrades/super_crit_power.tres",
+		"res://resources/upgrades/mega_yield.tres",
+		"res://resources/upgrades/xp_wisdom.tres"
+	]
+	for p in paths:
 		if ResourceLoader.exists(p):
-			var res: UpgradeDefinition = load(p) as UpgradeDefinition
-			if res != null:
-				list.append(res)
+			var upg: UpgradeDefinition = load(p) as UpgradeDefinition
+			if upg != null:
+				list.append(upg)
 	return list
 
-static func get_tier_definition(index: int) -> TierDefinition:
-	if index >= 0 and index < TIER_RESOURCE_PATHS.size():
-		var path: String = TIER_RESOURCE_PATHS[index]
-		if ResourceLoader.exists(path):
-			var tier: TierDefinition = load(path) as TierDefinition
-			if tier != null:
-				return tier
-				
-	# Procedural fallback for tiers beyond the 6 authored resources
-	var last_tier: TierDefinition = null
-	if ResourceLoader.exists(TIER_RESOURCE_PATHS[TIER_RESOURCE_PATHS.size() - 1]):
-		last_tier = load(TIER_RESOURCE_PATHS[TIER_RESOURCE_PATHS.size() - 1]) as TierDefinition
-	
-	var base_val: float = last_tier.increment_value if last_tier != null else 5000.0
-	var base_time: float = last_tier.base_timer_wait_time if last_tier != null else 0.25
-	var extra_levels: int = max(0, index - TIER_RESOURCE_PATHS.size() + 1)
-	
-	var proc_tier := TierDefinition.new()
-	proc_tier.tier_name = "Tier %d" % (index + 1)
-	proc_tier.conversion = 1.0
-	proc_tier.increment_value = base_val * pow(4.0, extra_levels)
-	proc_tier.base_timer_wait_time = maxf(0.1, base_time)
-	proc_tier.max_conversion = 1.0
-	proc_tier.available_upgrades = load_default_upgrades()
-	return proc_tier
-
-static func get_counter_tier(index: int) -> Dictionary:
-	var def: TierDefinition = get_tier_definition(index)
-	return {
-		"name": def.tier_name,
-		"conversion": def.conversion,
-		"increment_value": def.increment_value,
-		"base_timer_wait_time": def.base_timer_wait_time,
-		"max_conversion": def.max_conversion
-	}
 
 static func format_number(value: float) -> String:
 	if is_nan(value):

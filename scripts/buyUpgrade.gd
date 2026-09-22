@@ -1,8 +1,5 @@
-extends Button
 class_name BuyUpgrade
-
-const CounterModel = preload("res://scripts/counter_model.gd")
-const UpgradeDefinition = preload("res://scripts/upgrade_definition.gd")
+extends Button
 
 signal was_pressed
 
@@ -19,6 +16,9 @@ var is_holding: bool = false
 var hold_duration: float = 0.0
 var repeat_timer: float = 0.0
 var current_interval: float = 0.2
+
+var cached_cost: float = 0.0
+var cached_is_max: bool = false
 
 func _ready() -> void:
 	set_process(false)
@@ -49,29 +49,56 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_EXIT_TREE:
 		_stop_holding()
 
+func _get_compact_name() -> String:
+	if definition == null:
+		return ""
+	match definition.id:
+		"speed_1", "speed": return "Spd"
+		"value_1", "yield": return "Yld"
+		"convert_1", "convert": return "Flw"
+		"crit_1", "crit_chance": return "Crit"
+		"crit_power_1", "crit_power": return "CPwr"
+		"scrit_1", "super_crit_chance": return "Scrit"
+		"scrit_power_1", "super_crit_power": return "SPwr"
+		"mega_yield_1", "mega_yield": return "Mega"
+		"xp_wisdom_1", "xp_wisdom": return "XP"
+		_: return definition.display_name.substr(0, 4)
+
 func _update_ui_state() -> void:
 	if model == null or definition == null:
 		return
 		
-	var is_max: bool = model.is_upgrade_max_level(definition)
+	cached_is_max = model.is_upgrade_max_level(definition)
 	var lvl: int = model.get_upgrade_level(definition.id)
-	var cost: float = model.get_upgrade_cost(definition)
+	cached_cost = model.get_upgrade_cost(definition)
+	var short_name: String = _get_compact_name()
 	
-	if is_max:
-		text = "%s [MAX]" % definition.display_name
+	if cached_is_max:
+		text = "%s [MAX]" % short_name
 		disabled = true
 		_stop_holding()
 		return
 		
 	if definition.cost_type == UpgradeDefinition.CostType.STAR_POINTS:
-		text = "%s Lv.%d • ★ %d" % [definition.display_name, lvl, int(cost)]
+		text = "%s %d • ★%d" % [short_name, lvl, int(cached_cost)]
 	else:
-		text = "%s Lv.%d • %s" % [definition.display_name, lvl, Global_data.format_number(cost)]
+		text = "%s %d • %s" % [short_name, lvl, GlobalData.format_number(cached_cost)]
 		
-	var can_afford: bool = model.can_afford_upgrade(definition)
-	disabled = not can_afford
-	if disabled:
-		_stop_holding()
+	_update_affordability()
+
+func _update_affordability() -> void:
+	if cached_is_max or model == null or definition == null:
+		return
+	var can_afford: bool = false
+	if definition.cost_type == UpgradeDefinition.CostType.STAR_POINTS:
+		can_afford = model.star_points >= int(cached_cost)
+	else:
+		can_afford = CurrencyManager.current_currency >= cached_cost
+		
+	if disabled == can_afford:
+		disabled = not can_afford
+		if disabled:
+			_stop_holding()
 
 func _on_upgrade_purchased(upgrade_id: String, _level: int) -> void:
 	if definition != null and definition.id == upgrade_id:
@@ -79,11 +106,11 @@ func _on_upgrade_purchased(upgrade_id: String, _level: int) -> void:
 
 func _on_currency_changed(_amount: float) -> void:
 	if definition != null and definition.cost_type == UpgradeDefinition.CostType.CURRENCY:
-		_update_ui_state()
+		_update_affordability()
 
 func _on_star_points_changed(_amount: int) -> void:
 	if definition != null and definition.cost_type == UpgradeDefinition.CostType.STAR_POINTS:
-		_update_ui_state()
+		_update_affordability()
 
 func _on_button_down() -> void:
 	if disabled or model == null or definition == null:

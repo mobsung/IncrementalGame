@@ -1,15 +1,17 @@
 [gd_scene format=3 uid="uid://byjy4ft7qper2"]
 
-[ext_resource type="Script" uid="uid://bx1were0ydu4x" path="res://scripts/game.gd" id="1_e2o6t"]
-[ext_resource type="PackedScene" uid="uid://dr4h015exo7le" path="res://scenes/CurrencyLabel.tscn" id="2_feb5d"]
-[ext_resource type="PackedScene" uid="uid://cxvh8y42n7q51" path="res://scenes/prestige_modal.tscn" id="3_prestige_modal"]
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_e2o6t"]
+[ext_resource type="PackedScene" path="res://scenes/CurrencyLabel.tscn" id="2_feb5d"]
+[ext_resource type="PackedScene" path="res://scenes/prestige_modal.tscn" id="3_prestige_modal"]
+[ext_resource type="PackedScene" path="res://scenes/evolution_modal.tscn" id="4_evolution_modal"]
+[ext_resource type="Script" path="res://scripts/floating_text_manager.gd" id="5_ftm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prestige_normal"]
 content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.4, 0.18, 0.72, 1)
+bg_color = Color(0.42, 0.2, 0.75, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -20,7 +22,7 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.5, 0.25, 0.85, 1)
+bg_color = Color(0.52, 0.26, 0.88, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -31,7 +33,7 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.32, 0.12, 0.6, 1)
+bg_color = Color(0.34, 0.14, 0.62, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -44,7 +46,7 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.02, 0.588, 0.412, 1)
+bg_color = Color(0.04, 0.55, 0.38, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -55,7 +57,7 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.063, 0.725, 0.506, 1)
+bg_color = Color(0.06, 0.68, 0.46, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -66,7 +68,7 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.016, 0.471, 0.341, 1)
+bg_color = Color(0.02, 0.44, 0.3, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -77,12 +79,12 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.10980392, 0.1254902, 0.16862746, 0.7)
+bg_color = Color(0.1, 0.11, 0.15, 0.7)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.18039216, 0.20392157, 0.26666668, 0.5)
+border_color = Color(0.16, 0.18, 0.25, 0.5)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -93,18 +95,18 @@ content_margin_left = 14.0
 content_margin_top = 8.0
 content_margin_right = 14.0
 content_margin_bottom = 8.0
-bg_color = Color(0.101960786, 0.11372549, 0.15294118, 1)
+bg_color = Color(0.08, 0.09, 0.13, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.18039216, 0.20392157, 0.27450982, 1)
+border_color = Color(0.18, 0.22, 0.3, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="Game" type="Control" unique_id=975015288]
+[node name="Game" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,7 +115,16 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_e2o6t")
 
-[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1001]
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.04, 0.047, 0.07, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -125,28 +136,28 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=1002]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 15
 
-[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1003]
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="CurrencyLabel" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1393963228 instance=ExtResource("2_feb5d")]
+[node name="CurrencyLabel" parent="MarginContainer/VBoxContainer/TopBar" instance=ExtResource("2_feb5d")]
 custom_minimum_size = Vector2(220, 40)
 layout_mode = 2
 
-[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1004]
+[node name="Spacer" type="Control" parent="MarginContainer/VBoxContainer/TopBar"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="SlotsBadgePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar" unique_id=1006]
+[node name="SlotsBadgePanel" type="PanelContainer" parent="MarginContainer/VBoxContainer/TopBar"]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_slots_badge")
 
-[node name="SlotsBadgeLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/SlotsBadgePanel" unique_id=1007]
+[node name="SlotsBadgeLabel" type="Label" parent="MarginContainer/VBoxContainer/TopBar/SlotsBadgePanel"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
@@ -155,9 +166,9 @@ text = "Slots: 1 / 3"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BuyCounter" type="Button" parent="MarginContainer/VBoxContainer/TopBar" unique_id=552313218]
+[node name="BuyCounter" type="Button" parent="MarginContainer/VBoxContainer/TopBar"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
+custom_minimum_size = Vector2(210, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 theme_override_styles/focus = SubResource("StyleBoxEmpty_bc_focus")
@@ -165,9 +176,9 @@ theme_override_styles/disabled = SubResource("StyleBoxFlat_bc_disabled")
 theme_override_styles/hover = SubResource("StyleBoxFlat_bc_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_bc_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_bc_normal")
-text = "Buy Counter"
+text = "Summon Creature"
 
-[node name="PrestigeButton" type="Button" parent="MarginContainer/VBoxContainer/TopBar" unique_id=987654321]
+[node name="PrestigeButton" type="Button" parent="MarginContainer/VBoxContainer/TopBar"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(170, 40)
 layout_mode = 2
@@ -176,24 +187,48 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_bc_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_prestige_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_prestige_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_prestige_normal")
-text = "✦ 0 PP"
+text = "✦ 0 AS"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer" unique_id=1005]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="CounterGridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer" unique_id=1138367529]
-unique_name_in_owner = true
+[node name="CenterContainer" type="CenterContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/h_separation = 25
-theme_override_constants/v_separation = 25
+
+[node name="CounterGridContainer" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer/CenterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
 columns = 3
 
-[node name="PrestigeModal" parent="." unique_id=987654322 instance=ExtResource("3_prestige_modal")]
+[node name="FloatingTextManager" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("5_ftm")
+
+[node name="PrestigeModal" parent="." instance=ExtResource("3_prestige_modal")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EvolutionModal" parent="." instance=ExtResource("4_evolution_modal")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1

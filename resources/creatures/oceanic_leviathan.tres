@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/oceanic_leviathan.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "oceanic_leviathan"
+display_name = "Oceanic Leviathan"
+element_type = 2
+primary_element = "Water"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.05, 0.6, 1.0, 1.0)
+secondary_color = Color(0.0, 0.9, 0.8, 1.0)
+is_pure = true
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Apex Pure Ocean Sovereign. Cycle threshold drops to absolute minimum; Mana discharges continuously."
+base_yield = 220.0
+base_conversion = 10.0
+channel_interval = 0.45
+crit_chance = 0.15
+crit_power = 2.5
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.5
+speed_cap = 0.08
+flow_cap = 1.0
+crit_cap = 0.6
+super_crit_cap = 0.0
+proc_name = "Tsunami Deluge"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, triggers an endless wave of instant mana."
+proc_color = Color(0.1, 0.8, 1.0, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/tidal_siren.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "tidal_siren"
+display_name = "Tidal Siren"
+element_type = 2
+primary_element = "Water"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.05, 0.65, 0.95, 1.0)
+secondary_color = Color(0.0, 0.45, 0.85, 1.0)
+is_pure = true
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Pure Abyssal Naiad. Ultra-low conversion threshold allowing non-stop Mana discharge."
+base_yield = 45.0
+base_conversion = 25.0
+channel_interval = 0.75
+crit_chance = 0.08
+crit_power = 2.2
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.1
+speed_cap = 0.12
+flow_cap = 2.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Maelstrom Wave"
+proc_cycle_interval = 6
+proc_description = "Every 6 cycles, instantly completes 2 consecutive cycles."
+proc_color = Color(0.2, 0.7, 1.0, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["oceanic_leviathan", "abyssal_archon", "rime_storm_serpent"]

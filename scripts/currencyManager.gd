@@ -5,7 +5,8 @@ signal prestige_points_changed(new_amount: int)
 signal prestige_upgrades_changed()
 signal prestige_performed(points_gained: int)
 
-const PRESTIGE_BASE_CURRENCY: float = 100000.0
+# Rebalanced for rewarding idle & active pacing
+const PRESTIGE_BASE_CURRENCY: float = 25000.0
 
 var current_currency: float = 0.0
 var run_currency_earned: float = 0.0
@@ -40,7 +41,6 @@ func spend_currency(cost: float) -> bool:
 func get_claimable_prestige_points() -> int:
 	if run_currency_earned < PRESTIGE_BASE_CURRENCY:
 		return 0
-	# 100k -> 1, 200k -> 2, 400k -> 3, 800k -> 4...
 	var ratio: float = run_currency_earned / PRESTIGE_BASE_CURRENCY
 	return int(floor(log(ratio) / log(2.0))) + 1
 
@@ -75,7 +75,7 @@ func execute_prestige() -> int:
 	prestige_performed.emit(claimable)
 	return claimable
 
-# --- Prestige Shop Logic ---
+# --- Prestige Relics Logic ---
 
 func get_bonus_slots() -> int:
 	return prestige_slots_level
@@ -87,7 +87,7 @@ func get_upgrade_cost(type: String) -> int:
 		"xp":
 			return int(pow(2, prestige_xp_level))
 		"slots":
-			return int(2 * pow(5, prestige_slots_level))
+			return int(2 * pow(3, prestige_slots_level))
 	return 999999999
 
 func can_afford_prestige_upgrade(type: String) -> bool:

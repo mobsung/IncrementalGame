@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/gaia_prime_colossus.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "gaia_prime_colossus"
+display_name = "Gaia Prime Colossus"
+element_type = 3
+primary_element = "Earth"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.2, 0.85, 0.4, 1.0)
+secondary_color = Color(0.1, 0.6, 0.25, 1.0)
+is_pure = true
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Apex Pure Earth Sovereign. The heart of the world itself, radiating harmonious monumental power."
+base_yield = 380.0
+base_conversion = 20.0
+channel_interval = 0.65
+crit_chance = 0.15
+crit_power = 3.2
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 2.8
+speed_cap = 0.1
+flow_cap = 1.5
+crit_cap = 0.65
+super_crit_cap = 0.0
+proc_name = "Gaia Heartbeat"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, multiplies all sanctuary output."
+proc_color = Color(0.3, 1.0, 0.5, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

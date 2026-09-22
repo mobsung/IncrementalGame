@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/shadow_behemoth.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "shadow_behemoth"
+display_name = "Shadow Behemoth"
+element_type = 3
+primary_element = "Earth"
+secondary_element = "Darkness"
+tertiary_element = ""
+element_color = Color(0.2, 0.65, 0.35, 1.0)
+secondary_color = Color(0.55, 0.2, 0.75, 1.0)
+is_pure = false
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Obsidian nightmare titan. Fuses earth fortitude with dark super crit obliteration."
+base_yield = 75.0
+base_conversion = 42.0
+channel_interval = 0.8
+crit_chance = 0.12
+crit_power = 2.8
+super_crit_chance = 0.12
+super_crit_power = 3.8
+yield_multiplier = 1.5
+speed_cap = 0.14
+flow_cap = 4.5
+crit_cap = 0.6
+super_crit_cap = 0.5
+proc_name = "Abyssal Tremor"
+proc_cycle_interval = 7
+proc_description = "Every 7 cycles, unleashes a tremor yielding massive Super Crit mana."
+proc_color = Color(0.8, 0.3, 0.95, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["dusk_titan", "gaia_prime_colossus", "abyssal_archon"]

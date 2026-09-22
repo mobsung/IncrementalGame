@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/terra_gnome.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "terra_gnome"
+display_name = "Terra Gnome"
+element_type = 3
+primary_element = "Earth"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.13, 0.77, 0.37, 1.0)
+secondary_color = Color(0.08, 0.5, 0.24, 1.0)
+is_pure = true
+tier_rank = 1
+portrait = ExtResource("2_tex")
+description = "Ancient earth guardian clad in living stone. Perfectly balances Mana Yield and Flow."
+base_yield = 20.0
+base_conversion = 65.0
+channel_interval = 0.95
+crit_chance = 0.05
+crit_power = 2.5
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.25
+speed_cap = 0.15
+flow_cap = 7.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Tectonic Pulse"
+proc_cycle_interval = 8
+proc_description = "Every 8 cycles, grants double Mana and Creature XP."
+proc_color = Color(0.4, 0.9, 0.4, 1.0)
+evolution_level_req = 25
+evolution_option_ids = ["stone_golem", "crystal_warden", "shadow_behemoth"]

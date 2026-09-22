@@ -1,0 +1,314 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/upgrade_definition.gd" id="1_ibofk"]
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="2_8wyil"]
+[ext_resource type="Texture2D" path="res://assets/creatures/elder_wyrm.jpg" id="3_3gefb"]
+[ext_resource type="Texture2D" path="res://assets/creatures/astral_dragon.jpg" id="4_hfgr6"]
+[ext_resource type="Texture2D" path="res://assets/creatures/thunder_roc.jpg" id="5_og7jt"]
+
+[sub_resource type="Resource" id="Resource_rlots"]
+script = ExtResource("1_ibofk")
+id = "speed"
+display_name = "Speed"
+base_cost = 650.0
+cost_multiplier_or_step = 1.25
+effect_type = 0
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_1cgaf"]
+script = ExtResource("1_ibofk")
+id = "yield"
+display_name = "Yield"
+base_cost = 130.0
+effect_value = 18.0
+
+[sub_resource type="Resource" id="Resource_ub0ja"]
+script = ExtResource("1_ibofk")
+id = "convert"
+display_name = "Flow"
+base_cost = 1300.0
+cost_multiplier_or_step = 1.2
+effect_type = 2
+
+[sub_resource type="Resource" id="Resource_fb6qk"]
+script = ExtResource("1_ibofk")
+id = "crit_chance"
+display_name = "Crit %"
+base_cost = 2600.0
+cost_multiplier_or_step = 1.35
+effect_type = 3
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_lpjx4"]
+script = ExtResource("1_ibofk")
+id = "crit_power"
+display_name = "Crit Pwr"
+base_cost = 6500.0
+cost_multiplier_or_step = 1.5
+effect_type = 4
+effect_value = 0.5
+
+[sub_resource type="Resource" id="Resource_254dx"]
+script = ExtResource("1_ibofk")
+id = "super_crit_chance"
+display_name = "Super %"
+base_cost = 13000.0
+cost_multiplier_or_step = 1.6
+effect_type = 5
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_my24t"]
+script = ExtResource("1_ibofk")
+id = "super_crit_power"
+display_name = "Super Pwr"
+base_cost = 39000.0
+cost_multiplier_or_step = 1.8
+effect_type = 6
+
+[sub_resource type="Resource" id="Resource_eyg5m"]
+script = ExtResource("1_ibofk")
+id = "mega_yield"
+display_name = "Mega Yield"
+category = 1
+cost_type = 1
+cost_growth_type = 1
+cost_multiplier_or_step = 1.0
+effect_type = 7
+effect_value = 180.0
+
+[sub_resource type="Resource" id="Resource_q7pho"]
+script = ExtResource("1_ibofk")
+id = "xp_wisdom"
+display_name = "Wisdom"
+category = 1
+cost_type = 1
+base_cost = 2.0
+cost_growth_type = 1
+cost_multiplier_or_step = 2.0
+effect_type = 8
+
+[sub_resource type="Resource" id="Resource_ubonu"]
+script = ExtResource("1_ibofk")
+id = "speed"
+display_name = "Speed"
+base_cost = 5000.0
+cost_multiplier_or_step = 1.25
+effect_type = 0
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_yuy4s"]
+script = ExtResource("1_ibofk")
+id = "yield"
+display_name = "Yield"
+base_cost = 1000.0
+effect_value = 250.0
+
+[sub_resource type="Resource" id="Resource_xsul5"]
+script = ExtResource("1_ibofk")
+id = "convert"
+display_name = "Flow"
+base_cost = 10000.0
+cost_multiplier_or_step = 1.2
+effect_type = 2
+
+[sub_resource type="Resource" id="Resource_rpstp"]
+script = ExtResource("1_ibofk")
+id = "crit_chance"
+display_name = "Crit %"
+base_cost = 20000.0
+cost_multiplier_or_step = 1.35
+effect_type = 3
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_qs1lb"]
+script = ExtResource("1_ibofk")
+id = "crit_power"
+display_name = "Crit Pwr"
+base_cost = 50000.0
+cost_multiplier_or_step = 1.5
+effect_type = 4
+effect_value = 0.5
+
+[sub_resource type="Resource" id="Resource_uj2pp"]
+script = ExtResource("1_ibofk")
+id = "super_crit_chance"
+display_name = "Super %"
+base_cost = 100000.0
+cost_multiplier_or_step = 1.6
+effect_type = 5
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_8r0if"]
+script = ExtResource("1_ibofk")
+id = "super_crit_power"
+display_name = "Super Pwr"
+base_cost = 300000.0
+cost_multiplier_or_step = 1.8
+effect_type = 6
+
+[sub_resource type="Resource" id="Resource_mnjui"]
+script = ExtResource("1_ibofk")
+id = "mega_yield"
+display_name = "Mega Yield"
+category = 1
+cost_type = 1
+cost_growth_type = 1
+cost_multiplier_or_step = 1.0
+effect_type = 7
+effect_value = 2500.0
+
+[sub_resource type="Resource" id="Resource_usjij"]
+script = ExtResource("1_ibofk")
+id = "xp_wisdom"
+display_name = "Wisdom"
+category = 1
+cost_type = 1
+base_cost = 2.0
+cost_growth_type = 1
+cost_multiplier_or_step = 2.0
+effect_type = 8
+
+[sub_resource type="Resource" id="Resource_nvsrd"]
+script = ExtResource("2_8wyil")
+id = "elder_wyrm"
+display_name = "Elder Wyrm"
+element_type = 7
+element_name = "Draconic"
+element_color = Color(0.9607843, 0.61960787, 0.043137256, 1)
+tier_rank = 4
+portrait = ExtResource("3_3gefb")
+description = "Colossal ancient dragon crowned in golden scales, channeling devastating bursts of primal dragonfire."
+base_yield = 2500.0
+base_conversion = 25.0
+min_conversion = 2.0
+channel_interval = 0.4
+crit_chance = 0.4
+crit_power = 5.0
+super_crit_chance = 0.2
+super_crit_power = 4.0
+evolution_level_req = 0
+available_upgrades = Array[ExtResource("1_ibofk")]([SubResource("Resource_ubonu"), SubResource("Resource_yuy4s"), SubResource("Resource_xsul5"), SubResource("Resource_rpstp"), SubResource("Resource_qs1lb"), SubResource("Resource_uj2pp"), SubResource("Resource_8r0if"), SubResource("Resource_mnjui"), SubResource("Resource_usjij")])
+
+[sub_resource type="Resource" id="Resource_q2eah"]
+script = ExtResource("1_ibofk")
+id = "speed"
+display_name = "Speed"
+base_cost = 6000.0
+cost_multiplier_or_step = 1.25
+effect_type = 0
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_nwta2"]
+script = ExtResource("1_ibofk")
+id = "yield"
+display_name = "Yield"
+base_cost = 1200.0
+effect_value = 200.0
+
+[sub_resource type="Resource" id="Resource_cvt20"]
+script = ExtResource("1_ibofk")
+id = "convert"
+display_name = "Flow"
+base_cost = 12000.0
+cost_multiplier_or_step = 1.2
+effect_type = 2
+
+[sub_resource type="Resource" id="Resource_njv1r"]
+script = ExtResource("1_ibofk")
+id = "crit_chance"
+display_name = "Crit %"
+base_cost = 24000.0
+cost_multiplier_or_step = 1.35
+effect_type = 3
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_eihc1"]
+script = ExtResource("1_ibofk")
+id = "crit_power"
+display_name = "Crit Pwr"
+base_cost = 60000.0
+cost_multiplier_or_step = 1.5
+effect_type = 4
+effect_value = 0.5
+
+[sub_resource type="Resource" id="Resource_mdryt"]
+script = ExtResource("1_ibofk")
+id = "super_crit_chance"
+display_name = "Super %"
+base_cost = 120000.0
+cost_multiplier_or_step = 1.6
+effect_type = 5
+effect_value = 0.05
+
+[sub_resource type="Resource" id="Resource_qx1wj"]
+script = ExtResource("1_ibofk")
+id = "super_crit_power"
+display_name = "Super Pwr"
+base_cost = 360000.0
+cost_multiplier_or_step = 1.8
+effect_type = 6
+
+[sub_resource type="Resource" id="Resource_djra4"]
+script = ExtResource("1_ibofk")
+id = "mega_yield"
+display_name = "Mega Yield"
+category = 1
+cost_type = 1
+cost_growth_type = 1
+cost_multiplier_or_step = 1.0
+effect_type = 7
+effect_value = 2000.0
+
+[sub_resource type="Resource" id="Resource_gdy5f"]
+script = ExtResource("1_ibofk")
+id = "xp_wisdom"
+display_name = "Wisdom"
+category = 1
+cost_type = 1
+base_cost = 2.0
+cost_growth_type = 1
+cost_multiplier_or_step = 2.0
+effect_type = 8
+
+[sub_resource type="Resource" id="Resource_sima0"]
+script = ExtResource("2_8wyil")
+id = "astral_dragon"
+display_name = "Astral Dragon"
+element_type = 8
+element_name = "Cosmic Astral"
+element_color = Color(0.7529412, 0.5176471, 0.9882353, 1)
+tier_rank = 4
+portrait = ExtResource("4_hfgr6")
+description = "Sovereign cosmic deity forged from nebulae and constellations, radiating infinite stellar mana."
+base_yield = 2000.0
+base_conversion = 15.0
+min_conversion = 1.0
+channel_interval = 0.25
+crit_chance = 0.45
+crit_power = 6.0
+super_crit_chance = 0.25
+super_crit_power = 5.0
+evolution_level_req = 0
+available_upgrades = Array[ExtResource("1_ibofk")]([SubResource("Resource_q2eah"), SubResource("Resource_nwta2"), SubResource("Resource_cvt20"), SubResource("Resource_njv1r"), SubResource("Resource_eihc1"), SubResource("Resource_mdryt"), SubResource("Resource_qx1wj"), SubResource("Resource_djra4"), SubResource("Resource_gdy5f")])
+
+[resource]
+script = ExtResource("2_8wyil")
+id = "thunder_roc"
+display_name = "Thunder Roc"
+element_type = 6
+element_name = "Lightning"
+element_color = Color(0.65882355, 0.33333334, 0.96862745, 1)
+tier_rank = 3
+portrait = ExtResource("5_og7jt")
+description = "Tempestuous storm bird wreathed in violet lightning, pulsing with rapid electrical channel discharges."
+base_yield = 120.0
+base_conversion = 35.0
+min_conversion = 3.0
+channel_interval = 0.35
+crit_chance = 0.3
+crit_power = 3.0
+super_crit_chance = 0.15
+super_crit_power = 2.5
+evolution_level_req = 50
+evolution_options = Array[ExtResource("2_8wyil")]([SubResource("Resource_nvsrd"), SubResource("Resource_sima0")])
+available_upgrades = Array[ExtResource("1_ibofk")]([SubResource("Resource_rlots"), SubResource("Resource_1cgaf"), SubResource("Resource_ub0ja"), SubResource("Resource_fb6qk"), SubResource("Resource_lpjx4"), SubResource("Resource_254dx"), SubResource("Resource_my24t"), SubResource("Resource_eyg5m"), SubResource("Resource_q7pho")])

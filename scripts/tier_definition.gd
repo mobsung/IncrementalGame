@@ -1,7 +1,6 @@
 class_name TierDefinition
 extends Resource
 
-const UpgradeDefinition = preload("res://scripts/upgrade_definition.gd")
 
 @export var tier_name: String = "Bronze"
 @export var conversion: float = 100.0

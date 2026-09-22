@@ -1,0 +1,379 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/evolution_modal.gd" id="1_ev_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_backdrop"]
+bg_color = Color(0.03, 0.04, 0.06, 0.85)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_modal_panel"]
+content_margin_left = 24.0
+content_margin_top = 20.0
+content_margin_right = 24.0
+content_margin_bottom = 20.0
+bg_color = Color(0.08, 0.09, 0.13, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.9, 0.7, 0.2, 0.9)
+corner_radius_top_left = 14
+corner_radius_top_right = 14
+corner_radius_bottom_right = 14
+corner_radius_bottom_left = 14
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_opt_card"]
+content_margin_left = 16.0
+content_margin_top = 16.0
+content_margin_right = 16.0
+content_margin_bottom = 16.0
+bg_color = Color(0.05, 0.06, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.24, 0.35, 0.8)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evolve_btn"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.85, 0.65, 0.15, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evolve_btn_hover"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 14.0
+content_margin_bottom = 10.0
+bg_color = Color(0.95, 0.75, 0.25, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="EvolutionModal" type="Control"]
+z_index = 200
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ev_script")
+
+[node name="BackdropButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_backdrop")
+theme_override_styles/hover = SubResource("StyleBoxFlat_backdrop")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_backdrop")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ModalPanel" type="PanelContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(1040, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_modal_panel")
+
+[node name="MainVBox" type="VBoxContainer" parent="CenterContainer/ModalPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderHBox" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.35, 1)
+theme_override_font_sizes/font_size = 18
+text = "✦ CREATURE ASCENSION & EVOLUTION"
+
+[node name="Spacer" type="Control" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/HeaderHBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+text = "✕"
+
+[node name="Subtitle" type="Label" parent="CenterContainer/ModalPanel/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 12
+text = "Your creature has unlocked deeper elemental resonance. Choose your ancestral evolution branch:"
+
+[node name="OptionsContainer" type="HBoxContainer" parent="CenterContainer/ModalPanel/MainVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="OptACard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_opt_card")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="OptALineageBadge" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.25, 1)
+theme_override_font_sizes/font_size = 10
+text = "✦ PURE LINEAGE"
+horizontal_alignment = 1
+
+[node name="Center" type="CenterContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+layout_mode = 2
+
+[node name="OptAPortrait" type="TextureRect" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox/Center"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="OptAName" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Option A"
+horizontal_alignment = 1
+
+[node name="OptAElement" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "✦ ELEMENT"
+horizontal_alignment = 1
+
+[node name="OptADesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+text = "Description of path A..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptAProc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 10
+text = "Proc description"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptAStats" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "Stats preview"
+horizontal_alignment = 1
+
+[node name="OptAButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptACard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.09, 0.12, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_evolve_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_evolve_btn_hover")
+text = "Evolve"
+
+[node name="OptBCard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_opt_card")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="OptBLineageBadge" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "✦ DUAL HYBRID"
+horizontal_alignment = 1
+
+[node name="Center" type="CenterContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+layout_mode = 2
+
+[node name="OptBPortrait" type="TextureRect" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox/Center"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="OptBName" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Option B"
+horizontal_alignment = 1
+
+[node name="OptBElement" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "✦ ELEMENT"
+horizontal_alignment = 1
+
+[node name="OptBDesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+text = "Description of path B..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptBProc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 10
+text = "Proc description"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptBStats" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "Stats preview"
+horizontal_alignment = 1
+
+[node name="OptBButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptBCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.09, 0.12, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_evolve_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_evolve_btn_hover")
+text = "Evolve"
+
+[node name="OptCCard" type="PanelContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_opt_card")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="OptCLineageBadge" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.75, 0.45, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "✦ DUAL HYBRID"
+horizontal_alignment = 1
+
+[node name="Center" type="CenterContainer" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+layout_mode = 2
+
+[node name="OptCPortrait" type="TextureRect" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox/Center"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="OptCName" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = "Option C"
+horizontal_alignment = 1
+
+[node name="OptCElement" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "✦ ELEMENT"
+horizontal_alignment = 1
+
+[node name="OptCDesc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.65, 0.7, 0.8, 1)
+theme_override_font_sizes/font_size = 10
+text = "Description of path C..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptCProc" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.75, 0.2, 1)
+theme_override_font_sizes/font_size = 10
+text = "Proc description"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="OptCStats" type="Label" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 10
+text = "Stats preview"
+horizontal_alignment = 1
+
+[node name="OptCButton" type="Button" parent="CenterContainer/ModalPanel/MainVBox/OptionsContainer/OptCCard/VBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.09, 0.12, 1)
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_evolve_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_evolve_btn_hover")
+text = "Evolve"
+

@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/calamity_inferno.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "calamity_inferno"
+display_name = "Calamity Inferno"
+element_type = 1
+primary_element = "Fire"
+secondary_element = "Darkness"
+tertiary_element = "Lightning"
+element_color = Color(0.95, 0.2, 0.1, 1.0)
+secondary_color = Color(0.7, 0.2, 0.9, 1.0)
+is_pure = false
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Dark flame phoenix of doom: Fire, Darkness & Lightning. Unrivaled Super Crit annihilation."
+base_yield = 300.0
+base_conversion = 25.0
+channel_interval = 0.5
+crit_chance = 0.4
+crit_power = 4.0
+super_crit_chance = 0.35
+super_crit_power = 5.0
+yield_multiplier = 2.2
+speed_cap = 0.09
+flow_cap = 3.0
+crit_cap = 1.0
+super_crit_cap = 0.75
+proc_name = "Infernal Eclipse"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, triggers an eclipse multiplying critical yield."
+proc_color = Color(0.9, 0.2, 0.9, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

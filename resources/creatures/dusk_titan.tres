@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/dusk_titan.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "dusk_titan"
+display_name = "Dusk Obsidian Titan"
+element_type = 3
+primary_element = "Earth"
+secondary_element = "Darkness"
+tertiary_element = "Fire"
+element_color = Color(0.25, 0.75, 0.4, 1.0)
+secondary_color = Color(0.8, 0.25, 0.85, 1.0)
+is_pure = false
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Tri-elemental colossus: Earth, Darkness & Fire. Volcanic obsidian fueled by the shadow abyss."
+base_yield = 360.0
+base_conversion = 22.0
+channel_interval = 0.55
+crit_chance = 0.25
+crit_power = 3.8
+super_crit_chance = 0.35
+super_crit_power = 5.5
+yield_multiplier = 2.5
+speed_cap = 0.09
+flow_cap = 1.8
+crit_cap = 0.8
+super_crit_cap = 0.75
+proc_name = "Obsidian Cataclysm"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, obliterates the cycle with massive Super Crit Mana."
+proc_color = Color(0.9, 0.3, 0.8, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

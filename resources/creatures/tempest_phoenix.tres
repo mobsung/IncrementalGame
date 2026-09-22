@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/tempest_phoenix.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "tempest_phoenix"
+display_name = "Tempest Phoenix"
+element_type = 1
+primary_element = "Fire"
+secondary_element = "Lightning"
+tertiary_element = ""
+element_color = Color(1.0, 0.55, 0.1, 1.0)
+secondary_color = Color(1.0, 0.9, 0.2, 1.0)
+is_pure = false
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Radiant solar lightning god. Hits 100% Crit Rate with blistering chain lightning."
+base_yield = 290.0
+base_conversion = 28.0
+channel_interval = 0.38
+crit_chance = 0.6
+crit_power = 5.0
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 2.0
+speed_cap = 0.06
+flow_cap = 3.0
+crit_cap = 1.0
+super_crit_cap = 0.0
+proc_name = "Plasma Chain"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, discharges a cascade of lightning."
+proc_color = Color(1.0, 1.0, 0.4, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

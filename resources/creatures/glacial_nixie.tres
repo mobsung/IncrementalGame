@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/glacial_nixie.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "glacial_nixie"
+display_name = "Glacial Nixie"
+element_type = 2
+primary_element = "Water"
+secondary_element = "Ice"
+tertiary_element = ""
+element_color = Color(0.2, 0.8, 0.95, 1.0)
+secondary_color = Color(0.65, 0.9, 1.0, 1.0)
+is_pure = false
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Frost nymph of frozen seas. Unlocks unprecedented channel Speed and low Flow threshold."
+base_yield = 40.0
+base_conversion = 30.0
+channel_interval = 0.45
+crit_chance = 0.1
+crit_power = 2.0
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.0
+speed_cap = 0.08
+flow_cap = 3.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Glacial Freeze"
+proc_cycle_interval = 7
+proc_description = "Every 7 cycles, triggers a 3-second haste flurry."
+proc_color = Color(0.7, 0.95, 1.0, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["rime_storm_serpent", "oceanic_leviathan", "abyssal_archon"]

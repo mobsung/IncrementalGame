@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/tectonic_beast.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "tectonic_beast"
+display_name = "Tectonic Beast"
+element_type = 1
+primary_element = "Fire"
+secondary_element = "Earth"
+tertiary_element = ""
+element_color = Color(0.95, 0.4, 0.1, 1.0)
+secondary_color = Color(0.25, 0.8, 0.35, 1.0)
+is_pure = false
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Molten continent shaker. Blends colossal Fire yield with near-limitless Earth endurance."
+base_yield = 380.0
+base_conversion = 22.0
+channel_interval = 0.6
+crit_chance = 0.15
+crit_power = 3.5
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 2.6
+speed_cap = 0.12
+flow_cap = 2.0
+crit_cap = 0.65
+super_crit_cap = 0.0
+proc_name = "Earthquake Rupture"
+proc_cycle_interval = 6
+proc_description = "Every 6 cycles, ruptures the earth with double Mana and XP."
+proc_color = Color(1.0, 0.55, 0.2, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

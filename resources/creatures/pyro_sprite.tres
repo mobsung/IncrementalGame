@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/pyro_sprite.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "pyro_sprite"
+display_name = "Pyro Sprite"
+element_type = 1
+primary_element = "Fire"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.98, 0.45, 0.08, 1.0)
+secondary_color = Color(0.93, 0.27, 0.27, 1.0)
+is_pure = true
+tier_rank = 1
+portrait = ExtResource("2_tex")
+description = "Playful fire fairy radiating blazing heat. Specializes in raw Mana Yield output."
+base_yield = 25.0
+base_conversion = 80.0
+channel_interval = 0.9
+crit_chance = 0.08
+crit_power = 2.2
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.5
+speed_cap = 0.15
+flow_cap = 10.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Solar Spark"
+proc_cycle_interval = 8
+proc_description = "Every 8 cycles, the next discharge yields +100% bonus Mana."
+proc_color = Color(1.0, 0.6, 0.1, 1.0)
+evolution_level_req = 25
+evolution_option_ids = ["flame_ifrit", "magma_drake", "spark_phoenix"]

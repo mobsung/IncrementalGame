@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/solar_colossus.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "solar_colossus"
+display_name = "Solar Colossus"
+element_type = 1
+primary_element = "Fire"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(1.0, 0.45, 0.0, 1.0)
+secondary_color = Color(1.0, 0.8, 0.2, 1.0)
+is_pure = true
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Apex Pure Sun Sovereign. Channeling the thermonuclear core of a star, generating cataclysmic Mana."
+base_yield = 450.0
+base_conversion = 40.0
+channel_interval = 0.6
+crit_chance = 0.15
+crit_power = 3.0
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 3.5
+speed_cap = 0.12
+flow_cap = 5.0
+crit_cap = 0.7
+super_crit_cap = 0.0
+proc_name = "Supernova Burst"
+proc_cycle_interval = 6
+proc_description = "Every 6 cycles, triggers a Supernova multiplying yield by 5x."
+proc_color = Color(1.0, 0.85, 0.3, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

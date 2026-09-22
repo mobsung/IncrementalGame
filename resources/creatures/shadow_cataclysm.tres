@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/shadow_cataclysm.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "shadow_cataclysm"
+display_name = "Shadow Cataclysm"
+element_type = 2
+primary_element = "Water"
+secondary_element = "Darkness"
+tertiary_element = "Earth"
+element_color = Color(0.1, 0.4, 0.8, 1.0)
+secondary_color = Color(0.6, 0.15, 0.85, 1.0)
+is_pure = false
+tier_rank = 3
+portrait = ExtResource("2_tex")
+description = "Deep trench leviathan: Water, Darkness & Earth. Crushes all barriers with abyssal density."
+base_yield = 280.0
+base_conversion = 18.0
+channel_interval = 0.5
+crit_chance = 0.3
+crit_power = 3.5
+super_crit_chance = 0.35
+super_crit_power = 5.5
+yield_multiplier = 2.0
+speed_cap = 0.09
+flow_cap = 1.5
+crit_cap = 0.75
+super_crit_cap = 0.75
+proc_name = "Trench Collapse"
+proc_cycle_interval = 5
+proc_description = "Every 5 cycles, implodes with massive Super Crit mana."
+proc_color = Color(0.7, 0.2, 0.9, 1.0)
+evolution_level_req = 999
+evolution_option_ids = []

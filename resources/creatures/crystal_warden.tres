@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/crystal_warden.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "crystal_warden"
+display_name = "Crystal Warden"
+element_type = 3
+primary_element = "Earth"
+secondary_element = "Ice"
+tertiary_element = ""
+element_color = Color(0.25, 0.8, 0.5, 1.0)
+secondary_color = Color(0.5, 0.9, 0.95, 1.0)
+is_pure = false
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Glacial quartz sentinel. Combines heavy geological power with rapid ice channels."
+base_yield = 60.0
+base_conversion = 35.0
+channel_interval = 0.5
+crit_chance = 0.1
+crit_power = 2.4
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.4
+speed_cap = 0.08
+flow_cap = 4.0
+crit_cap = 0.55
+super_crit_cap = 0.0
+proc_name = "Prismatic Surge"
+proc_cycle_interval = 7
+proc_description = "Every 7 cycles, channels a burst of crystal mana."
+proc_color = Color(0.6, 1.0, 0.9, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["continental_turtle", "gaia_prime_colossus", "dusk_titan"]

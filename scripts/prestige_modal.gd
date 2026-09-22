@@ -1,5 +1,5 @@
-extends Control
 class_name PrestigeModal
+extends Control
 
 signal prestige_executed(points_gained: int)
 signal modal_closed()
@@ -86,7 +86,7 @@ func _on_claim_pressed() -> void:
 	var claimable: int = CurrencyManager.get_claimable_prestige_points()
 	if claimable <= 0:
 		return
-	confirm_label.text = "Sei sicuro di voler eseguire il Prestigio?\n\n• Riceverai: +%d Punti Prestigio\n• Verranno resettati i contatori e le monete correnti\n• I potenziamenti prestigio resteranno attivi per sempre!" % claimable
+	confirm_label.text = "Are you sure you want to Transcend?\n\n• Gain: +%d Astral Shards\n• Your active creatures and current Mana will reset\n• Permanent Astral Relics will boost all future runs forever!" % claimable
 	confirm_container.visible = true
 
 func _on_cancel_prestige() -> void:
@@ -105,23 +105,22 @@ func update_ui() -> void:
 
 func _update_wallet() -> void:
 	if current_points_label != null:
-		current_points_label.text = "[b]Punti Prestigio:[/b] [color=#c084fc]✦ %d PP[/color]" % CurrencyManager.prestige_points
+		current_points_label.text = "[b]Astral Shards:[/b] [color=#c084fc]✦ %d AS[/color]" % CurrencyManager.prestige_points
 
 func _update_run_stats() -> void:
 	if run_currency_label != null:
-		run_currency_label.text = "Monete Run Attuale: %s" % Global_data.format_number(CurrencyManager.run_currency_earned)
+		run_currency_label.text = "Current Run Mana: %s" % GlobalData.format_number(CurrencyManager.run_currency_earned)
 		
 	var claimable: int = CurrencyManager.get_claimable_prestige_points()
 	if claimable_points_label != null:
-		claimable_points_label.text = "+%d PP" % claimable
+		claimable_points_label.text = "+%d AS" % claimable
 		
 	var next_tgt: float = CurrencyManager.get_next_point_target()
-	var prev_tgt: float = CurrencyManager.get_current_point_threshold()
 	if next_point_label != null:
 		var needed: float = maxf(0.0, next_tgt - CurrencyManager.run_currency_earned)
-		next_point_label.text = "Prossimo punto a: %s monete (mancano %s)" % [
-			Global_data.format_number(next_tgt),
-			Global_data.format_number(needed)
+		next_point_label.text = "Next Astral Shard at: %s Mana (%s remaining)" % [
+			GlobalData.format_number(next_tgt),
+			GlobalData.format_number(needed)
 		]
 		
 	if prestige_progress_bar != null:
@@ -130,10 +129,10 @@ func _update_run_stats() -> void:
 		
 	if prestige_claim_button != null:
 		if claimable > 0:
-			prestige_claim_button.text = "✦ Esegui Prestigio (+%d PP)" % claimable
+			prestige_claim_button.text = "✦ Transcend & Claim (+%d Astral Shards)" % claimable
 			prestige_claim_button.disabled = false
 		else:
-			prestige_claim_button.text = "✦ Prestigio Non Disponibile (minimo 100k monete)"
+			prestige_claim_button.text = "✦ Transcendence Locked (Requires %s Mana)" % GlobalData.format_number(CurrencyManager.PRESTIGE_BASE_CURRENCY)
 			prestige_claim_button.disabled = true
 
 func _update_upgrades() -> void:
@@ -142,11 +141,11 @@ func _update_upgrades() -> void:
 	var c_mult: float = 1.0 + float(c_lvl) * 1.0
 	var c_cost: int = CurrencyManager.get_upgrade_cost("currency")
 	if currency_upg_title != null:
-		currency_upg_title.text = "Moltiplicatore Valuta [Liv. %d]" % c_lvl
+		currency_upg_title.text = "Mana Resonance [Lv. %d]" % c_lvl
 	if currency_upg_desc != null:
-		currency_upg_desc.text = "Attuale: x%.1f monete  ➔  Prossimo: x%.1f monete" % [c_mult, c_mult + 1.0]
+		currency_upg_desc.text = "Current: x%.1f Mana  ➔  Next: x%.1f Mana" % [c_mult, c_mult + 1.0]
 	if currency_upg_btn != null:
-		currency_upg_btn.text = "Migliora [✦ %d PP]" % c_cost
+		currency_upg_btn.text = "Attune [✦ %d AS]" % c_cost
 		currency_upg_btn.disabled = not CurrencyManager.can_afford_prestige_upgrade("currency")
 
 	# XP upgrade
@@ -154,11 +153,11 @@ func _update_upgrades() -> void:
 	var x_mult: float = 1.0 + float(x_lvl) * 1.0
 	var x_cost: int = CurrencyManager.get_upgrade_cost("xp")
 	if xp_upg_title != null:
-		xp_upg_title.text = "Saggezza Globale XP [Liv. %d]" % x_lvl
+		xp_upg_title.text = "Ancient Creature Wisdom [Lv. %d]" % x_lvl
 	if xp_upg_desc != null:
-		xp_upg_desc.text = "Attuale: x%.1f XP contatori  ➔  Prossimo: x%.1f XP" % [x_mult, x_mult + 1.0]
+		xp_upg_desc.text = "Current: x%.1f Creature XP  ➔  Next: x%.1f XP" % [x_mult, x_mult + 1.0]
 	if xp_upg_btn != null:
-		xp_upg_btn.text = "Migliora [✦ %d PP]" % x_cost
+		xp_upg_btn.text = "Attune [✦ %d AS]" % x_cost
 		xp_upg_btn.disabled = not CurrencyManager.can_afford_prestige_upgrade("xp")
 
 	# Slots upgrade
@@ -166,9 +165,9 @@ func _update_upgrades() -> void:
 	var s_bonus: int = s_lvl
 	var s_cost: int = CurrencyManager.get_upgrade_cost("slots")
 	if slots_upg_title != null:
-		slots_upg_title.text = "Espansione Spazio Contatori [Liv. %d]" % s_lvl
+		slots_upg_title.text = "Sanctuary Slot Expansion [Lv. %d]" % s_lvl
 	if slots_upg_desc != null:
-		slots_upg_desc.text = "Attuale: +%d slot extra  ➔  Prossimo: +%d slot" % [s_bonus, s_bonus + 1]
+		slots_upg_desc.text = "Current: +%d extra slots  ➔  Next: +%d slots" % [s_bonus, s_bonus + 1]
 	if slots_upg_btn != null:
-		slots_upg_btn.text = "Migliora [✦ %d PP]" % s_cost
+		slots_upg_btn.text = "Attune [✦ %d AS]" % s_cost
 		slots_upg_btn.disabled = not CurrencyManager.can_afford_prestige_upgrade("slots")

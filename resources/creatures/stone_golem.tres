@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/stone_golem.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "stone_golem"
+display_name = "Stone Golem"
+element_type = 3
+primary_element = "Earth"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.3, 0.8, 0.4, 1.0)
+secondary_color = Color(0.15, 0.55, 0.25, 1.0)
+is_pure = true
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Towering living bedrock. Sturdy foundation boosting both Yield and Flow evenly."
+base_yield = 70.0
+base_conversion = 40.0
+channel_interval = 0.85
+crit_chance = 0.07
+crit_power = 2.6
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.7
+speed_cap = 0.15
+flow_cap = 4.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Tectonic Resonance"
+proc_cycle_interval = 7
+proc_description = "Every 7 cycles, permanently bolsters baseline energy flow."
+proc_color = Color(0.4, 0.95, 0.5, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["gaia_prime_colossus", "continental_turtle", "dusk_titan"]

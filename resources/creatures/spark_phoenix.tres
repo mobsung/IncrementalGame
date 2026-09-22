@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/spark_phoenix.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "spark_phoenix"
+display_name = "Spark Phoenix"
+element_type = 1
+primary_element = "Fire"
+secondary_element = "Lightning"
+tertiary_element = ""
+element_color = Color(1.0, 0.5, 0.05, 1.0)
+secondary_color = Color(0.95, 0.8, 0.1, 1.0)
+is_pure = false
+tier_rank = 2
+portrait = ExtResource("2_tex")
+description = "Electrified firebird. Combines explosive Yield with heightened Crit Chance and Crit Power."
+base_yield = 60.0
+base_conversion = 50.0
+channel_interval = 0.75
+crit_chance = 0.22
+crit_power = 3.2
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.5
+speed_cap = 0.12
+flow_cap = 6.0
+crit_cap = 0.85
+super_crit_cap = 0.0
+proc_name = "Overcharge Conflagration"
+proc_cycle_interval = 7
+proc_description = "Every 7 cycles, grants guaranteed Super Crit on next channel."
+proc_color = Color(1.0, 0.9, 0.2, 1.0)
+evolution_level_req = 50
+evolution_option_ids = ["tempest_phoenix", "volcanic_hydra", "solar_colossus"]

@@ -1,142 +1,134 @@
 [gd_scene format=3 uid="uid://da8stveie8yo"]
 
-[ext_resource type="Script" uid="uid://bd1uhsv7akekg" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
+[ext_resource type="Script" path="res://scripts/counterComponent.gd" id="1_s0xjf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_card"]
-content_margin_left = 14.0
-content_margin_top = 14.0
-content_margin_right = 14.0
-content_margin_bottom = 14.0
-bg_color = Color(0.101960786, 0.11372549, 0.15294118, 1)
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.08, 0.09, 0.13, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.18039216, 0.20392157, 0.27450982, 1)
+border_color = Color(0.18, 0.22, 0.32, 0.8)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
-shadow_color = Color(0, 0, 0, 0.25)
-shadow_size = 6
-shadow_offset = Vector2(0, 3)
+shadow_color = Color(0, 0, 0, 0.45)
+shadow_size = 8
+shadow_offset = Vector2(0, 4)
+
+[sub_resource type="Gradient" id="Gradient_card_dimmer"]
+offsets = PackedFloat32Array(0, 0.35, 0.65, 1)
+colors = PackedColorArray(0.02, 0.03, 0.06, 0.12, 0.03, 0.04, 0.08, 0.35, 0.04, 0.05, 0.09, 0.72, 0.04, 0.05, 0.09, 0.92)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_card_dimmer"]
+gradient = SubResource("Gradient_card_dimmer")
+fill_from = Vector2(0.5, 0)
+fill_to = Vector2(0.5, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
 content_margin_left = 6.0
 content_margin_top = 2.0
 content_margin_right = 6.0
 content_margin_bottom = 2.0
-bg_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
+bg_color = Color(0.12, 0.14, 0.2, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.21960784, 0.2509804, 0.3529412, 1)
+border_color = Color(0.25, 0.3, 0.42, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_portrait_frame"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evolve_btn"]
+content_margin_left = 8.0
+content_margin_top = 3.0
+content_margin_right = 8.0
+content_margin_bottom = 3.0
+bg_color = Color(0.9, 0.65, 0.1, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evolve_btn_hover"]
+content_margin_left = 8.0
+content_margin_top = 3.0
+content_margin_right = 8.0
+content_margin_bottom = 3.0
+bg_color = Color(1, 0.78, 0.2, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_bg"]
-bg_color = Color(0.06666667, 0.07450981, 0.101960786, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.05, 0.06, 0.08, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_progress_fill"]
-bg_color = Color(0.23137255, 0.50980395, 0.9647059, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
+bg_color = Color(0.2, 0.55, 0.95, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_bg"]
-bg_color = Color(0.06666667, 0.07450981, 0.101960786, 1)
+bg_color = Color(0.05, 0.06, 0.08, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp_fill"]
-bg_color = Color(0.9843137, 0.7490196, 0.14117648, 1)
+bg_color = Color(0.95, 0.75, 0.15, 1)
 corner_radius_top_left = 2
 corner_radius_top_right = 2
 corner_radius_bottom_right = 2
 corner_radius_bottom_left = 2
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_normal"]
-content_margin_left = 8.0
-content_margin_top = 2.0
-content_margin_right = 8.0
-content_margin_bottom = 2.0
-bg_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.25, 0.28, 0.38, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_hover"]
-content_margin_left = 8.0
-content_margin_top = 2.0
-content_margin_right = 8.0
-content_margin_bottom = 2.0
-bg_color = Color(0.18, 0.21, 0.30, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.35, 0.40, 0.55, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_star_btn_pressed"]
-content_margin_left = 8.0
-content_margin_top = 2.0
-content_margin_right = 8.0
-content_margin_bottom = 2.0
-bg_color = Color(0.12, 0.14, 0.19, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.35, 0.40, 0.55, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_stat_pill"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.07450981, 0.08235294, 0.11372549, 1)
+content_margin_left = 6.0
+content_margin_top = 2.0
+content_margin_right = 6.0
+content_margin_bottom = 2.0
+bg_color = Color(0.06, 0.07, 0.1, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.14117648, 0.16078432, 0.21960784, 1)
+border_color = Color(0.14, 0.17, 0.24, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_focus"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_normal"]
 content_margin_left = 8.0
-content_margin_top = 8.0
+content_margin_top = 6.0
 content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.18039216, 0.38039216, 0.8509804, 1)
+content_margin_bottom = 6.0
+bg_color = Color(0.16, 0.42, 0.88, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -144,10 +136,10 @@ corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_hover"]
 content_margin_left = 8.0
-content_margin_top = 8.0
+content_margin_top = 6.0
 content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.23921569, 0.45882353, 0.98039216, 1)
+content_margin_bottom = 6.0
+bg_color = Color(0.22, 0.52, 1, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -155,17 +147,17 @@ corner_radius_bottom_left = 8
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_action_pressed"]
 content_margin_left = 8.0
-content_margin_top = 8.0
+content_margin_top = 6.0
 content_margin_right = 8.0
-content_margin_bottom = 8.0
-bg_color = Color(0.14117648, 0.29803923, 0.7019608, 1)
+content_margin_bottom = 6.0
+bg_color = Color(0.12, 0.32, 0.72, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
-[node name="CounterComponent" type="Control" unique_id=2104405447]
-custom_minimum_size = Vector2(280, 520)
+[node name="CounterComponent" type="Control"]
+custom_minimum_size = Vector2(340, 480)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -176,10 +168,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_s0xjf")
 
-[node name="Timer" type="Timer" parent="." unique_id=1787928864]
+[node name="Timer" type="Timer" parent="."]
 autostart = true
 
-[node name="CardPanel" type="PanelContainer" parent="." unique_id=598028461]
+[node name="CardPanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+clip_children = 2
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -188,191 +182,243 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_card")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CardPanel" unique_id=1348365546]
+[node name="FullArtBackground" type="TextureRect" parent="CardPanel"]
+unique_name_in_owner = true
+texture_filter = 1
 layout_mode = 2
-theme_override_constants/separation = 10
+expand_mode = 1
+stretch_mode = 6
 
-[node name="HeaderBox" type="HBoxContainer" parent="CardPanel/VBoxContainer" unique_id=101]
-layout_mode = 2
-
-[node name="CounterNameLabel" type="Label" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=102]
+[node name="CardDimmer" type="TextureRect" parent="CardPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.92156863, 0.9411765, 0.98039216, 1)
-theme_override_font_sizes/font_size = 15
-text = "Bronze Counter"
+texture = SubResource("GradientTexture2D_card_dimmer")
+expand_mode = 1
 
-[node name="Spacer" type="Control" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=103]
+[node name="VBoxContainer" type="VBoxContainer" parent="CardPanel"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="HeaderBox" type="HBoxContainer" parent="CardPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="CounterNameLabel" type="Label" parent="CardPanel/VBoxContainer/HeaderBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.94, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "Forest Sprite [Lv. 1]"
+
+[node name="Spacer" type="Control" parent="CardPanel/VBoxContainer/HeaderBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="StarButton" type="Button" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=130]
+[node name="StarButton" type="Button" parent="CardPanel/VBoxContainer/HeaderBox"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_font_sizes/font_size = 12
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover = SubResource("StyleBoxFlat_star_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_star_btn_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_star_btn_normal")
+theme_override_font_sizes/font_size = 11
 text = "☆"
 
-[node name="TierBadgePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/HeaderBox" unique_id=104]
+[node name="BadgePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/HeaderBox"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
 
-[node name="TierBadge" type="Label" parent="CardPanel/VBoxContainer/HeaderBox/TierBadgePanel" unique_id=105]
+[node name="ElementBadge" type="Label" parent="CardPanel/VBoxContainer/HeaderBox/BadgePanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.55, 0.6, 0.72, 1)
 theme_override_font_sizes/font_size = 10
-text = "TIER"
+text = "✦ NATURE"
 
-[node name="HeroBox" type="VBoxContainer" parent="CardPanel/VBoxContainer" unique_id=106]
+[node name="PortraitCenter" type="CenterContainer" parent="CardPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 3
 
-[node name="HeroValueLabel" type="RichTextLabel" parent="CardPanel/VBoxContainer/HeroBox" unique_id=2115334519]
+[node name="PortraitFrame" type="PanelContainer" parent="CardPanel/VBoxContainer/PortraitCenter"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_portrait_frame")
+
+[node name="CreaturePortrait" type="TextureRect" parent="CardPanel/VBoxContainer/PortraitCenter/PortraitFrame"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 36)
+texture_filter = 1
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ElementalParticles" type="CPUParticles2D" parent="CardPanel/VBoxContainer/PortraitCenter"]
+unique_name_in_owner = true
+position = Vector2(160, 50)
+emitting = true
+amount = 14
+lifetime = 1.4
+emission_shape = 1
+emission_sphere_radius = 55.0
+direction = Vector2(0, -1)
+spread = 35.0
+gravity = Vector2(0, -25)
+initial_velocity_min = 10.0
+initial_velocity_max = 25.0
+scale_amount_min = 2.0
+scale_amount_max = 3.5
+color = Color(0.35, 0.75, 1.0, 0.6)
+
+[node name="EvolutionButton" type="Button" parent="CardPanel/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 28)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.08, 0.09, 0.12, 1)
+theme_override_font_sizes/font_size = 11
+theme_override_styles/normal = SubResource("StyleBoxFlat_evolve_btn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_evolve_btn_hover")
+text = "✨ EVOLVE (Ready!)"
+
+[node name="HeroBox" type="VBoxContainer" parent="CardPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HeroValueLabel" type="RichTextLabel" parent="CardPanel/VBoxContainer/HeroBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 15
 bbcode_enabled = true
 fit_content = true
-text = "[center][b]0[/b][/center]"
+text = "[center][b]0 / 100[/b][/center]"
 
-[node name="ConversionProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox" unique_id=107]
+[node name="ConversionProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 6)
+custom_minimum_size = Vector2(0, 7)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_progress_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_progress_fill")
 show_percentage = false
 
-[node name="ConversionLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox" unique_id=108]
+[node name="ConversionLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.48, 0.53, 0.64, 1)
-theme_override_font_sizes/font_size = 10
-text = "0 / 100 to convert"
+theme_override_colors/font_color = Color(0.7, 0.78, 0.9, 1)
+theme_override_font_sizes/font_size = 9
+text = "0 / 100 to discharge Mana"
 horizontal_alignment = 1
 
-[node name="XPProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox" unique_id=131]
+[node name="XPProgress" type="ProgressBar" parent="CardPanel/VBoxContainer/HeroBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 4)
+custom_minimum_size = Vector2(0, 3)
 layout_mode = 2
 theme_override_styles/background = SubResource("StyleBoxFlat_xp_bg")
 theme_override_styles/fill = SubResource("StyleBoxFlat_xp_fill")
 show_percentage = false
 
-[node name="XPLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox" unique_id=132]
+[node name="XPLabel" type="Label" parent="CardPanel/VBoxContainer/HeroBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.78, 0.65, 0.35, 1)
+theme_override_colors/font_color = Color(0.85, 0.72, 0.35, 1)
 theme_override_font_sizes/font_size = 9
 text = "XP: 0 / 10"
 horizontal_alignment = 1
 
-[node name="StatsGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=109]
+[node name="StatsGrid" type="GridContainer" parent="CardPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 6
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
 columns = 2
 
-[node name="StatYieldPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=110]
+[node name="StatYieldPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
 
-[node name="StatYieldLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatYieldPanel" unique_id=111]
+[node name="StatYieldLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatYieldPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.63, 0.66, 0.75, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 10
 text = "Yield: +5"
 
-[node name="StatSpeedPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=112]
+[node name="StatSpeedPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
 
-[node name="StatSpeedLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatSpeedPanel" unique_id=113]
+[node name="StatSpeedLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatSpeedPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.63, 0.66, 0.75, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 10
 text = "Speed: 1.0s"
 
-[node name="StatRatePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=114]
+[node name="StatRatePanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
 
-[node name="StatRateLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatRatePanel" unique_id=115]
+[node name="StatRateLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatRatePanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.38, 0.65, 0.98, 1)
-theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.4, 0.7, 1, 1)
+theme_override_font_sizes/font_size = 10
 text = "Rate: 5.0/s"
 
-[node name="StatCritPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid" unique_id=116]
+[node name="StatCritPanel" type="PanelContainer" parent="CardPanel/VBoxContainer/StatsGrid"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_stat_pill")
 
-[node name="StatCritLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatCritPanel" unique_id=117]
+[node name="StatCritLabel" type="Label" parent="CardPanel/VBoxContainer/StatsGrid/StatCritPanel"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.96, 0.62, 0.04, 1)
-theme_override_font_sizes/font_size = 11
-text = "Crit: 0% (x2)"
+theme_override_colors/font_color = Color(0.96, 0.65, 0.15, 1)
+theme_override_font_sizes/font_size = 10
+text = "Crit: 5% (x2.0)"
 
-[node name="ManualClickButton" type="Button" parent="CardPanel/VBoxContainer" unique_id=584971701]
+[node name="ManualClickButton" type="Button" parent="CardPanel/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 38)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = SubResource("StyleBoxFlat_action_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_action_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_action_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_action_normal")
-text = "Collect (+5)"
+text = "Channel (+5)"
 
-[node name="DividerBox" type="HBoxContainer" parent="CardPanel/VBoxContainer" unique_id=118]
+[node name="DividerBox" type="HBoxContainer" parent="CardPanel/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 6
 
-[node name="HSeparator" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox" unique_id=119]
+[node name="HSeparator" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="UpgradesTitle" type="Label" parent="CardPanel/VBoxContainer/DividerBox" unique_id=120]
+[node name="UpgradesTitle" type="Label" parent="CardPanel/VBoxContainer/DividerBox"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.45, 0.5, 0.6, 1)
+theme_override_colors/font_color = Color(0.5, 0.55, 0.68, 1)
 theme_override_font_sizes/font_size = 10
 text = "UPGRADES"
 
-[node name="HSeparator2" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox" unique_id=121]
+[node name="HSeparator2" type="HSeparator" parent="CardPanel/VBoxContainer/DividerBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="UpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=1701551757]
+[node name="UpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 6
-columns = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 3
 
-[node name="StarUpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer" unique_id=133]
+[node name="StarUpgradeGrid" type="GridContainer" parent="CardPanel/VBoxContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 6
-columns = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 3
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="CardPanel/VBoxContainer/HeaderBox/StarButton" to="." method="_on_star_button_pressed"]
+[connection signal="pressed" from="CardPanel/VBoxContainer/EvolutionButton" to="." method="_on_evolution_button_pressed"]
 [connection signal="pressed" from="CardPanel/VBoxContainer/ManualClickButton" to="." method="_on_manual_click_button_pressed"]

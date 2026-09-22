@@ -22,7 +22,7 @@ enum EffectType {
 @export var cost_type: CostType = CostType.CURRENCY
 @export var base_cost: float = 1.0
 @export var cost_growth_type: CostGrowthType = CostGrowthType.EXPONENTIAL
-@export var cost_multiplier_or_step: float = 1.05
+@export var cost_multiplier_or_step: float = 1.15
 @export var max_level: int = -1
 @export var effect_type: EffectType = EffectType.YIELD
 @export var effect_value: float = 1.0

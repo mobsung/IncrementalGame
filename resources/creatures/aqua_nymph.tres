@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="CreatureDefinition" format=3]
+
+[ext_resource type="Script" path="res://scripts/creature_definition.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/creatures/aqua_nymph.png" id="2_tex"]
+
+[resource]
+script = ExtResource("1_script")
+id = "aqua_nymph"
+display_name = "Aqua Nymph"
+element_type = 2
+primary_element = "Water"
+secondary_element = ""
+tertiary_element = ""
+element_color = Color(0.02, 0.71, 0.83, 1.0)
+secondary_color = Color(0.01, 0.52, 0.78, 1.0)
+is_pure = true
+tier_rank = 1
+portrait = ExtResource("2_tex")
+description = "Serene water spirit of azure streams. Specializes in rapid Mana Flow conversions."
+base_yield = 15.0
+base_conversion = 50.0
+channel_interval = 0.85
+crit_chance = 0.06
+crit_power = 2.0
+super_crit_chance = 0.0
+super_crit_power = 2.0
+yield_multiplier = 1.0
+speed_cap = 0.15
+flow_cap = 5.0
+crit_cap = 0.5
+super_crit_cap = 0.0
+proc_name = "Tidal Surge"
+proc_cycle_interval = 8
+proc_description = "Every 8 cycles, instantly completes the current cycle."
+proc_color = Color(0.2, 0.8, 1.0, 1.0)
+evolution_level_req = 25
+evolution_option_ids = ["tidal_siren", "glacial_nixie", "abyssal_kelpie"]
