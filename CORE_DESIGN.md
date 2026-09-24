@@ -202,22 +202,19 @@ Il prestigio resetta le ondate e riapre la possibilità di ottenere XP affrontan
 
 Questo crea una scelta ricorrente: continuare a ottenere valuta senza XP per tentare di superare una soglia, oppure resettare le ondate e usare una nuova progressione per allenare la squadra e le copie aggiuntive.
 
-## Questioni introdotte ma ancora da sviluppare
+## Questioni ancora da sviluppare — punti 18–28
 
-1. **Regole dell'XP e livelli:** contributo delle copie schierate sul lato nemico, arrotondamenti, eventuali regole di arrotondamento, scelta del requisito iniziale della curva esponenziale e verifica del coefficiente 1,30 nel bilanciamento.
-2. **Prestigio:** formula dei punti in funzione delle ondate, utilizzi, ritmo desiderato e modo in cui il prestigio interagisce con le nuove soglie di contenuto.
-3. **Evocazioni gacha e Dust:** rarità, probabilità, disponibilità delle specie, costo definitivo, valore iniziale della soglia dei punti anima e ricompense anima delle ondate interrotte. Eventuali usi ulteriori delle copie duplicate sono rinviati.
-4. **Potenziamenti:** catalogo concreto dei miglioramenti individuali e globali, valori degli incrementi costanti per grado, prezzi iniziali, coefficienti di crescita e limiti per ciascuno; valori configurati dei costi lineari, limiti e soglie di sblocco dei potenziamenti con punti livello, oltre alla relazione esatta tra potenziamenti base e bonus di efficacia.
-5. **Gold:** valori base dei nemici, rendimenti delle ondate ripetute, arrotondamenti e contributo delle copie schierate sul lato nemico.
-6. **Vita e cure:** design delle singole abilità curative e di resurrezione, eventuali eccezioni esplicite al limite della vita massima e criteri di scelta dei bersagli.
-7. **Multi hit e multi cast:** limiti numerici e accesso ai potenziamenti, comportamento dei colpi residui senza bersaglio; per ogni abilità compatibile, forma della ripetizione e interazione con effetti, bersagli e cooldown.
-8. **Range e area:** unità di misura sul campo, geometria e visualizzazione; eventuali regole particolari di portata e AoE delle singole abilità.
-9. **Combattimento:** inizio del cooldown e condizioni d'uso; rappresentazione e limiti della riduzione cooldown; definizione degli stadi di amplificazione del danno. Le curve numeriche di armatura e resistenza magica sono concordate. Per le ondate restano aperti gli istanti delle 12 comparizioni nei 5 secondi, i valori e la crescita delle statistiche, il valore delle ricompense per nemico e il tempismo della comparizione speciale. La disposizione geometrica degli slot sarà definita insieme alla mappa e alle unità.
-10. **Evocazioni in battaglia:** numero e durata delle unità e dei nemici evocati, limiti, comportamento alla fine dell'ondata e ricompense dei nemici evocati. È stata proposta, ma non ancora concordata, la scomparsa senza ricompense degli evocati ancora vivi quando muore l'ultimo nemico naturale.
-11. **Design delle unità:** ruoli, abilità, passive, differenze tra lato alleato e lato nemico, evoluzioni e sinergie concrete. Sono possibili build che potenziano i nemici naturali, da definire per singola unità.
-12. **Ritmo ed economia:** bilanciamento tra spinta verso nuove ondate, farming di valuta, crescita delle copie e prestigî ripetuti; crescita delle statistiche dei nemici; rischio e ricompense degli evocatori nemici.
-13. **Ripristino e transizioni:** quali stati oltre a vita e stato vivo/morto entrano nel punto di ripristino e come riprendono le ondate dopo la scelta della nuova formazione al prestigio.
-14. **Direzione visiva:** aspetto delle unità, leggibilità dei ruoli e delle evoluzioni, stile generale, presentazione del campo e dell'interfaccia.
+18. **Evoluzioni:** requisiti, scelta dei rami per singola copia, numero di stadi, effetti immediati, nuove abilità e passive, nuovi gradi dei potenziamenti e presentazione delle opzioni. Gli investimenti precedenti restano conservati.
+19. **Prestigio:** formula dei punti in funzione delle ondate completate, utilizzi dei punti, ritmo desiderato e interazione con nuove soglie di contenuto.
+20. **Progressione delle ondate:** crescita delle statistiche dei nemici, difficoltà delle ondate speciali, tempi precisi delle 12 comparizioni nei 5 secondi e momento della tredicesima comparizione.
+21. **Valori dell'economia:** Gold base dei nemici, punti anima per nemico, soglia iniziale del Dust, requisito iniziale di XP per salire di livello, prezzi e limiti dei potenziamenti, rendimenti delle ondate ripetute. Il coefficiente candidato della curva XP è 1,30, da verificare nel bilanciamento.
+22. **Regole residue delle ricompense:** contributo delle copie del giocatore schierate sul lato nemico ai bonus Gold e XP, eventuale loro accesso all'XP, visualizzazione o arrotondamento dei totali assegnati, punti anima delle uccisioni durante un'ondata interrotta dal prestigio.
+23. **Catalogo dei potenziamenti:** miglioramenti individuali e globali acquistabili con Gold, incrementi costanti per grado, prezzi iniziali, coefficienti di crescita e limiti; costi lineari, soglie di livello e limiti dei potenziamenti con punti livello; relazione precisa fra potenziamenti base e bonus di efficacia.
+24. **Evocazioni gacha:** rarità, probabilità, specie disponibili e costo definitivo in Dust. Eventuali impieghi ulteriori delle copie duplicate sono rinviati.
+25. **Evocazioni in battaglia:** numero e durata delle unità e dei nemici evocati, limiti, bersagli, ricompense dei nemici evocati e comportamento degli evocati quando termina l'ondata. La loro eventuale scomparsa senza ricompense alla morte dell'ultimo nemico naturale è ancora una proposta.
+26. **Dettagli del combattimento e della mappa:** disposizione e sblocco degli slot, distanze e geometria di range e area, movimento dei nemici, tempi degli attacchi e delle abilità, inizio e riduzione dei cooldown, stadi di amplificazione del danno, limiti numerici di multi hit e multi cast, bersagli delle cure e degli effetti, gestione dei colpi senza bersaglio, stati da ripristinare dopo una sconfitta e transizioni al prestigio. Le formule di armatura e resistenza magica sono già concordate.
+27. **Unità concrete e direzione visiva:** ruoli, abilità, passive, sinergie, differenze tra lato alleato e lato nemico, eventuali build che potenziano i nemici naturali, aspetto delle unità, evoluzioni visibili, stile del campo e leggibilità dell'interfaccia.
+28. **Progressione offline:** se e come avanzano combattimento, ricompense, sconfitte, pause e prestigio mentre il gioco è chiuso; relazione fra simulazione offline e regole della progressione idle.
 
 ## Criterio per le prossime decisioni
 
