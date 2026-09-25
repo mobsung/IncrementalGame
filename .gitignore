@@ -2,6 +2,9 @@
 /.godot/
 /android/
 
+# Godot AI is installed locally on each device
+/addons/godot_ai/
+
 # Godot AI updater staging files
 /addons/.godot_ai_update/
 
