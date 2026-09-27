@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LevelUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"heavy_meatballs"
+display_name = "Heavy Meatballs"
+max_ranks = 3
+base_cost = 1
+cost_increment = 1
+required_levels = PackedInt32Array(2, 5, 8)
+description = "+10 percentage points to Punch damage coefficient."
+effects = Dictionary[StringName, float]({&"basic_coefficient": 0.1})

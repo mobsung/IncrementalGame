@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CombatantDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"offensive"
+display_name = "Ember Mite"
+max_health = 15.0
+physical_attack = 4.0
+attack_speed = 0.8
+attack_range = 55.0
+movement_speed = 95.0
+gold = 1.0
+visual_color = Color(0.94, 0.39, 0.29, 1)
+visual_radius = 14.0

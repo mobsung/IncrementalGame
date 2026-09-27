@@ -13,5 +13,41 @@
 Thumbs.db
 Desktop.ini
 
+# Local editor and IDE settings
+/.idea/
+/.vscode/
+*.code-workspace
+
+# Local environment and signing secrets
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+*.p12
+*.pem
+
+# Exported builds and packages
+/build/
+/builds/
+/dist/
+/exports/
+
+# Temporary and backup files
+*.tmp
+*.bak
+*~
+crash-*.txt
+
+# Local architecture indexes and caches
+/graphify-out/
+/.graphify/
+
+# Local validation output and disposable test saves
+/tests/*.log
+/tests/*_preview.png
+/tests/*_preview.png.import
+/tests/demo_test_*.save*
+
 # Keep Godot source metadata (*.uid and *.import) and export_presets.cfg tracked.
 # Export credentials are stored in the ignored .godot directory.

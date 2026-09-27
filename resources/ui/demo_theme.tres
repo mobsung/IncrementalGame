@@ -1,0 +1,65 @@
+[gd_resource type="Theme" load_steps=5 format=3]
+
+[sub_resource type="StyleBoxFlat" id="panel"]
+bg_color = Color(0.055, 0.06, 0.065, 0.97)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.39, 0.33, 0.23, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_left = 12
+corner_radius_bottom_right = 12
+content_margin_left = 18.0
+content_margin_top = 16.0
+content_margin_right = 18.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="button"]
+bg_color = Color(0.15, 0.14, 0.115, 1)
+border_width_bottom = 2
+border_color = Color(0.58, 0.46, 0.27, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 7
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="hover"]
+bg_color = Color(0.28, 0.23, 0.15, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 7
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[sub_resource type="StyleBoxFlat" id="disabled"]
+bg_color = Color(0.09, 0.095, 0.10, 1)
+corner_radius_top_left = 7
+corner_radius_top_right = 7
+corner_radius_bottom_left = 7
+corner_radius_bottom_right = 7
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+
+[resource]
+default_font_size = 17
+Label/colors/font_color = Color(0.87, 0.91, 0.88, 1)
+Button/colors/font_color = Color(0.91, 0.94, 0.9, 1)
+Button/colors/font_disabled_color = Color(0.42, 0.5, 0.5, 1)
+Button/styles/normal = SubResource("button")
+Button/styles/hover = SubResource("hover")
+Button/styles/pressed = SubResource("hover")
+Button/styles/disabled = SubResource("disabled")
+PanelContainer/styles/panel = SubResource("panel")
+VBoxContainer/constants/separation = 12
+HBoxContainer/constants/separation = 12

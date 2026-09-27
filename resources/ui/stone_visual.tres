@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="CombatantVisual" load_steps=3 format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_visual.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/battle/stone_idle_v1.png" id="2"]
+[resource]
+script = ExtResource("1")
+texture = ExtResource("2")
+height = 160.0
+faces_right = false

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="GoldUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/gold_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"health"
+display_name = "Maximum Health"
+stat = "max_health"
+increment = 30.0
+base_cost = 10.0
+cost_growth = 1.18
+max_ranks = 100

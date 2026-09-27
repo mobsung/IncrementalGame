@@ -1,7 +1,0 @@
-[gd_scene format=3 uid="uid://huhybn7ylbh0"]
-
-[ext_resource type="Script" uid="uid://cjsjunrjrpes0" path="res://scripts/currencyManager.gd" id="1_fkyde"]
-
-[node name="CurrencyManager" type="Node" unique_id=1020977809]
-script = ExtResource("1_fkyde")
-metadata/_edit_use_anchors_ = true

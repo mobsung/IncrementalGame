@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="CombatantDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"balanced"
+display_name = "Stone Drifter"
+max_health = 40.0
+physical_attack = 3.0
+attack_speed = 0.65
+attack_range = 65.0
+movement_speed = 70.0
+gold = 2.0
+visual_color = Color(0.66, 0.5, 0.76, 1)
+visual_radius = 22.0

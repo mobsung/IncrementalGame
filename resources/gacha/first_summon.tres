@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GachaDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/gacha_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/gacha/john_common.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+cost_dust = 5
+entries = Array[Resource]([ExtResource("2")])

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="GoldUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/gold_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"range"
+display_name = "Attack Range"
+description = "Adds 5 range units. Does not enlarge the engagement zone or Sweep area."
+stat = "attack_range"
+increment = 5
+base_cost = 20.0
+cost_growth = 1.20
+max_ranks = 50

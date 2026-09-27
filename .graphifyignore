@@ -1,0 +1,11 @@
+# Local editor, third-party tools, and generated content
+addons/
+.godot/
+.git/
+.agents/
+.codex/
+assets/
+graphify-out/
+.graphify/
+android/
+bin/

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StatUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/stat_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"chrono_gold"
+display_name = "Golden Memory"
+description = "+10% Gold per rank in a separate Chrono pool, multiplied with global Gold bonuses."
+stat = "gold"
+operation = "multiplier"
+increment = 0.1
+base_cost = 2.0
+cost_growth = 1.6
+max_ranks = 20

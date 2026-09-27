@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StatUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/stat_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"global_ability_power_multiplier"
+display_name = "Ability Power Mastery"
+description = "Adds 5% to the global Ability Power pool, after additive points. Requires Ability Power points to have an effect."
+stat = "ability_power"
+operation = "multiplier"
+increment = 0.05
+base_cost = 150.0
+cost_growth = 1.25
+max_ranks = 50

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SummonEntryDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/summon_entry_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/units/john_the_meatball.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+unit = ExtResource("2")
+rarity = &"common"
+pool_weight = 1.0

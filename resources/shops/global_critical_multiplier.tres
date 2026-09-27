@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="StatUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/stat_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"global_critical_multiplier"
+display_name = "Squad Critical Damage"
+description = "Adds 0.05 to the normal critical damage multiplier."
+stat = "critical_multiplier"
+increment = 0.05
+base_cost = 120.0
+cost_growth = 1.20
+max_ranks = 50

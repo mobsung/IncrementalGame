@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="StatUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/stat_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"global_ultra_critical_chance"
+display_name = "Squad Ultra Critical Chance"
+description = "Adds 1 percentage point to ultra critical chance, capped at 100%. Rolled only after a super critical."
+stat = "ultra_critical_chance"
+increment = 0.01
+base_cost = 360.0
+cost_growth = 1.20
+max_ranks = 50
