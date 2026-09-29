@@ -3,7 +3,8 @@ extends RefCounted
 ## One owned copy. No battle health or cooldowns belong here.
 
 var id: String = ""
-var species_id: StringName = &"john_the_meatball"
+var species_id: StringName = &"spaghetti_golem"
+var evolution: int = 0
 var level: int = 1
 var experience: float = 0.0
 var level_points: int = 0
@@ -11,12 +12,12 @@ var mobile: bool = true
 var priority: int = 0
 var slot: int = 4
 var deployed: bool = false
-var movement_speed: float = 120.0
+var movement_speed: float = 220.0
 var upgrade_ranks: Dictionary = {}
 var gold_ranks: Dictionary = {}
 
 const FIELDS: Array[StringName] = [
-	&"id", &"species_id", &"level", &"experience", &"level_points",
+	&"id", &"species_id", &"evolution", &"level", &"experience", &"level_points",
 	&"mobile", &"priority", &"slot", &"deployed", &"movement_speed"]
 
 func xp_required(config: BattleConfig) -> float:
@@ -37,7 +38,7 @@ func gold_rank(upgrade_id: StringName) -> int:
 
 func purchase_upgrade(upgrade: LevelUpgradeDefinition) -> bool:
 	var rank: int = purchased_rank(upgrade.id)
-	if rank >= upgrade.max_ranks or level_points < upgrade.cost_for_rank(rank):
+	if rank >= upgrade.cap_for(evolution) or level_points < upgrade.cost_for_rank(rank):
 		return false
 	if not upgrade.unlocked_for(rank, level):
 		return false

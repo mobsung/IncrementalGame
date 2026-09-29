@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LevelUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"thickened_glaze"
+display_name = "Thickened Glaze"
+max_ranks = 3
+base_cost = 1
+cost_increment = 0
+required_levels = PackedInt32Array(1, 1, 1)
+evolution_caps = PackedInt32Array(0, 2, 3)
+description = "+2 percentage points to Sauce Guard armor."
+effects = Dictionary[StringName, float]({&"guard_armor": 0.02})

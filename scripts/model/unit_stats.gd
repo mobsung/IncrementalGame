@@ -4,7 +4,7 @@ extends RefCounted
 ## previously modified stats. Transient health/actions/timers remain untouched.
 
 static func apply(actor: CombatantState, copy: UnitProgress, config: BattleConfig, profile: PlayerProfile) -> void:
-	var definition: CombatantDefinition = config.definitions().get(copy.species_id)
+	var definition: CombatantDefinition = config.definition_for(copy)
 	assert(definition != null)
 	var bonuses: Dictionary = {}
 	for upgrade: LevelUpgradeDefinition in config.upgrades:
@@ -17,6 +17,8 @@ static func apply(actor: CombatantState, copy: UnitProgress, config: BattleConfi
 	actor.max_health = ShopModifiers.value(actor.max_health, "max_health", profile, config)
 	actor.attack = ShopModifiers.value(actor.attack, "attack", profile, config)
 	actor.armor = ShopModifiers.value(actor.armor, "armor", profile, config)
+	actor.unbuffed_attack = actor.attack
+	actor.unbuffed_armor = actor.armor
 	actor.health = minf(actor.health, actor.max_health)
 	actor.basic_bonus = float(bonuses.get(&"basic_coefficient", 0.0))
 	actor.sweep_bonus = float(bonuses.get(&"sweep_coefficient", 0.0))
@@ -31,6 +33,9 @@ static func apply(actor: CombatantState, copy: UnitProgress, config: BattleConfi
 			"super_critical_chance", "super_critical_multiplier", "ultra_critical_chance", "ultra_critical_multiplier"]:
 		var value: float = ShopModifiers.value(float(definition.get(stat)) + float(gold.get(stat, 0.0)), stat, profile, config)
 		actor.set(stat, clampf(value, 0.0, 1.0) if stat.ends_with("_chance") else value)
+	if definition.kit != null:
+		definition.kit.ensure_state(actor)
+		definition.kit.apply_stats(actor, copy)
 
 static func individual_gold_bonuses(copy: UnitProgress, config: BattleConfig) -> Dictionary:
 	var bonuses: Dictionary = {}

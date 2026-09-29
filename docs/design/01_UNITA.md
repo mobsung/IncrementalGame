@@ -40,7 +40,7 @@ Ogni scheda di specie raccoglie statistiche base, attacco, abilità e passive, p
 
 ## Schede delle specie
 
-- [John the Meatball](unita/SPAGHETTI_GOLEM.md): specie iniziale confermata il 26 settembre 2026, classe warrior e ruolo da mischia con equilibrio fra danno e resistenza. Prima configurazione tecnica definita su delega del giocatore: rarità Common, statistiche, due azioni, passiva curativa e primi potenziamenti con punti livello. Nessuna evoluzione nella prima tappa; bilanciamento e implementazione restano da eseguire.
+- [Spaghetti Golem](../../content/units/warriors/spaghetti_golem/concepts/SPAGHETTI_GOLEM_CONCEPT.md): Rare Warrior, sostituisce John su richiesta del 27 settembre. Tre forme implementate: Noodle Squire, Saucebound Knight (livello 10), Spaghetti Golem (livello 25). Evoluzioni con rimborso/reset dei punti secondo la regola generale sopra. [Dettagli implementazione](../implementation/SPAGHETTI_GOLEM.md). La [vecchia scheda John](../../content/units/warriors/spaghetti_golem/design/JOHN_IMPLEMENTED.md) è solo storica.
 
 ## Questioni aperte — 18, 27.2 e 27.3
 

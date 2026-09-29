@@ -14,4 +14,4 @@ Valori iniziali scelti il 26 settembre 2026 su delega del giocatore. Incluso nel
 
 Gold e XP valgono cinque volte quelli del bilanciato. Il bonus non si applica ai punti anima. Attacco fisico singolo, nessuna abilità. Crescita comune applicata all'ondata di comparsa.
 
-Compare a 11 s ogni decima ondata, quindi un secondo dopo la finestra ordinaria; il ritardo è configurabile. Risorsa: `res://resources/enemies/special.tres`. Vedere [Ondate](../06_ONDATE_ED_ESITI.md).
+Compare a 11 s ogni decima ondata, quindi un secondo dopo la finestra ordinaria; il ritardo è configurabile. Risorsa: `res://content/enemies/special/definition.tres`. Vedere [Ondate](../06_ONDATE_ED_ESITI.md).

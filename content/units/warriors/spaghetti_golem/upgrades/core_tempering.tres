@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LevelUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"core_tempering"
+display_name = "Core Tempering"
+max_ranks = 2
+base_cost = 1
+cost_increment = 0
+required_levels = PackedInt32Array(1, 1)
+evolution_caps = PackedInt32Array(0, 0, 2)
+description = "+1% max health to Glassheart Surge healing."
+effects = Dictionary[StringName, float]({&"surge_fraction": 0.01})

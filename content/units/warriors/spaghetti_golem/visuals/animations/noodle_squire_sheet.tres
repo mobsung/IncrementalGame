@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=5 format=3]
+[ext_resource type="Script" path="res://content/units/warriors/spaghetti_golem/visuals/animations/sprite_sheet_motion.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/noodle_squire_locomotion.png" id="2"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/noodle_squire_attacks.png" id="3"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/noodle_squire_abilities.png" id="4"]
+[resource]
+script = ExtResource("1")
+locomotion = ExtResource("2")
+attacks = ExtResource("3")
+abilities = ExtResource("4")
+evolution = 0
+locomotion_row_cuts = PackedVector3Array(0.26, 0.51, 0.765, 0.265, 0.51, 0.768, 0.26, 0.51, 0.765, 0.26, 0.51, 0.765)
+attack_row_cuts = PackedVector3Array(0.25, 0.5, 0.75, 0.281, 0.514, 0.752, 0.25, 0.5, 0.75, 0.253, 0.515, 0.748)

@@ -1,6 +1,6 @@
 # Danno comune, Ability Power e catena critica
 
-Tappa completata il 27 settembre 2026. Regole di riferimento: [Combattimento](../design/05_COMBATTIMENTO_E_ABILITA.md), [Economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md), [Nemici](../design/02_NEMICI.md) e [John](../design/unita/SPAGHETTI_GOLEM.md).
+Tappa completata il 27 settembre 2026. Regole di riferimento: [Combattimento](../design/05_COMBATTIMENTO_E_ABILITA.md), [Economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md), [Nemici](../design/02_NEMICI.md) e [John](../../content/units/warriors/spaghetti_golem/design/JOHN_IMPLEMENTED.md).
 
 ## Sistemi disponibili
 

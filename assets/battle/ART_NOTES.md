@@ -7,7 +7,7 @@ The user rejected the first generated field sprite as too generic and reaffirmed
 Built-in imagegen edited that exact user sheet, extracting/adapting the large left pose onto alpha transparency. Prompt required faithful silhouette/materials, a right-facing three-quarter pose, full hands and feet, no sheet text/panels/ground puddles, small margins, readability at 220px, and explicitly prohibited metal boots, long muscular legs and added armor. Output: exec-486a3d85-495b-4636-a258-67af2ec26c6b.png, copied unchanged as john_idle_v2.png. The same texture in the unit card avoids a second inconsistent interpretation. Static idle artwork; no new animation claimed. Earlier v1 files are retained but are no longer referenced by gameplay.
 
 - field_concept_v1.jpeg: unchanged copy of the user's C:/Users/marce/Downloads/fieldconcept.jpeg, provided as the desired battlefield reference and used for this implementation stage.
-- john_idle_v1.png: built-in image_gen output, using the accepted portrait assets/portraits/john_the_meatball_portrait_v1.png as identity reference.
+- john_idle_v1.png: built-in image_gen output, using the accepted portrait content/units/warriors/spaghetti_golem/visuals/john_the_meatball_portrait_v1.png as identity reference.
 - stone_idle_v1.png and ember_idle_v1.png: built-in image_gen outputs for the current enemy definitions. Stone Warden provisionally reuses the stone sprite at height 300.
 - All three sprites retain generated alpha. No CLI/API fallback was used. Original generated outputs remain in the Codex generated_images directory. Project assets are local copies.
 - These are static first-pass field sprites. Slight idle bobbing is implemented in presentation; no walk or attack sprite animation is claimed.

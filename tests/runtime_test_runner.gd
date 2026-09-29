@@ -3,7 +3,7 @@ extends Node
 
 func _ready() -> void:
 	await get_tree().process_frame
-	var runner: Variant = load("res://tests/run_tests.gd").new()
+	var runner: Variant = load("res://tests/run_spaghetti_tests.gd").new()
 	runner.host_tree = get_tree()
 	await runner._run(false)
 	set_meta("checks", runner.checks)

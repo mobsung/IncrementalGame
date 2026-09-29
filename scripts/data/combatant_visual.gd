@@ -6,3 +6,4 @@ extends Resource
 @export var height: float = 160.0
 @export var faces_right: bool = false
 @export var tint: Color = Color.WHITE
+@export var animation: Resource

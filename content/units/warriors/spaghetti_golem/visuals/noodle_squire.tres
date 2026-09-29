@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="CombatantVisual" load_steps=4 format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_visual.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/noodle_squire.png" id="2"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/visuals/animations/noodle_squire_sheet.tres" id="4"]
+[resource]
+script = ExtResource("1")
+texture = ExtResource("2")
+height = 180.0
+faces_right = true
+animation = ExtResource("4")

@@ -1,6 +1,32 @@
 # Project context
 
-Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Identità visiva di John preservata.
+Ultimo aggiornamento: 2026-09-29, animazioni sprite-sheet dello Spaghetti Golem.
+
+## Sprite sheet Spaghetti Golem — 2026-09-29 (sostituisce il pass procedurale sotto)
+
+- Richiesta esplicita dell'utente: animazioni dettagliate a sprite sheet per movimento, attacchi e abilità. Nove PNG trasparenti 1254×1254, 144 pose sorgente, in content/units/warriors/spaghetti_golem/visuals/spritesheets/. Generati con il tool immagini integrato dalle tre illustrazioni esistenti; prompt completi in spritesheets/ART_NOTES.md.
+- Tre risorse *_sheet.tres collegate ai visual delle forme. sprite_sheet_motion.gd costruisce SpriteFrames/AtlasTexture condivisi; sprite_sheet_player.gd seleziona fotogrammi per copia, senza deformazioni. Per forma: idle 4, camminata 8, Jab 8, Sweep 8, morte 4; hit riusa una posa. Simmer 16/8/4, Guard 8/4 nelle forme abilitate, Surge 8 nella finale. Ritratti originali invariati. Vecchi golem_motion*.gd non più referenziati dai visual, conservati come codice storico.
+- Separazioni delle celle adattate alle pose estese/gutter irregolari; canvas virtuali uniformi e coordinate arrotondate ai pixel. Tempi impatto/cast guidati dalla simulazione, pausa e identità per copia preservate. Simmer attende un intervallo visivo libero; azioni e movimento hanno precedenza e possono interrompere la coda degli effetti. Nessuna modifica a gameplay, inventario, RNG o salvataggi.
+- Godot AI su 4.7.stable.official.5b4e0cb0f, sessione incrementalgame@3d07ce54918ca992: runtime_test_runner.tscn, **434 controlli, zero fallimenti**, log gioco/editor correnti senza errori/warning. Verificate bounds/alpha atlas, canvas, pause, Jab/Sweep e Guard, stato indipendente, integrazione UI. Ispezionati screenshot preview (camminata, Jab, Surge) e breve smoke test di battaglia con persist_progress=false. Nessun caricamento/scrittura del profilo reale. git diff --check senza errori di whitespace (solo avviso CRLF preesistente su first_arena.tres).
+- Preview isolata visuals/animations/preview.tscn: F6, Space pausa, frecce stato. Limiti: variazioni residue di volume/appoggio tra fotogrammi generati, nessuna pulizia manuale pixel-perfect, audio o benchmark esteso. Mappatura e dettagli in animations/README.md.
+
+## Storico animazioni procedurali Spaghetti Golem — 2026-09-28
+
+- Tre forme animate con soft mesh degli sprite esistenti: idle/gocce, camminata, Jab, Sweep, Simmer, Guard, Surge, danno e collasso. Configurazione e player in content/units/warriors/spaghetti_golem/visuals/animations/, collegati dalle tre risorse visuali. Si tratta di animazione procedurale, non nuovi fotogrammi disegnati né rig con arti separati.
+- ArenaView gestisce un player visivo indipendente per copia, pulizia/cambio forma e pausa; la simulazione conserva autorità su tempi/danni. Eventi hit/heal arricchiti con target ID e tipo di cura; evento death solo visivo. Nessuna regola, RNG o schema di salvataggio modificato. Breve eco di morte completa il collasso anche dopo rollback immediato.
+- Preview isolata in visuals/animations/preview.tscn: F6, Space pausa, frecce cambiano stato. Non carica né salva il profilo reale. Dettagli/limiti nel README della stessa cartella.
+- Verificato tramite Godot AI su 4.7.stable.official.5b4e0cb0f (sessione incrementalgame@3e6a8fda3f7b6551): **246 controlli, zero fallimenti**, log correnti gioco/editor senza errori. Include rig delle tre forme, geometria finita, pausa, timing Jab e acquisti a metà ciclo, isolamento del modello/RNG, routing eventi, riuso ID e completamento/pulizia eco di morte. Preview delle forme eseguita e ispezionata. Nessun accesso al salvataggio reale in questa tappa; nessun benchmark esteso.
+
+## Stato corrente Spaghetti Golem (prevale sulle note storiche John/v7 sotto)
+
+- John è sostituito da Spaghetti Golem, Rare Warrior: Noodle Squire base, Saucebound Knight livello 10, Spaghetti Golem livello 25. Evoluzioni manuali con conferma, nessun aumento delle statistiche base; rimborso/reset dei punti livello, conservazione livello/XP/Gold individuale come da regola generale concordata.
+- Kit completo: Meatball Jab/Sweep, Slow Simmer, Sauce Reserve, Sauce Guard, Glassheart Surge. Quattro potenziamenti con cap per stadio, bonus personali limitati, effetti/timer indipendenti per copia e persistenti. Dettagli: docs/implementation/SPAGHETTI_GOLEM.md.
+- Risorse specifiche in content/units/warriors/spaghetti_golem/{forms,abilities,upgrades,visuals,gacha,concepts,design}. Nemici e Dice Summoner organizzati per entità. Tre nuovi sprite trasparenti dalle schede dell'utente; provenance in visuals/ART_NOTES.md. Vecchie risorse John storiche, non collegate al gameplay.
+- Pool gacha attivo: solo Rare Spaghetti Golem, evocato base livello 1, costo 5 Dust. Pesi sulle rarità presenti rinormalizzati. Restano fino a tre alleati schierati, acquisti condivisi e Multi Hit/Cast.
+- Salvataggio v8. Reset pre-v8 autorizzato: una base, rimozione copie e progressi individuali/tentativo provvisorio; conservazione valute, acquisti globali/Chrono e record. Verificato profilo reale: una copia starter_spaghetti_0001, livello 1, XP 0, evoluzione 0; Gold 3040.025, Dust 45, Shards 0.630000000000003 invariati. Preparazione, nessun combattimento automatico. Salvataggio v8 scritto e verificato.
+- Backup indipendente precedente: user://first_demo.before_spaghetti_v8.save. Non sovrascriverlo. I successivi salvataggi v8 non ripetono il reset.
+- Godot AI, sessione incrementalgame@eefae985ebbe52a5: suite corrente tests/run_spaghetti_tests.gd tramite runtime_test_runner.tscn, **194 controlli, zero fallimenti**. Copre azioni, cure letali simultanee, buff/cooldown minimi, evoluzioni, snapshot indipendenti, caricamento deterministico, migrazione v7, gacha e UI. Vecchia suite archiviata in tests/legacy/john_v7.gd.txt: non eseguirla come suite corrente. Avvio main senza errori correnti, screenshot controllato del profilo base. Non è un benchmark o test di bilanciamento esteso.
+- Restano aperti evoluzioni ramificate, sistema status generico, supporti nemici, ulteriori specie, rifinitura artistica delle animazioni/audio e offline.
 
 ## Current state and authority
 
@@ -10,7 +36,7 @@ Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Ide
 - Current design: docs/design/00_INDICE.md. CORE_DESIGN.md is historical. Implementation details are in docs/implementation/, including GACHA_E_COLLEZIONE.md for the latest stage.
 - Confirm changes to gameplay rules with the user. Configurable initial Gold costs/increments/limits are authorized by 07_ECONOMIA_E_POTENZIAMENTI.md. Player-facing text is English; working documents may be Italian.
 
-## Implemented
+## Historical baseline before the Spaghetti Golem replacement
 
 - One owned John the Meatball (Common Warrior) nel profilo reale; il gacha può aggiungere copie indipendenti e il modello supporta fino a tre copie alleate schierate in nove slot univoci. Il campo usa fieldconcept.jpeg, personaggi illustrati interi in vista laterale e proiezione compressa della profondità.
 - Bottom navigation: Battle controls, Collection & squad, Chrono, Global shop. Il roster mostra ogni copia e apre Stats & formation / Upgrades per quella selezionata. Global and Chrono shops support real purchases. Close, repeated navigation click and Escape dismiss panels.
@@ -24,7 +50,7 @@ Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Ide
 - Multi Hit e Multi Cast runtime: compatibilità dichiarata per azione, retarget fra colpi, critici indipendenti, passiva una volta per ciclo e applicazioni ordinate della Sweep con geometria/cooldown condivisi. L'acquisto Chrono resta in attesa dei costi di design.
 - Salvataggio **v7**, backup e migrazioni dalle versioni 1, 2, 3, 4, 5 e 6. Offline predisposto ma inattivo.
 
-## Architecture
+## Shared architecture (historical John-specific details superseded above)
 
 - Shared typed Resource definitions in scripts/data/ and resources/ are immutable during gameplay.
 - UnitProgress holds independent copy identity, XP/level/points, purchase ranks, deployment and formation preferences. PlayerProfile owns copies, permanent balances, global_ranks and chrono_ranks and resolves stable copy IDs. StatUpgradeDefinition supplies shared stat/cost data; GoldUpgradeDefinition inherits it for existing individual resources. ShopModifiers applies additions before separate global/Chrono percentage pools. SharedShopPanel renders both catalogs and requests model transactions.
@@ -37,7 +63,7 @@ Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Ide
 - Fixed step 1/60 second; seed/state di combattimento e gacha salvati separatamente. Determinism tested with the same engine/content. advance(seconds) and the save timestamp prepare for future offline processing; policy and efficient calculation remain open.
 - La collezione supporta tutte le copie possedute e fino a tre copie alleate schierate. Il pool attuale contiene solo John; il lato supporto nemico non è incluso finché non esistono contenuti autorizzati per quel ruolo.
 
-## Persistence
+## Persistence history
 
 - File user://first_demo.save, separate from old prototype saves. Save after model changes, every 10 seconds and normal window close.
 - Formato v7 Variant senza oggetti, SHA-256, file temporaneo e backup. Validazione di struttura/tipi/intervalli, ripetizioni, ID di copia/attore, seriale di collezione, limite e unicità degli slot. La migrazione v6 aggiunge Multi Hit/Multi Cast; la v5 aggiunge seriale e RNG del gacha; la v4 aggiunge schieramento, identità copia-attore e snapshot multiplo. La migrazione v3 aggiunge i nove valori di danno/difesa/critici. Versioni future bloccate; file invalidi preservati.
@@ -49,6 +75,8 @@ Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Ide
 - Haste è ricostruita dai gradi. Quick Stir precede il fattore 100/(100+Haste); cooldown catturati preservati. Attack Speed vale dal ciclo successivo; Range non amplia l'ingaggio e Area aumenta la superficie tramite radice quadrata. Questa tappa manteneva v3; il danno comune successivo ha introdotto v4.
 
 ## Validation
+
+- Riorganizzazione per specie: runner tests/runtime_test_runner.tscn avviato tramite Godot AI dopo scansione filesystem: **487 controlli, zero fallimenti**, log editor senza errori. Il runner usa profili isolati. Verifica dei nuovi percorsi delle risorse effettuata; nessuna evoluzione testata o implementata in questa tappa.
 
 - Multi Hit e Multi Cast: **487 controlli, zero fallimenti** su Godot 4.7.stable.official.5b4e0cb0f. Verificati retarget, colpi persi, passiva per ciclo, critici indipendenti, applicazioni Sweep ordinate, compatibilità esplicita, simultaneità globale, ricostruzione, UI, roundtrip v7 e migrazione v6. Suite Godot AI isolata. La scena reale trovata aperta era già in preparation; è stata fermata prima dei test senza azioni o acquisti.
 
@@ -81,16 +109,20 @@ Ultimo aggiornamento: 2026-09-27, dopo la fondazione Multi Hit e Multi Cast. Ide
 
 ## Pending
 
+- Richiesta Spaghetti Golem completata; vedere lo stato corrente sopra. Conservata la regola generale di rimborso/reset punti all'evoluzione, prevalente sulla frase divergente del concept.
+
 - Completare il catalogo Chrono, collegando gli acquisti Multi Hit/Multi Cast ora supportati dal runtime e gli slot aggiuntivi quando prezzi e requisiti saranno definiti. Cataloghi Gold individuale e globale completi nelle voci; bilanciamento da verificare.
 - Aggiungere specie al gacha soltanto dopo schede approvate; restano aperte soglie di sblocco rarità e distribuzione fra specie della stessa rarità. Pesi 55/30/12/3, costo, collezione e composizione della squadra sono implementati. Fortuna resta esclusa.
-- Evoluzioni, buff/status generici, multi hit/cast, supporti nemici/evocazioni, animazioni/audio. Danno magico e super/ultracritici sono ora implementati.
+- Evoluzioni ramificate, buff/status generici, supporti nemici/evocazioni, animazioni/audio. Evoluzioni lineari del Golem, buff personali, Multi Hit/Cast, danno magico e super/ultracritici sono implementati.
 - Offline progress policies, limits and efficient computation; final platforms and representative performance budgets. Desktop is the current test target.
 
 ## Preserved tooling and repository state
+
+- Contenuti specifici raccolti in content/units/<classe>/<specie>/ (forms, abilities, upgrades, visuals, concepts, design, gacha) e content/enemies/<tipo>/. Sistemi e cataloghi condivisi restano in scripts/, resources/ e scenes/. Vedere content/README.md. Spostamenti con metadati .import preservati e riferimenti aggiornati; nessuna nuova meccanica introdotta dalla riorganizzazione.
 
 - Preserve addons/godot_ai/, enabled plugin and _mcp_game_helper autoload. MCP 4.2.3 works; latest verified session incrementalgame@10d96b9eee0fb838 is the correct project. Rediscover sessions after editor restarts; do not replace/add servers.
 - Preserve AGENTS.md, .agents/skills/, design and docs/tooling/. Studio exposes 188 skills; load relevant specialists only.
 - Graphify fork: C:/Users/marce/.local/share/graphify-godot. Indice locale ricostruito e consultato prima della tappa danno per dipendenze combattimento/salvataggi. Aggiornarlo prima di riutilizzarlo dopo nuove modifiche; non commettere gli output ignorati.
 - Git history intact. Many old tracked files were deleted by the authorized reset and replaced by the staged implementation described above.
-- Authoritative John design: user-supplied C:/Users/marce/Downloads/noodlegolem.jpeg, reaffirmed after the user rejected john_idle_v1 as too generic. Current battlefield and unit-card texture: assets/battle/john_idle_v2.png, a faithful transparent adaptation of that sheet. Preserve the elongated glass torso/helmet and visible heart, spaghetti structure, dangling meatball fists and tiny wooden legs. Do not use the earlier portrait or v1 sprite to redesign him. Animation studies under docs/design/unita/references/ remain concepts.
+- Authoritative John design: user-supplied C:/Users/marce/Downloads/noodlegolem.jpeg, reaffirmed after the user rejected john_idle_v1 as too generic. Current battlefield and unit-card texture: content/units/warriors/spaghetti_golem/visuals/john_idle_v2.png, a faithful transparent adaptation of that sheet. Preserve the elongated glass torso/helmet and visible heart, spaghetti structure, dangling meatball fists and tiny wooden legs. Do not use the earlier portrait or v1 sprite to redesign him. Animation studies under docs/design/unita/references/ remain concepts.
 - Current field assets: assets/battle/field_concept_v1.jpeg copied from the user's reference; john_idle_v2.png, stone_idle_v1.png, ember_idle_v1.png generated/edited with the built-in image tool. Prompts/provenance in assets/battle/ART_NOTES.md. Stone Warden currently reuses the stone sprite at a larger size. These are static sprites with slight idle bobbing, not final walk/attack animation. Implementation details in docs/implementation/CAMPO_E_NAVIGAZIONE.md.

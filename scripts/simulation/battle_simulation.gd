@@ -77,7 +77,7 @@ func preview_actor(copy_id: String) -> CombatantState:
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
 	if copy == null:
 		return null
-	var definition: CombatantDefinition = config.definitions().get(copy.species_id)
+	var definition: CombatantDefinition = config.definition_for(copy)
 	if definition == null:
 		return null
 	actor = CombatantState.create(definition, 0, true, config.slots[copy.slot])
@@ -110,7 +110,7 @@ func _create_allies() -> void:
 	actors.clear()
 	var entity_id: int = 1
 	for copy: UnitProgress in deployed_units():
-		var definition: CombatantDefinition = config.definitions().get(copy.species_id)
+		var definition: CombatantDefinition = config.definition_for(copy)
 		if definition == null:
 			continue
 		var actor: CombatantState = CombatantState.create(definition, entity_id, true, config.slots[copy.slot])
@@ -142,6 +142,10 @@ func _begin_attempt() -> void:
 	pending_souls = 0.0
 	attempt_snapshot.clear()
 	for actor: CombatantState in allied_actors():
+		var copy: UnitProgress = profile.copy_by_id(actor.copy_id)
+		var definition: CombatantDefinition = config.definition_for(copy)
+		if definition.kit != null:
+			definition.kit.reset_wave(actor, copy)
 		attempt_snapshot.append(actor.to_data())
 	sequence = WaveSequence.generate(rng)
 	_spawn_due()
@@ -260,6 +264,9 @@ func _finish(victory: bool) -> void:
 			restored.return_wait = 0.0
 			restored.returning = false
 			restored.clear_action()
+			var definition: CombatantDefinition = config.definition_for(copy)
+			if definition.kit != null:
+				definition.kit.reset_wave(restored, copy)
 			actors.append(restored)
 		wave = selected_wave
 	pending_gold = 0.0
@@ -367,6 +374,43 @@ func _first_free_slot() -> int:
 
 func purchase_upgrade(upgrade_id: StringName) -> bool:
 	return purchase_copy_upgrade(unit().id, upgrade_id)
+
+func evolution_offer(copy_id: String) -> Dictionary:
+	var copy: UnitProgress = profile.copy_by_id(copy_id)
+	if copy == null:
+		return {"available": false, "reason": "Unknown copy"}
+	var base: CombatantDefinition = config.definitions()[copy.species_id]
+	if copy.evolution >= base.forms.size():
+		return {"available": false, "reason": "Final evolution"}
+	var next: CombatantDefinition = base.forms[copy.evolution]
+	var reason: String = ""
+	if copy.deployed and phase == &"battle":
+		reason = "Pause after the attempt to evolve"
+	elif copy.level < next.evolution_level:
+		reason = "Requires level %d" % next.evolution_level
+	return {"available": reason.is_empty(), "reason": reason,
+		"name": next.display_name, "level": next.evolution_level}
+
+func evolve_copy(copy_id: String) -> bool:
+	if not evolution_offer(copy_id).available:
+		return false
+	var copy: UnitProgress = profile.copy_by_id(copy_id)
+	for id: Variant in copy.upgrade_ranks:
+		var upgrade: LevelUpgradeDefinition = config.upgrade_by_id(id)
+		for rank: int in range(copy.purchased_rank(id)):
+			copy.level_points += upgrade.cost_for_rank(rank)
+	copy.upgrade_ranks.clear()
+	copy.evolution += 1
+	var actor: CombatantState = actor_for_copy(copy_id)
+	if actor != null:
+		actor.clear_action()
+		_apply_progress(actor)
+		# An evolution made between attempts must also update rollback state.
+		for index: int in range(attempt_snapshot.size()):
+			if attempt_snapshot[index].copy_id == copy_id:
+				attempt_snapshot[index] = actor.to_data()
+	state_changed.emit()
+	return true
 
 func purchase_copy_upgrade(copy_id: String, upgrade_id: StringName) -> bool:
 	var upgrade: LevelUpgradeDefinition = config.upgrade_by_id(upgrade_id)

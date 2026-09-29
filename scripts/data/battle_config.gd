@@ -55,6 +55,12 @@ func upgrade_by_id(upgrade_id: StringName) -> LevelUpgradeDefinition:
 			return upgrade
 	return null
 
+func definition_for(copy: UnitProgress) -> CombatantDefinition:
+	var base: CombatantDefinition = definitions().get(copy.species_id)
+	if base != null and copy.evolution > 0 and copy.evolution <= base.forms.size():
+		return base.forms[copy.evolution - 1] as CombatantDefinition
+	return base
+
 func gold_upgrade_by_id(upgrade_id: StringName) -> GoldUpgradeDefinition:
 	for upgrade: GoldUpgradeDefinition in gold_upgrades:
 		if upgrade.id == upgrade_id:
@@ -86,7 +92,7 @@ func validation_errors() -> PackedStringArray:
 		if upgrade.max_ranks < 1 or upgrade.required_levels.size() != upgrade.max_ranks or upgrade.base_cost < 1 or upgrade.cost_increment < 0 or upgrade.effects.is_empty():
 			errors.append("Invalid level upgrade: %s" % upgrade.id)
 		for key: StringName in upgrade.effects:
-			if key not in [&"gold_health", &"gold_attack", &"gold_armor", &"basic_coefficient", &"sweep_coefficient", &"sweep_area", &"sweep_cooldown"] or not is_finite(upgrade.effects[key]) or upgrade.effects[key] < 0.0:
+			if key not in [&"gold_health", &"gold_attack", &"gold_armor", &"basic_coefficient", &"sweep_coefficient", &"sweep_area", &"sweep_cooldown", &"simmer_fraction", &"guard_armor", &"surge_fraction"] or not is_finite(upgrade.effects[key]) or upgrade.effects[key] < 0.0:
 				errors.append("Invalid upgrade effect: %s" % key)
 	for upgrade: GoldUpgradeDefinition in gold_upgrades:
 		if upgrade == null or upgrade.id.is_empty() or upgrade.id in ids:

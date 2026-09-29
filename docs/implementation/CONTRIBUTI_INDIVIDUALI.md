@@ -1,6 +1,6 @@
 # Contributi individuali Gold, XP e Souls
 
-Tappa completata il 27 settembre 2026 dopo velocità, portata, area e Haste. Attua il catalogo e le formule già concordati in [Economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md), con contributi base zero definiti nella [scheda di John](../design/unita/SPAGHETTI_GOLEM.md).
+Tappa completata il 27 settembre 2026 dopo velocità, portata, area e Haste. Attua il catalogo e le formule già concordati in [Economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md), con contributi base zero definiti nella [scheda di John](../../content/units/warriors/spaghetti_golem/design/JOHN_IMPLEMENTED.md).
 
 ## Acquisti e interfaccia
 

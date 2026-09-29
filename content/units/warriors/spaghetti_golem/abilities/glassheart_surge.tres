@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SelfBuffDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/self_buff_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"surge"
+display_name = "Glassheart Surge"
+minimum_evolution = 2
+health_threshold = 0.35
+required_stacks = 4
+consumed_stacks = 4
+cast_time = 0.5
+cooldown = 24.0
+minimum_cooldown = 16.0
+duration = 5.0
+heal_fraction = 0.08
+heal_ap = 0.5
+attack_bonus = 0.2
+armor_bonus = 0.15

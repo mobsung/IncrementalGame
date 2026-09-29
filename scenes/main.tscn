@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/app/demo_controller.gd" id="1"]
 [ext_resource type="Theme" path="res://resources/ui/demo_theme.tres" id="2"]
 [ext_resource type="PackedScene" path="res://scenes/battle/arena_view.tscn" id="3"]
-[ext_resource type="Texture2D" path="res://assets/battle/john_idle_v2.png" id="4"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/noodle_squire.png" id="4"]
 [ext_resource type="PackedScene" path="res://scenes/ui/upgrade_panel.tscn" id="5"]
 [ext_resource type="Script" path="res://scripts/presentation/navigation_panels.gd" id="6"]
 [ext_resource type="PackedScene" path="res://scenes/ui/shared_shop_panel.tscn" id="7"]
@@ -222,7 +222,7 @@ text = "Arrange formation"
 [node name="FormationHint" type="Label" parent="Panels/Layout/PanelScroll/Pages/Battle"]
 layout_mode = 2
 autowrap_mode = 2
-text = "Between attempts, choose a ground marker to move John. Solid ring: attack range. Dashed ring: engagement zone."
+text = "Between attempts, choose a ground marker to move the selected unit. Solid ring: attack range. Dashed ring: engagement zone."
 
 [node name="CollectionSummary" type="Label" parent="Panels/Layout/PanelScroll/Pages/Units"]
 unique_name_in_owner = true
@@ -243,7 +243,7 @@ autowrap_mode = 2
 [node name="UnitCard" type="Button" parent="Panels/Layout/PanelScroll/Pages/Units"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "John the Meatball\nCommon · Warrior\nView stats & upgrades"
+text = "Noodle Squire\nRare · Warrior\nView stats & upgrades"
 alignment = 0
 
 [node name="RosterList" type="VBoxContainer" parent="Panels/Layout/PanelScroll/Pages/Units"]
@@ -282,6 +282,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Portrait" type="TextureRect" parent="Panels/Layout/PanelScroll/Pages/Units/UnitDetails/Identity"]
+unique_name_in_owner = true
 layout_mode = 2
 custom_minimum_size = Vector2(120, 120)
 texture = ExtResource("4")
@@ -295,7 +296,7 @@ size_flags_horizontal = 3
 [node name="Name" type="Label" parent="Panels/Layout/PanelScroll/Pages/Units/UnitDetails/Identity/IdentityText"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "John the Meatball"
+text = "Noodle Squire"
 theme_override_font_sizes/font_size = 23
 
 [node name="Class" type="Label" parent="Panels/Layout/PanelScroll/Pages/Units/UnitDetails/Identity/IdentityText"]
@@ -313,7 +314,7 @@ text = "Health 300 / 300"
 unique_name_in_owner = true
 layout_mode = 2
 autowrap_mode = 2
-text = "Spaghetti Sweep"
+text = "Meatball Sweep"
 
 [node name="Posture" type="OptionButton" parent="Panels/Layout/PanelScroll/Pages/Units/UnitDetails"]
 unique_name_in_owner = true

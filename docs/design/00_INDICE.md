@@ -50,7 +50,7 @@ Leggere prima questo indice e poi soltanto i documenti pertinenti al lavoro. Con
 | [Visuale e UI](10_DIREZIONE_VISIVA_E_UI.md) | Riferimenti, scala, leggibilità e indicatori | 27.1, 27.5 |
 | [Bilanciamento e offline](11_BILANCIAMENTO_E_OFFLINE.md) | Configurabilità, ritmo e progressione offline | 21, 28 |
 
-I punti 22, 23, 25 e 26 hanno regole generali chiarite; alcuni dati concreti restano aperti. Il punto 27.1 e le regole del movimento sono concordati per la demo. **Riprendere dal 27.2: rosa iniziale di sei specie.** [John the Meatball](unita/SPAGHETTI_GOLEM.md) è stato confermato come specie iniziale; la prima tappa si concentra sulla sua scheda. Le altre specie e le schede complete restano da concordare.
+I punti 22, 23, 25 e 26 hanno regole generali chiarite; alcuni dati concreti restano aperti. Il punto 27.1 e le regole del movimento sono concordati per la demo. **Riprendere dal 27.2: rosa iniziale di sei specie.** [Spaghetti Golem](../../content/units/warriors/spaghetti_golem/concepts/SPAGHETTI_GOLEM_CONCEPT.md) sostituisce John su richiesta del 27 settembre: tre forme Rare implementate, base Noodle Squire. [Stato tecnico e migrazione](../implementation/SPAGHETTI_GOLEM.md). Le altre specie e le schede complete restano da concordare.
 
 ## Metodo di lavoro
 

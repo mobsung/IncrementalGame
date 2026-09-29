@@ -10,6 +10,10 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 		if actor.alive():
 			var definition: CombatantDefinition = definitions[actor.definition_id]
 			var copy: UnitProgress = copies.get(actor.copy_id) as UnitProgress
+			if copy != null:
+				definition = config.definition_for(copy)
+			if definition.kit != null and copy != null:
+				definition.kit.advance_timers(actor, copy, delta)
 			destinations[actor.id] = _prepare(actor, actors, definition, copy, config, rng, delta)
 	# Apply all movement after decisions, so scene/entity order cannot change distances.
 	for actor: CombatantState in actors:
@@ -19,17 +23,26 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 	var healing: Dictionary = {}
 	var events: Array[Dictionary] = []
 	for actor: CombatantState in actors:
+		var copy: UnitProgress = copies.get(actor.copy_id)
+		if actor.alive() and copy != null:
+			var definition: CombatantDefinition = config.definition_for(copy)
+			if definition.kit != null:
+				definition.kit.periodic_healing(actor, copy, healing, events)
+	for actor: CombatantState in actors:
 		if not actor.alive() or actor.action.is_empty():
 			continue
 		var target: CombatantState = Targeting.by_id(actors, actor.target_id)
+		var copy: UnitProgress = copies.get(actor.copy_id) as UnitProgress
+		var definition: CombatantDefinition = config.definition_for(copy) if copy != null else definitions[actor.definition_id]
+		if definition.kit != null:
+			_tick_kit_action(actor, target, actors, definition, copy, rng, delta, damage, healing, events)
+			continue
 		if actor.action == &"basic" and not Targeting.in_range(actor, target):
 			actor.clear_action()
 			continue
 		actor.action_left -= delta
 		if actor.action_left > 0.000001:
 			continue
-		var definition: CombatantDefinition = definitions[actor.definition_id]
-		var copy: UnitProgress = copies.get(actor.copy_id) as UnitProgress
 		if actor.action == &"sweep":
 			_complete_sweep(actor, actors, definition, copy, rng, damage, events)
 		else:
@@ -44,9 +57,20 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 	var deaths: Array[int] = CombatMath.resolve(actors, damage, healing)
 	for id: int in deaths:
 		var actor: CombatantState = Targeting.by_id(actors, id)
-		if actor.action == &"sweep":
+		var copy: UnitProgress = copies.get(actor.copy_id)
+		var definition: CombatantDefinition = config.definition_for(copy) if copy != null else definitions[actor.definition_id]
+		if definition.kit != null:
+			definition.kit.on_death(actor, copy)
+			events.append({"kind": "death", "target_id": actor.id, "position": actor.position})
+		elif actor.action == &"sweep":
 			actor.cooldown = actor.pending_cooldown
 		actor.clear_action()
+	for actor: CombatantState in actors:
+		var copy: UnitProgress = copies.get(actor.copy_id)
+		if copy != null:
+			var definition: CombatantDefinition = config.definition_for(copy)
+			if definition.kit != null:
+				definition.kit.apply_stats(actor, copy)
 	return {"deaths": deaths, "events": events}
 
 static func _prepare(actor: CombatantState, actors: Array[CombatantState],
@@ -54,6 +78,18 @@ static func _prepare(actor: CombatantState, actors: Array[CombatantState],
 		rng: RandomNumberGenerator, delta: float) -> Vector2:
 	var target: CombatantState = Targeting.by_id(actors, actor.target_id)
 	var priority_return: bool = actor.allied and copy != null and not copy.mobile and not actor.position.is_equal_approx(actor.anchor)
+	if definition.kit != null:
+		if not actor.action.is_empty():
+			return actor.position
+		var self_action: StringName = definition.kit.select_action(actor, copy)
+		if not self_action.is_empty():
+			var ability: SelfBuffDefinition = definition.kit.self_ability(self_action)
+			actor.action = self_action
+			actor.action_left = ability.cast_time
+			actor.impact_left = ability.cast_time
+			actor.impacted = false
+			actor.pending_cooldown = maxf(ability.minimum_cooldown, ability.cooldown * 100.0 / (100.0 + actor.haste))
+			return actor.position
 	if actor.action == &"sweep":
 		return actor.position
 	if actor.action == &"basic" and not Targeting.in_range(actor, target):
@@ -66,11 +102,21 @@ static func _prepare(actor: CombatantState, actors: Array[CombatantState],
 		return actor.position.move_toward(actor.anchor, actor.speed * delta)
 	if definition.ability != null and actor.cooldown <= 0.0:
 		var ability_target: CombatantState = target if Targeting.in_range(actor, target) else Targeting.acquire(actor, actors, definition, copy, rng, true)
+		if definition.kit != null:
+			var candidates: Array[CombatantState] = []
+			for candidate: CombatantState in Targeting.opponents(actor, actors):
+				if actor.position.distance_to(candidate.position) <= definition.ability.radius * sqrt(1.0 + actor.area_bonus):
+					candidates.append(candidate)
+			ability_target = Targeting.choose(actor, candidates, copy.priority, rng)
 		if ability_target != null:
 			actor.target_id = ability_target.id
 			actor.action = &"sweep"
 			actor.action_left = definition.ability.cast_time
 			actor.pending_cooldown = actor.ability_cooldown(definition.ability.cooldown)
+			if definition.kit != null:
+				actor.pending_cooldown = maxf(definition.kit.sweep_minimum_cooldown, actor.pending_cooldown)
+				actor.impact_left = definition.kit.sweep_impact_time
+				actor.impacted = false
 			_face(actor, ability_target.position)
 			return actor.position
 	if actor.action == &"basic":
@@ -88,6 +134,9 @@ static func _prepare(actor: CombatantState, actors: Array[CombatantState],
 		if Targeting.in_range(actor, target):
 			actor.action = &"basic"
 			actor.action_left = 1.0 / actor.attack_speed
+			if definition.kit != null:
+				actor.impact_left = actor.action_left * definition.kit.jab_impact_fraction
+				actor.impacted = false
 			return actor.position
 		var distance: float = actor.position.distance_to(target.position)
 		var destination: Vector2 = actor.position.move_toward(target.position, minf(actor.speed * delta, maxf(0.0, distance - actor.attack_range)))
@@ -107,21 +156,43 @@ static func _face(actor: CombatantState, point: Vector2) -> void:
 	if not direction.is_zero_approx():
 		actor.facing = direction.normalized()
 
+static func _tick_kit_action(actor: CombatantState, target: CombatantState,
+		actors: Array[CombatantState], definition: CombatantDefinition, copy: UnitProgress,
+		rng: RandomNumberGenerator, delta: float, damage: Dictionary, healing: Dictionary,
+		events: Array[Dictionary]) -> void:
+	actor.action_left -= delta
+	actor.impact_left = maxf(0.0, actor.impact_left - delta)
+	if not actor.impacted and actor.impact_left <= 0.000001:
+		actor.impacted = true
+		if actor.action in [&"guard", &"surge"]:
+			definition.kit.complete_self(actor, copy, healing, events)
+		elif actor.action == &"basic":
+			if _complete_basic(actor, target, actors, definition, copy, rng, damage, events):
+				definition.kit.successful_action(actor, copy)
+		elif actor.action == &"sweep":
+			if _complete_sweep(actor, actors, definition, copy, rng, damage, events):
+				definition.kit.successful_action(actor, copy)
+	if actor.action_left <= 0.000001:
+		actor.clear_action()
+
 static func _complete_sweep(actor: CombatantState, actors: Array[CombatantState],
 		definition: CombatantDefinition, copy: UnitProgress, rng: RandomNumberGenerator,
-		damage: Dictionary, events: Array[Dictionary]) -> void:
+	damage: Dictionary, events: Array[Dictionary]) -> bool:
 	actor.cooldown = actor.pending_cooldown
 	var target: CombatantState = Targeting.by_id(actors, actor.target_id)
-	if target == null or not target.alive():
+	if definition.kit == null and (target == null or not target.alive()):
 		target = Targeting.acquire(actor, actors, definition, copy, rng, true)
-	if target == null:
-		return
-	_face(actor, target.position)
+	if definition.kit == null:
+		if target == null:
+			return false
+		_face(actor, target.position)
 	var sweep: SweepDefinition = definition.ability
 	var radius: float = sweep.radius * sqrt(1.0 + actor.area_bonus)
 	var applications: int = actor.multi_cast if sweep.supports_multi_cast else 1
 	var virtual_health: Dictionary = {}
+	var hit_any: bool = false
 	for application: int in range(applications):
+		var hit_count: int = 0
 		events.append({"kind": "sweep", "position": actor.position, "facing": actor.facing,
 			"radius": radius, "angle": sweep.angle_degrees, "application": application + 1})
 		for candidate: CombatantState in Targeting.opponents(actor, actors):
@@ -129,8 +200,14 @@ static func _complete_sweep(actor: CombatantState, actors: Array[CombatantState]
 			if remaining <= 0.0:
 				continue
 			if CombatMath.in_sector(actor.position, actor.facing, candidate.position, radius, sweep.angle_degrees):
+				if definition.kit != null and hit_count >= definition.kit.sweep_max_targets:
+					break
 				remaining -= _add_damage(actor, candidate, sweep, actor.sweep_bonus, rng, damage, events)
 				virtual_health[candidate.id] = remaining
+				hit_count += 1
+				if application == 0:
+					hit_any = true
+	return hit_any
 
 static func _complete_basic(actor: CombatantState, target: CombatantState,
 		actors: Array[CombatantState], definition: CombatantDefinition, copy: UnitProgress,
@@ -166,6 +243,7 @@ static func _add_damage(actor: CombatantState, target: CombatantState,
 	var amount: float = CombatMath.damage_amount(packet, target)
 	damage[target.id] = float(damage.get(target.id, 0.0)) + amount
 	events.append({"kind": "hit", "position": target.position, "from": actor.position,
+		"source_id": actor.id, "target_id": target.id,
 		"amount": amount, "allied": actor.allied, "critical_stage": packet.critical_stage,
 		"physical": packet.physical, "magic": packet.magic})
 	return amount

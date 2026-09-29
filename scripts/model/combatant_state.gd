@@ -35,6 +35,11 @@ var passive_count: int = 0
 var return_wait: float = 0.0
 var returning: bool = false
 var facing: Vector2 = Vector2.RIGHT
+var kit_state: Dictionary = {}
+var impact_left: float = 0.0
+var impacted: bool = false
+var unbuffed_attack: float = 0.0
+var unbuffed_armor: float = 0.0
 
 # Derived from owned progress on creation/load/purchase; not snapshot state.
 var basic_bonus: float = 0.0
@@ -52,7 +57,8 @@ const FIELDS: Array[StringName] = [
 	&"magic_attack", &"magic_resistance", &"ability_power", &"critical_chance", &"critical_multiplier",
 	&"super_critical_chance", &"super_critical_multiplier", &"ultra_critical_chance", &"ultra_critical_multiplier",
 	&"target_id", &"action", &"action_left", &"cooldown", &"pending_cooldown",
-	&"passive_count", &"return_wait", &"returning", &"facing"]
+	&"passive_count", &"return_wait", &"returning", &"facing",
+	&"kit_state", &"impact_left", &"impacted"]
 
 static func create(definition: CombatantDefinition, entity_id: int, is_ally: bool,
 		spawn: Vector2, health_scale: float = 1.0, attack_scale: float = 1.0) -> CombatantState:
@@ -83,15 +89,17 @@ func alive() -> bool:
 func clear_action() -> void:
 	action = &""
 	action_left = 0.0
+	impact_left = 0.0
+	impacted = false
 
 func to_data() -> Dictionary:
 	var data: Dictionary = {}
 	for field: StringName in FIELDS:
-		data[field] = get(field)
+		data[field] = get(field).duplicate(true) if field == &"kit_state" else get(field)
 	return data
 
 static func from_data(data: Dictionary) -> CombatantState:
 	var actor: CombatantState = CombatantState.new()
 	for field: StringName in FIELDS:
-		actor.set(field, data[field])
+		actor.set(field, data[field].duplicate(true) if field == &"kit_state" else data[field])
 	return actor

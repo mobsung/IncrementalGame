@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="LevelUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"meatball_training"
+display_name = "Meatball Training"
+max_ranks = 3
+base_cost = 1
+cost_increment = 0
+required_levels = PackedInt32Array(1, 1, 1)
+evolution_caps = PackedInt32Array(1, 2, 3)
+description = "+8 percentage points to Meatball Sweep physical coefficient."
+effects = Dictionary[StringName, float]({&"sweep_coefficient": 0.08})

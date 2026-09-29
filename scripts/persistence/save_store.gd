@@ -2,7 +2,7 @@ class_name SaveStore
 extends RefCounted
 ## Versioned binary snapshots preserve Vector2 and 64-bit RNG state without objects.
 
-const VERSION: int = 7
+const VERSION: int = 8
 const V4_STATS: Array[StringName] = [&"magic_attack", &"magic_resistance", &"ability_power",
 	&"critical_chance", &"critical_multiplier", &"super_critical_chance", &"super_critical_multiplier",
 	&"ultra_critical_chance", &"ultra_critical_multiplier"]
@@ -89,6 +89,13 @@ func _read(candidate: String) -> Dictionary:
 		last_error = "Save checksum mismatch."
 		return {}
 	var data: Variant = bytes_to_var(envelope.payload)
+	if data is Dictionary and envelope.version <= 7:
+		# Authorized roster replacement: one fresh base copy, shared progress retained.
+		data = _replace_legacy_roster(data)
+		if data.is_empty() or not validate(data):
+			last_error = "Invalid legacy profile; original preserved."
+			return {}
+		return data
 	if data is Dictionary and envelope.version == 1:
 		data = _migrate_v1(data)
 	if data is Dictionary and envelope.version <= 2:
@@ -105,6 +112,33 @@ func _read(candidate: String) -> Dictionary:
 		last_error = "Invalid battle snapshot."
 		return {}
 	return data
+
+static func _replace_legacy_roster(data: Dictionary) -> Dictionary:
+	if not data.get("profile") is Dictionary:
+		return {}
+	var previous: Dictionary = data.profile
+	for key: String in ["gold", "dust", "shards"]:
+		if not previous.has(key) or (not previous[key] is int and not previous[key] is float):
+			return {}
+		if not is_finite(float(previous[key])) or previous[key] < 0:
+			return {}
+	var fresh: BattleSimulation = BattleSimulation.new(int(data.get("rng_seed", 1)))
+	fresh.profile.gold = previous.gold
+	fresh.profile.dust = int(previous.dust)
+	fresh.profile.shards = previous.shards
+	for key: String in ["global_ranks", "chrono_ranks"]:
+		if not previous.get(key, {}) is Dictionary:
+			return {}
+		fresh.profile.set(key, previous.get(key, {}).duplicate(true))
+	for key: String in ["record_wave", "selected_wave", "xp_block", "souls", "dust_earned"]:
+		var value: Variant = data.get(key, fresh.get(key))
+		if typeof(value) != typeof(fresh.get(key)):
+			return {}
+		fresh.set(key, value)
+	fresh.selected_wave = clampi(fresh.selected_wave, fresh.minimum_wave(), fresh.record_wave + 1)
+	fresh.wave = fresh.selected_wave
+	fresh._create_allies()
+	return fresh.to_data()
 
 static func _migrate_v1(data: Dictionary) -> Dictionary:
 	# Only additive schema changes. Preserve all battle state and owned progress.
@@ -232,12 +266,17 @@ static func _actor_valid(data: Dictionary, definitions: Dictionary) -> bool:
 		data.health >= 0.0 and data.health <= data.max_health and data.speed > 0.0 and
 		data.attack_speed > 0.0 and data.attack_range >= 0.0 and data.action_left >= -0.1 and
 		data.cooldown >= 0.0 and data.pending_cooldown >= 0.0 and data.passive_count >= 0 and
-		data.action in [&"", &"basic", &"sweep"])
+		data.action in [&"", &"basic", &"sweep", &"guard", &"surge"] and data.impact_left >= -0.1)
 
 static func _copy_valid(copy_data: Dictionary, template: BattleSimulation) -> bool:
 	if not _fields_match(copy_data, UnitProgress.new().to_data()):
 		return false
 	if copy_data.id.is_empty() or not template.config.definitions().has(copy_data.species_id) or copy_data.level < 1:
+		return false
+	var base: CombatantDefinition = template.config.definitions()[copy_data.species_id]
+	if copy_data.species_id != template.config.ally.id or copy_data.evolution < 0 or copy_data.evolution > base.forms.size():
+		return false
+	if copy_data.evolution > 0 and copy_data.level < base.forms[copy_data.evolution - 1].evolution_level:
 		return false
 	if copy_data.experience < 0.0 or copy_data.level_points < 0 or copy_data.movement_speed <= 0.0:
 		return false
@@ -248,7 +287,7 @@ static func _copy_valid(copy_data: Dictionary, template: BattleSimulation) -> bo
 			return false
 		var upgrade: LevelUpgradeDefinition = template.config.upgrade_by_id(id)
 		var rank: Variant = copy_data.upgrade_ranks[id]
-		if upgrade == null or not rank is int or rank < 0 or rank > upgrade.max_ranks:
+		if upgrade == null or not rank is int or rank < 0 or rank > upgrade.cap_for(copy_data.evolution):
 			return false
 		if rank > 0 and not upgrade.unlocked_for(rank - 1, copy_data.level):
 			return false
@@ -318,8 +357,12 @@ static func validate(data: Dictionary) -> bool:
 				return false
 			if actor_data.definition_id != copies_by_id[actor_data.copy_id].species_id:
 				return false
+			if not _kit_valid(actor_data, copies_by_id[actor_data.copy_id], template):
+				return false
 			actor_copy_ids.append(actor_data.copy_id)
 		elif not actor_data.copy_id.is_empty():
+			return false
+		elif not actor_data.kit_state.is_empty() or actor_data.action in [&"guard", &"surge"]:
 			return false
 	if actor_copy_ids.size() != deployed_ids.size():
 		return false
@@ -332,6 +375,8 @@ static func validate(data: Dictionary) -> bool:
 				return false
 			if not snapshot.allied or snapshot.copy_id not in deployed_ids or snapshot.copy_id in snapshot_ids:
 				return false
+			if not _kit_valid(snapshot, copies_by_id[snapshot.copy_id], template):
+				return false
 			snapshot_ids.append(snapshot.copy_id)
 		var sequence: Array[int] = []
 		for value: Variant in data.sequence:
@@ -341,3 +386,12 @@ static func validate(data: Dictionary) -> bool:
 		if not WaveSequence.valid(sequence):
 			return false
 	return true
+
+static func _kit_valid(actor: Dictionary, copy: Dictionary, template: BattleSimulation) -> bool:
+	var definition: CombatantDefinition = template.config.definition_for(UnitProgress.from_data(copy))
+	if definition.kit == null:
+		return actor.kit_state.is_empty()
+	if not definition.kit.valid_state(actor.kit_state, copy.evolution):
+		return false
+	return not (actor.action == &"guard" and copy.evolution < 1) and not (
+		actor.action == &"surge" and copy.evolution < 2)

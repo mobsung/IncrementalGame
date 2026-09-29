@@ -1,15 +1,13 @@
 [gd_resource type="Resource" script_class="BattleConfig" load_steps=60 format=3]
 [ext_resource type="Script" path="res://scripts/data/battle_config.gd" id="1"]
-[ext_resource type="Resource" path="res://resources/units/john_the_meatball.tres" id="2"]
-[ext_resource type="Resource" path="res://resources/enemies/balanced.tres" id="3"]
-[ext_resource type="Resource" path="res://resources/enemies/offensive.tres" id="4"]
-[ext_resource type="Resource" path="res://resources/enemies/special.tres" id="5"]
-[ext_resource type="Resource" path="res://resources/upgrades/john_level_upgrades.tres" id="6"]
-[ext_resource type="Resource" path="res://resources/upgrades/wide_sweep.tres" id="7"]
-[ext_resource type="Resource" path="res://resources/upgrades/crushing_sweep.tres" id="8"]
-[ext_resource type="Resource" path="res://resources/upgrades/quick_stir.tres" id="9"]
-[ext_resource type="Resource" path="res://resources/upgrades/reinforced_glass.tres" id="10"]
-[ext_resource type="Resource" path="res://resources/upgrades/strong_noodles.tres" id="11"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/forms/noodle_squire.tres" id="2"]
+[ext_resource type="Resource" path="res://content/enemies/balanced/definition.tres" id="3"]
+[ext_resource type="Resource" path="res://content/enemies/offensive/definition.tres" id="4"]
+[ext_resource type="Resource" path="res://content/enemies/special/definition.tres" id="5"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/upgrades/sauce_infusion.tres" id="6"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/upgrades/meatball_training.tres" id="7"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/upgrades/thickened_glaze.tres" id="8"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/upgrades/core_tempering.tres" id="9"]
 [ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="12"]
 [ext_resource type="Script" path="res://scripts/data/gold_upgrade_definition.gd" id="13"]
 [ext_resource type="Resource" path="res://resources/upgrades/gold_health.tres" id="14"]
@@ -65,7 +63,7 @@ balanced = ExtResource("3")
 offensive = ExtResource("4")
 special = ExtResource("5")
 gacha = ExtResource("59")
-upgrades = Array[ExtResource("12")]([ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9"), ExtResource("10"), ExtResource("11")])
+upgrades = Array[ExtResource("12")]([ExtResource("6"), ExtResource("7"), ExtResource("8"), ExtResource("9")])
 gold_upgrades = Array[ExtResource("13")]([ExtResource("14"), ExtResource("15"), ExtResource("16"), ExtResource("31"), ExtResource("32"), ExtResource("33"), ExtResource("34"), ExtResource("38"), ExtResource("39"), ExtResource("40"), ExtResource("41"), ExtResource("42"), ExtResource("44"), ExtResource("46"), ExtResource("48"), ExtResource("50"), ExtResource("52"), ExtResource("54"), ExtResource("56")])
 global_upgrades = Array[ExtResource("17")]([ExtResource("18"), ExtResource("19"), ExtResource("20"), ExtResource("21"), ExtResource("22"), ExtResource("23"), ExtResource("24"), ExtResource("35"), ExtResource("36"), ExtResource("37"), ExtResource("43"), ExtResource("45"), ExtResource("47"), ExtResource("49"), ExtResource("51"), ExtResource("53"), ExtResource("55"), ExtResource("57"), ExtResource("58")])
 chrono_upgrades = Array[ExtResource("17")]([ExtResource("25"), ExtResource("26"), ExtResource("27"), ExtResource("28"), ExtResource("29"), ExtResource("30")])

@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="CombatantDefinition" load_steps=6 format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/abilities/meatball_sweep_final.tres" id="2"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/abilities/meatball_jab.tres" id="3"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/abilities/kit.tres" id="4"]
+[ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/visuals/spaghetti_golem.tres" id="5"]
+
+[resource]
+script = ExtResource("1")
+id = &"spaghetti_golem"
+display_name = "Spaghetti Golem"
+max_health = 320.0
+physical_attack = 20.0
+armor = 12.0
+magic_resistance = 12.0
+ability_power = 20.0
+attack_range = 130.0
+movement_speed = 220.0
+engagement_radius = 350.0
+critical_chance = 0.05
+gold = 0.0
+experience = 0.0
+souls = 0.0
+basic_damage = ExtResource("3")
+ability = ExtResource("2")
+kit = ExtResource("4")
+visual = ExtResource("5")
+evolution_level = 25

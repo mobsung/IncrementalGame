@@ -1,6 +1,6 @@
 # Fondazione Multi Hit e Multi Cast
 
-Tappa completata il 27 settembre 2026. Regole di riferimento: [Combattimento e abilità](../design/05_COMBATTIMENTO_E_ABILITA.md), [John the Meatball](../design/unita/SPAGHETTI_GOLEM.md) e [Chrono break e shop](../design/09_CHRONO_BREAK_E_SHOP.md).
+Tappa completata il 27 settembre 2026. Regole di riferimento: [Combattimento e abilità](../design/05_COMBATTIMENTO_E_ABILITA.md), [John the Meatball](../../content/units/warriors/spaghetti_golem/design/JOHN_IMPLEMENTED.md) e [Chrono break e shop](../design/09_CHRONO_BREAK_E_SHOP.md).
 
 ## Ambito completato
 

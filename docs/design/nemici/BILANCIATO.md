@@ -14,4 +14,4 @@ Valori iniziali scelti il 26 settembre 2026 su delega del giocatore per la prima
 
 Attacco fisico singolo, nessuna abilità. Crescita e movimento seguono [Nemici](../02_NEMICI.md). Una comparizione genera un esemplare; sei comparizioni per ondata ordinaria.
 
-Risorsa: `res://resources/enemies/balanced.tres`. Valori da bilanciare con gli acquisti.
+Risorsa: `res://content/enemies/balanced/definition.tres`. Valori da bilanciare con gli acquisti.

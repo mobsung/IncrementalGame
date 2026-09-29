@@ -39,7 +39,7 @@ func create_copy(species_id: StringName) -> UnitProgress:
 
 func _init() -> void:
 	var starter: UnitProgress = UnitProgress.new()
-	starter.id = "starter_john_0001"
+	starter.id = "starter_spaghetti_0001"
 	starter.deployed = true
 	copies.append(starter)
 

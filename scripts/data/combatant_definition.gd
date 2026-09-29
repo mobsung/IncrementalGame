@@ -31,6 +31,10 @@ extends Resource
 @export var ability: SweepDefinition
 @export var heal_every_attacks: int = 0
 @export var heal_fraction: float = 0.0
+@export var forms: Array[Resource] = []
+@export var evolution_level: int = 1
+@export var kit: Resource
+@export var visual: CombatantVisual
 
 func validation_errors() -> PackedStringArray:
 	var errors: PackedStringArray = []

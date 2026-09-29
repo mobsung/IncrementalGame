@@ -54,10 +54,13 @@ func refresh(blocked: bool) -> void:
 	for upgrade: LevelUpgradeDefinition in simulation.config.upgrades:
 		var button: Button = level_buttons[upgrade.id]
 		var rank: int = copy.purchased_rank(upgrade.id)
-		var capped: bool = rank >= upgrade.max_ranks
+		var cap: int = upgrade.cap_for(copy.evolution)
+		var capped: bool = rank >= cap
 		var cost: int = upgrade.cost_for_rank(rank)
 		var offer: String = "Maximum rank"
+		if cap == 0:
+			offer = "Unlocks with evolution"
 		if not capped:
 			offer = "%d points · requires Lv %d" % [cost, upgrade.required_levels[rank]]
-		button.text = "%s  %d/%d\n%s" % [upgrade.display_name, rank, upgrade.max_ranks, offer]
+		button.text = "%s  %d/%d\n%s" % [upgrade.display_name, rank, cap, offer]
 		button.disabled = blocked or capped or not upgrade.unlocked_for(rank, copy.level) or copy.level_points < cost

@@ -1,6 +1,6 @@
 # Potenziamenti individuali — seconda tappa
 
-Implementata il 27 settembre 2026. Regole: [economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md) e [scheda John](../design/unita/SPAGHETTI_GOLEM.md). Estende la [prima tappa](PRIMA_TAPPA.md).
+Implementata il 27 settembre 2026. Regole: [economia](../design/07_ECONOMIA_E_POTENZIAMENTI.md) e [scheda John](../../content/units/warriors/spaghetti_golem/design/JOHN_IMPLEMENTED.md). Estende la [prima tappa](PRIMA_TAPPA.md).
 
 ## Contenuto disponibile
 

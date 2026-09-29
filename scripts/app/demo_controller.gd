@@ -33,6 +33,9 @@ var refresh_elapsed: float = 0.0
 var blocked: bool = false
 var selected_copy_id: String = ""
 var roster_buttons: Dictionary = {}
+var evolve_button: Button
+var evolve_dialog: ConfirmationDialog
+var evolving_copy_id: String = ""
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
@@ -75,6 +78,14 @@ func _ready() -> void:
 	%UnitCard.pressed.connect(_open_copy.bind(simulation.unit().id))
 	%SummonButton.pressed.connect(_summon)
 	%DeployToggle.pressed.connect(_toggle_deployment)
+	evolve_button = Button.new()
+	evolve_button.name = "Evolve"
+	%UnitDetails.add_child(evolve_button)
+	evolve_button.pressed.connect(_ask_evolution)
+	evolve_dialog = ConfirmationDialog.new()
+	evolve_dialog.title = "Evolve unit"
+	add_child(evolve_dialog)
+	evolve_dialog.confirmed.connect(_confirm_evolution)
 	%BackToUnits.pressed.connect(_show_roster)
 	%StatsTab.pressed.connect(_show_unit_tab.bind(false))
 	%UpgradesTab.pressed.connect(_show_unit_tab.bind(true))
@@ -216,7 +227,7 @@ func _select_wave(value: float) -> void:
 	simulation.set_selected_wave(int(value))
 
 func _ask_chrono() -> void:
-	chrono_confirm.dialog_text = "End this run and restore John to full health?\nPending rewards from this attempt will be discarded.\nShards are calculated from the record when you confirm."
+	chrono_confirm.dialog_text = "End this run and restore your squad to full health?\nPending rewards from this attempt will be discarded.\nShards are calculated from the record when you confirm."
 	chrono_confirm.popup_centered(Vector2i(520, 180))
 
 func _chrono_break() -> void:
@@ -239,6 +250,7 @@ func _refresh() -> void:
 	%MenuUnits.text = "Units · %d copies" % simulation.profile.copies.size()
 	var copy: UnitProgress = simulation.profile.copy_by_id(selected_copy_id)
 	var hero: CombatantState = simulation.preview_actor(selected_copy_id)
+	var definition: CombatantDefinition = simulation.config.definition_for(copy)
 	var in_battle: bool = simulation.phase == &"battle"
 	%Record.text = "THE RUINED CROSSING  ·  Record %d" % simulation.record_wave
 	%CollectionSummary.text = "%d owned · %d / %d deployed\nEvery copy keeps its own level and upgrades." % [
@@ -266,15 +278,26 @@ func _refresh() -> void:
 		hero.ultra_critical_chance * 100.0, hero.ultra_critical_multiplier]
 	stats.text += "\nAttack speed  %.2f / s  ·  Range  %.0f\nHaste  %.0f  ·  Sweep area  +%.0f%%\nNext Sweep cooldown  %.2f s" % [
 		hero.attack_speed, hero.attack_range, hero.haste, hero.area_bonus * 100.0,
-		hero.ability_cooldown(simulation.config.ally.ability.cooldown)]
+		maxf(definition.kit.sweep_minimum_cooldown, hero.ability_cooldown(definition.ability.cooldown))]
 	stats.text += "\nMulti Hit  %d  ·  Multi Cast  %d" % [hero.multi_hit, hero.multi_cast]
 	stats.text += "\nContribution per enemy defeated\n(before shared bonuses)\nGold +%.2f  ·  XP +%.2f  ·  Souls +%.2f" % [
-		UnitStats.reward_contribution(copy, simulation.config.ally, simulation.config, "gold"),
-		UnitStats.reward_contribution(copy, simulation.config.ally, simulation.config, "experience"),
-		UnitStats.reward_contribution(copy, simulation.config.ally, simulation.config, "souls")]
-	ability.text = "Spaghetti Sweep · %s\n\nHearty Rhythm  %d / 5\n5 basic attacks → heal 10%%.\n\nSouls  %.0f / %.0f" % [
-		"Casting…" if hero.action == &"sweep" else ("Ready" if hero.cooldown <= 0 else "%.1f s cooldown" % hero.cooldown),
-		hero.passive_count, simulation.souls, simulation.config.soul_threshold * (simulation.dust_earned + 1)]
+		UnitStats.reward_contribution(copy, definition, simulation.config, "gold"),
+		UnitStats.reward_contribution(copy, definition, simulation.config, "experience"),
+		UnitStats.reward_contribution(copy, definition, simulation.config, "souls")]
+	ability.text = "Meatball Jab · 100%% Physical Attack\nMeatball Sweep · %.0f%% Physical Attack · up to 3 targets\nSweep: %s\nSlow Simmer · heals every 4 s\nNext tick: %.1f s" % [
+		(definition.ability.damage_coefficient + hero.sweep_bonus) * 100.0,
+		"Casting" if hero.action == &"sweep" else ("Ready" if hero.cooldown <= 0 else "%.1f s" % hero.cooldown),
+		maxf(0.0, definition.kit.simmer_interval - float(hero.kit_state.simmer_elapsed))]
+	if copy.evolution > 0:
+		ability.text += "\n\nSauce Reserve · %d / 5\nSauce Guard · cooldown %.1f s · buff %.1f s" % [
+			hero.kit_state.sauce, hero.kit_state.guard_cooldown, hero.kit_state.guard_duration]
+	if copy.evolution > 1:
+		ability.text += "\nGlassheart Surge · cooldown %.1f s · buff %.1f s" % [
+			hero.kit_state.surge_cooldown, hero.kit_state.surge_duration]
+	var evolution: Dictionary = simulation.evolution_offer(copy.id)
+	evolve_button.text = "Evolve → %s (Lv %d)" % [evolution.name, evolution.level] if evolution.has("name") else evolution.reason
+	evolve_button.disabled = blocked or not evolution.available
+	evolve_button.tooltip_text = "Refunds invested level points. Keeps level, XP and Gold upgrades." if evolution.available else evolution.reason
 	start_button.disabled = in_battle or blocked
 	start_button.text = "Resume" if simulation.phase == &"paused" else "Begin run"
 	pause_button.disabled = not in_battle or blocked
@@ -301,7 +324,8 @@ func _refresh() -> void:
 	%DeployToggle.disabled = blocked or simulation.phase != &"preparation" or (
 		copy.deployed and simulation.deployed_units().size() <= 1) or (
 		not copy.deployed and simulation.deployed_units().size() >= BattleSimulation.MAX_DEPLOYED_ALLIES)
-	%Name.text = simulation.config.definitions()[copy.species_id].display_name
+	%Name.text = definition.display_name
+	%Portrait.texture = definition.visual.texture
 	%Class.text = "%s · WARRIOR" % _rarity_for_species(copy.species_id).to_upper()
 
 func _sync_roster() -> void:
@@ -321,7 +345,7 @@ func _sync_roster() -> void:
 				roster_buttons[copy.id] = button
 		valid[copy.id] = true
 		button.text = "%s · Copy %d\n%s · Warrior · Level %d · %s\nView stats, upgrades & formation" % [
-			simulation.config.definitions()[copy.species_id].display_name, index + 1,
+			simulation.config.definition_for(copy).display_name, index + 1,
 			_rarity_for_species(copy.species_id).capitalize(), copy.level,
 			"Slot %d" % (copy.slot + 1) if copy.deployed else "Reserve"]
 	for copy_id: String in roster_buttons.keys():
@@ -341,3 +365,18 @@ func _enemy_count() -> int:
 		if not actor.allied:
 			count += 1
 	return count
+
+func _ask_evolution() -> void:
+	var offer: Dictionary = simulation.evolution_offer(selected_copy_id)
+	if blocked or not offer.available:
+		return
+	evolving_copy_id = selected_copy_id
+	var copy: UnitProgress = simulation.profile.copy_by_id(selected_copy_id)
+	var unlocks: String = "Sauce Reserve and Sauce Guard. Higher upgrade caps." if copy.evolution == 0 else "Glassheart Surge, stronger Sweep and Slow Simmer. Higher upgrade caps."
+	evolve_dialog.dialog_text = "Evolve into %s?\n%s\nBase stats stay the same. Level points are refunded and level upgrades reset.\nLevel, XP and Gold upgrades are kept. This evolution is permanent." % [offer.name, unlocks]
+	evolve_dialog.popup_centered(Vector2i(620, 220))
+
+func _confirm_evolution() -> void:
+	if not blocked:
+		simulation.evolve_copy(evolving_copy_id)
+	evolving_copy_id = ""

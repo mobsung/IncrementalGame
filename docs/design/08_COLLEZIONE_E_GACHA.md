@@ -6,7 +6,7 @@
 
 ## Evocazioni gacha e Dust
 
-Ogni giocatore inizia con **una unità iniziale** scelta dal design del gioco; la specie confermata è [John the Meatball](unita/SPAGHETTI_GOLEM.md). Le altre copie si ottengono con le evocazioni, pagando la valuta chiamata per ora **Dust**. Nella prima demo ogni evocazione costa **5 Dust**, un valore interamente configurabile per il bilanciamento. Ogni evocazione assegna lo stadio base di una specie.
+Ogni giocatore inizia con **una unità iniziale** scelta dal design del gioco: **Noodle Squire**, forma base del [Spaghetti Golem](../../content/units/warriors/spaghetti_golem/concepts/SPAGHETTI_GOLEM_CONCEPT.md), Rare Warrior che sostituisce John dal 27 settembre. Le altre copie si ottengono con le evocazioni pagando **Dust**. Nella prima demo ogni evocazione costa **5 Dust**, configurabile per il bilanciamento. Ogni evocazione assegna lo stadio base di una specie; il pool corrente contiene solo Spaghetti Golem.
 
 Le unità hanno rarità diverse. **Le rarità si sbloccano raggiungendo specifiche ondate**, per dare un obiettivo ulteriore alla progressione; specie, rarità, soglie e probabilità esatte saranno stabilite durante il design delle unità. Il pool delle evocazioni include le specie delle rarità disponibili. Si possono ottenere più copie della stessa specie: ciascuna è una copia indipendente. Nella prima demo non sono previste protezioni dai duplicati, garanzie dopo un numero di evocazioni o altri sistemi di compensazione della casualità. Eventuali usi ulteriori delle copie duplicate potranno essere valutati in futuro. Lo sblocco di ogni rarità è **permanente**: le specie delle rarità già sbloccate restano disponibili nelle evocazioni anche dopo un Chrono break.
 
