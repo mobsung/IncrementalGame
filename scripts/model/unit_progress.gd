@@ -5,6 +5,7 @@ extends RefCounted
 var id: String = ""
 var species_id: StringName = &"spaghetti_golem"
 var evolution: int = 0
+var evolution_path: PackedStringArray = []
 var level: int = 1
 var experience: float = 0.0
 var level_points: int = 0
@@ -12,13 +13,15 @@ var mobile: bool = true
 var priority: int = 0
 var slot: int = 4
 var deployed: bool = false
+var enemy_support: bool = false
 var movement_speed: float = 220.0
 var upgrade_ranks: Dictionary = {}
 var gold_ranks: Dictionary = {}
+var ability_priorities: Dictionary = {}
 
 const FIELDS: Array[StringName] = [
-	&"id", &"species_id", &"evolution", &"level", &"experience", &"level_points",
-	&"mobile", &"priority", &"slot", &"deployed", &"movement_speed"]
+	&"id", &"species_id", &"evolution", &"evolution_path", &"level", &"experience", &"level_points",
+	&"mobile", &"priority", &"slot", &"deployed", &"enemy_support", &"movement_speed"]
 
 func xp_required(config: BattleConfig) -> float:
 	return ceil(config.experience_base * pow(config.experience_growth, level - 1))
@@ -52,12 +55,14 @@ func to_data() -> Dictionary:
 		data[field] = get(field)
 	data[&"upgrade_ranks"] = upgrade_ranks.duplicate(true)
 	data[&"gold_ranks"] = gold_ranks.duplicate(true)
+	data[&"ability_priorities"] = ability_priorities.duplicate(true)
 	return data
 
 static func from_data(data: Dictionary) -> UnitProgress:
 	var copy: UnitProgress = UnitProgress.new()
 	for field: StringName in FIELDS:
-		copy.set(field, data[field])
+		copy.set(field, data.get(field, copy.get(field)))
 	copy.upgrade_ranks = data.get(&"upgrade_ranks", {}).duplicate(true)
 	copy.gold_ranks = data.get(&"gold_ranks", {}).duplicate(true)
+	copy.ability_priorities = data.get(&"ability_priorities", {}).duplicate(true)
 	return copy

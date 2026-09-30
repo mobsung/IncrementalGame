@@ -36,6 +36,14 @@ var roster_buttons: Dictionary = {}
 var evolve_button: Button
 var evolve_dialog: ConfirmationDialog
 var evolving_copy_id: String = ""
+var offline_runner: OfflineSimulation
+var offline_dialog: AcceptDialog
+var ability_order: VBoxContainer
+var ability_priority_controls: Dictionary = {}
+var branch_choice: OptionButton
+var branch_ids: Array[StringName] = []
+var evolving_branch_id: StringName = &""
+var role_choice: OptionButton
 
 func _ready() -> void:
 	get_tree().auto_accept_quit = false
@@ -79,6 +87,8 @@ func _ready() -> void:
 	%SummonButton.pressed.connect(_summon)
 	%DeployToggle.pressed.connect(_toggle_deployment)
 	evolve_button = Button.new()
+	branch_choice = OptionButton.new()
+	%UnitDetails.add_child(branch_choice)
 	evolve_button.name = "Evolve"
 	%UnitDetails.add_child(evolve_button)
 	evolve_button.pressed.connect(_ask_evolution)
@@ -86,6 +96,16 @@ func _ready() -> void:
 	evolve_dialog.title = "Evolve unit"
 	add_child(evolve_dialog)
 	evolve_dialog.confirmed.connect(_confirm_evolution)
+	ability_order = VBoxContainer.new()
+	var priority_title: Label = Label.new()
+	priority_title.text = "Ability priorities · higher values act first"
+	ability_order.add_child(priority_title)
+	%UnitDetails.add_child(ability_order)
+	role_choice = OptionButton.new()
+	role_choice.add_item("Allied unit")
+	role_choice.add_item("Enemy support · cannot be attacked")
+	role_choice.item_selected.connect(_change_role)
+	%UnitDetails.add_child(role_choice)
 	%BackToUnits.pressed.connect(_show_roster)
 	%StatsTab.pressed.connect(_show_unit_tab.bind(false))
 	%UpgradesTab.pressed.connect(_show_unit_tab.bind(true))
@@ -93,6 +113,36 @@ func _ready() -> void:
 	for entry: Array in [[%MenuBattle, &"battle"], [%MenuUnits, &"units"], [%MenuChrono, &"chrono"], [%MenuShop, &"shop"]]:
 		entry[0].pressed.connect(panels.toggle.bind(entry[1]))
 	panels.section_changed.connect(_on_section_changed)
+	_refresh()
+	if not blocked and not saved.is_empty() and save_store.loaded_saved_at > 0.0:
+		await _catch_up_offline(Time.get_unix_time_from_system() - save_store.loaded_saved_at)
+
+func _catch_up_offline(elapsed: float) -> void:
+	offline_runner = OfflineSimulation.new(simulation, elapsed)
+	if offline_runner.finished:
+		return
+	blocked = true
+	offline_dialog = AcceptDialog.new()
+	offline_dialog.title = "While you were away"
+	offline_dialog.get_ok_button().text = "Stop catch-up"
+	offline_dialog.confirmed.connect(offline_runner.cancel)
+	offline_dialog.canceled.connect(offline_runner.cancel)
+	add_child(offline_dialog)
+	offline_dialog.popup_centered(Vector2i(540, 180))
+	while not offline_runner.pump():
+		offline_dialog.dialog_text = "Simulating your squad · %.0f%%\nUp to %.0f minutes. Stops on defeat or a queued pause." % [
+			100.0 * offline_runner.processed_steps / offline_runner.total_steps,
+			simulation.config.offline_max_seconds / 60.0]
+		await get_tree().process_frame
+	blocked = false
+	_save()
+	var report: Dictionary = offline_runner.report
+	var elapsed_text: String = "%.0f seconds" % report.seconds if report.seconds < 60.0 else "%.1f minutes" % (report.seconds / 60.0)
+	offline_dialog.get_ok_button().text = "Continue"
+	offline_dialog.dialog_text = "Simulated %s · %s\n%d victories · %d defeats\n+%.1f Gold · +%.1f XP per deployed copy · +%d Dust\nUnfinished attempt rewards remain pending." % [
+		elapsed_text, report.reason, report.victories, report.defeats,
+		report.gold, report.xp_per_copy, report.dust]
+	offline_dialog.popup_centered(Vector2i(560, 220))
 	_refresh()
 
 func _on_section_changed(section: StringName) -> void:
@@ -124,13 +174,15 @@ func _show_unit_tab(show_upgrades: bool) -> void:
 	for control: Control in [%Identity, stats, ability, posture, priority, %InspectJohn]:
 		control.visible = not show_upgrades
 	upgrades.visible = show_upgrades
+	ability_order.visible = not show_upgrades
+	role_choice.visible = not show_upgrades and simulation.config.definition_for(simulation.profile.copy_by_id(selected_copy_id)).enemy_support_role
 	%StatsTab.set_pressed_no_signal(not show_upgrades)
 	%UpgradesTab.set_pressed_no_signal(show_upgrades)
 	%PanelScroll.scroll_vertical = 0
 
 func _inspect_actor(id: int) -> void:
 	var actor: CombatantState = Targeting.by_id(simulation.actors, id)
-	if actor != null and actor.allied:
+	if actor != null and not actor.copy_id.is_empty():
 		panels.show_section(&"units")
 		_open_copy(actor.copy_id)
 
@@ -176,7 +228,7 @@ func _save() -> void:
 	if not persist_progress:
 		return
 	var error: Error = save_store.write_state(simulation.to_data())
-	save_status.text = "Saved · offline paused" if error == OK else save_store.last_error
+	save_status.text = "Saved · offline enabled" if error == OK else save_store.last_error
 
 func _on_state_changed() -> void:
 	save_pending = true
@@ -251,10 +303,16 @@ func _refresh() -> void:
 	var copy: UnitProgress = simulation.profile.copy_by_id(selected_copy_id)
 	var hero: CombatantState = simulation.preview_actor(selected_copy_id)
 	var definition: CombatantDefinition = simulation.config.definition_for(copy)
+	_refresh_ability_order(copy, definition)
+	_refresh_evolution_choices(copy)
+	role_choice.visible = definition.enemy_support_role and not upgrades.visible
+	role_choice.disabled = blocked or simulation.phase == &"battle" or (not copy.deployed and simulation.phase != &"preparation")
+	role_choice.select(1 if copy.enemy_support else 0)
+	arena.formation_enemy_role = copy.enemy_support
 	var in_battle: bool = simulation.phase == &"battle"
 	%Record.text = "THE RUINED CROSSING  ·  Record %d" % simulation.record_wave
 	%CollectionSummary.text = "%d owned · %d / %d deployed\nEvery copy keeps its own level and upgrades." % [
-		simulation.profile.copies.size(), simulation.deployed_units().size(), BattleSimulation.MAX_DEPLOYED_ALLIES]
+		simulation.profile.copies.size(), simulation.deployed_units().size(), simulation.allied_limit()]
 	var offer: Dictionary = simulation.summon_offer()
 	%SummonButton.text = "Summon · %d Dust" % offer.cost
 	%SummonButton.disabled = blocked or not offer.available
@@ -278,23 +336,26 @@ func _refresh() -> void:
 		hero.ultra_critical_chance * 100.0, hero.ultra_critical_multiplier]
 	stats.text += "\nAttack speed  %.2f / s  ·  Range  %.0f\nHaste  %.0f  ·  Sweep area  +%.0f%%\nNext Sweep cooldown  %.2f s" % [
 		hero.attack_speed, hero.attack_range, hero.haste, hero.area_bonus * 100.0,
-		maxf(definition.kit.sweep_minimum_cooldown, hero.ability_cooldown(definition.ability.cooldown))]
+		maxf(definition.kit.sweep_minimum_cooldown, hero.ability_cooldown(definition.ability.cooldown)) if definition.kit != null else 0.0]
 	stats.text += "\nMulti Hit  %d  ·  Multi Cast  %d" % [hero.multi_hit, hero.multi_cast]
 	stats.text += "\nContribution per enemy defeated\n(before shared bonuses)\nGold +%.2f  ·  XP +%.2f  ·  Souls +%.2f" % [
 		UnitStats.reward_contribution(copy, definition, simulation.config, "gold"),
 		UnitStats.reward_contribution(copy, definition, simulation.config, "experience"),
 		UnitStats.reward_contribution(copy, definition, simulation.config, "souls")]
-	ability.text = "Meatball Jab · 100%% Physical Attack\nMeatball Sweep · %.0f%% Physical Attack · up to 3 targets\nSweep: %s\nSlow Simmer · heals every 4 s\nNext tick: %.1f s" % [
-		(definition.ability.damage_coefficient + hero.sweep_bonus) * 100.0,
-		"Casting" if hero.action == &"sweep" else ("Ready" if hero.cooldown <= 0 else "%.1f s" % hero.cooldown),
-		maxf(0.0, definition.kit.simmer_interval - float(hero.kit_state.simmer_elapsed))]
-	if copy.evolution > 0:
-		ability.text += "\n\nSauce Reserve · %d / 5\nSauce Guard · cooldown %.1f s · buff %.1f s" % [
-			hero.kit_state.sauce, hero.kit_state.guard_cooldown, hero.kit_state.guard_duration]
-	if copy.evolution > 1:
-		ability.text += "\nGlassheart Surge · cooldown %.1f s · buff %.1f s" % [
-			hero.kit_state.surge_cooldown, hero.kit_state.surge_duration]
-	var evolution: Dictionary = simulation.evolution_offer(copy.id)
+	if definition.kit != null:
+		ability.text = "Meatball Jab · 100%% Physical Attack\nMeatball Sweep · %.0f%% Physical Attack · up to 3 targets\nSweep: %s\nSlow Simmer · heals every 4 s\nNext tick: %.1f s" % [
+			(definition.ability.damage_coefficient + hero.sweep_bonus) * 100.0,
+			"Casting" if hero.action == &"sweep" else ("Ready" if hero.cooldown <= 0 else "%.1f s" % hero.cooldown),
+			maxf(0.0, definition.kit.simmer_interval - float(hero.kit_state.simmer_elapsed))]
+		if copy.evolution > 0:
+			ability.text += "\n\nSauce Reserve · %d / 5\nSauce Guard · cooldown %.1f s · buff %.1f s" % [
+				hero.kit_state.sauce, hero.kit_state.guard_cooldown, hero.kit_state.guard_duration]
+		if copy.evolution > 1:
+			ability.text += "\nGlassheart Surge · cooldown %.1f s · buff %.1f s" % [
+				hero.kit_state.surge_cooldown, hero.kit_state.surge_duration]
+	else:
+		ability.text = _generic_ability_description(hero, definition)
+	var evolution: Dictionary = simulation.evolution_offer(copy.id, _selected_branch())
 	evolve_button.text = "Evolve → %s (Lv %d)" % [evolution.name, evolution.level] if evolution.has("name") else evolution.reason
 	evolve_button.disabled = blocked or not evolution.available
 	evolve_button.tooltip_text = "Refunds invested level points. Keeps level, XP and Gold upgrades." if evolution.available else evolution.reason
@@ -302,7 +363,7 @@ func _refresh() -> void:
 	start_button.text = "Resume" if simulation.phase == &"paused" else "Begin run"
 	pause_button.disabled = not in_battle or blocked
 	pause_button.text = "Cancel queued pause" if simulation.pause_requested else "Pause after attempt"
-	posture.disabled = in_battle or blocked
+	posture.disabled = in_battle or blocked or copy.enemy_support
 	posture.select(0 if copy.mobile else 1)
 	priority.disabled = blocked
 	priority.select(copy.priority)
@@ -322,11 +383,12 @@ func _refresh() -> void:
 	%InspectJohn.disabled = selected_actor == null
 	%DeployToggle.text = "Move to reserve" if copy.deployed else "Deploy to first free slot"
 	%DeployToggle.disabled = blocked or simulation.phase != &"preparation" or (
-		copy.deployed and simulation.deployed_units().size() <= 1) or (
-		not copy.deployed and simulation.deployed_units().size() >= BattleSimulation.MAX_DEPLOYED_ALLIES)
+		copy.deployed and not copy.enemy_support and simulation.deployed_units().size() <= 1) or (
+		not copy.deployed and ((not copy.enemy_support and simulation.deployed_units().size() >= simulation.allied_limit()) or (
+			copy.enemy_support and simulation.profile.deployed_copies().size() > simulation.deployed_units().size())))
 	%Name.text = definition.display_name
 	%Portrait.texture = definition.visual.texture
-	%Class.text = "%s · WARRIOR" % _rarity_for_species(copy.species_id).to_upper()
+	%Class.text = "%s · %s" % [_rarity_for_species(copy.species_id).to_upper(), definition.unit_class.to_upper()]
 
 func _sync_roster() -> void:
 	var valid: Dictionary = {}
@@ -344,10 +406,10 @@ func _sync_roster() -> void:
 				%RosterList.add_child(button)
 				roster_buttons[copy.id] = button
 		valid[copy.id] = true
-		button.text = "%s · Copy %d\n%s · Warrior · Level %d · %s\nView stats, upgrades & formation" % [
+		button.text = "%s · Copy %d\n%s · %s · Level %d · %s\nView stats, upgrades & formation" % [
 			simulation.config.definition_for(copy).display_name, index + 1,
-			_rarity_for_species(copy.species_id).capitalize(), copy.level,
-			"Slot %d" % (copy.slot + 1) if copy.deployed else "Reserve"]
+			_rarity_for_species(copy.species_id).capitalize(), simulation.config.definition_for(copy).unit_class.capitalize(), copy.level,
+			("Enemy support %d" if copy.enemy_support else "Slot %d") % (copy.slot + 1) if copy.deployed else "Reserve"]
 	for copy_id: String in roster_buttons.keys():
 		if not valid.has(copy_id):
 			roster_buttons[copy_id].queue_free()
@@ -367,16 +429,85 @@ func _enemy_count() -> int:
 	return count
 
 func _ask_evolution() -> void:
-	var offer: Dictionary = simulation.evolution_offer(selected_copy_id)
+	var offer: Dictionary = simulation.evolution_offer(selected_copy_id, _selected_branch())
 	if blocked or not offer.available:
 		return
 	evolving_copy_id = selected_copy_id
+	evolving_branch_id = offer.id
 	var copy: UnitProgress = simulation.profile.copy_by_id(selected_copy_id)
 	var unlocks: String = "Sauce Reserve and Sauce Guard. Higher upgrade caps." if copy.evolution == 0 else "Glassheart Surge, stronger Sweep and Slow Simmer. Higher upgrade caps."
+	if simulation.config.definition_for(copy).kit == null:
+		unlocks = offer.description
 	evolve_dialog.dialog_text = "Evolve into %s?\n%s\nBase stats stay the same. Level points are refunded and level upgrades reset.\nLevel, XP and Gold upgrades are kept. This evolution is permanent." % [offer.name, unlocks]
 	evolve_dialog.popup_centered(Vector2i(620, 220))
 
 func _confirm_evolution() -> void:
 	if not blocked:
-		simulation.evolve_copy(evolving_copy_id)
+		simulation.evolve_copy(evolving_copy_id, evolving_branch_id)
 	evolving_copy_id = ""
+	evolving_branch_id = &""
+
+func _selected_branch() -> StringName:
+	return branch_ids[branch_choice.selected] if branch_choice.selected >= 0 and branch_choice.selected < branch_ids.size() else &""
+
+func _refresh_evolution_choices(copy: UnitProgress) -> void:
+	var choices: Array[Dictionary] = simulation.evolution_choices(copy.id)
+	var ids: Array[StringName] = []
+	for option: Dictionary in choices:
+		ids.append(option.id)
+	if ids != branch_ids:
+		branch_ids = ids
+		branch_choice.clear()
+		for option: Dictionary in choices:
+			branch_choice.add_item("%s · Level %d" % [option.name, option.level])
+	branch_choice.visible = ids.size() > 1
+	branch_choice.disabled = blocked
+
+func _change_role(index: int) -> void:
+	if blocked:
+		return
+	var enemy_role: bool = index == 1
+	var positions: PackedVector2Array = simulation.config.support_slots if enemy_role else simulation.config.slots
+	for slot: int in range(positions.size()):
+		if simulation.set_copy_role(selected_copy_id, enemy_role, slot):
+			return
+	_refresh()
+
+func _refresh_ability_order(copy: UnitProgress, definition: CombatantDefinition) -> void:
+	var available: Array[StringName] = simulation.active_ability_ids(copy)
+	for id: StringName in available:
+		if not ability_priority_controls.has(id):
+			var row: HBoxContainer = HBoxContainer.new()
+			var label: Label = Label.new()
+			var active: AbilityDefinition = AbilitySystem.definition_for(definition, id)
+			label.text = active.display_name if active != null else definition.kit.action_name(id)
+			label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			row.add_child(label)
+			var value: SpinBox = SpinBox.new()
+			value.min_value = 0
+			value.max_value = 100
+			value.tooltip_text = "Ability priority: higher values act first. Changes apply to the next action."
+			value.value_changed.connect(_change_ability_priority.bind(id))
+			row.add_child(value)
+			ability_order.add_child(row)
+			ability_priority_controls[id] = value
+	for id: StringName in ability_priority_controls:
+		var value: SpinBox = ability_priority_controls[id]
+		value.get_parent().visible = id in available
+		value.editable = not blocked
+		var default_priority: int = definition.kit.action_priority(copy, id) if definition.kit != null and AbilitySystem.definition_for(definition, id) == null else 0
+		value.set_value_no_signal(int(copy.ability_priorities.get(id, default_priority)))
+
+func _change_ability_priority(value: float, id: StringName) -> void:
+	if not blocked:
+		simulation.set_ability_priority(selected_copy_id, id, int(value))
+
+func _generic_ability_description(actor: CombatantState, definition: CombatantDefinition) -> String:
+	var lines: PackedStringArray = []
+	for active: AbilityDefinition in definition.active_abilities:
+		var left: float = actor.ability_cooldowns.get(active.id, 0.0)
+		lines.append("%s · %s · range %.0f" % [active.display_name,
+			"Casting" if actor.action == active.id else ("Ready" if left <= 0.0 else "%.1f s" % left), active.range_radius])
+	for status: Dictionary in actor.statuses:
+		lines.append("%s · %d stacks · %.1f s" % [status.id, status.stacks, status.remaining])
+	return "\n".join(lines)

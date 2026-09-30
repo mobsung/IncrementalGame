@@ -14,7 +14,7 @@ const FIELDS: Array[StringName] = [
 	&"auto_advance", &"pause_on_defeat", &"pause_requested", &"attempt_time",
 	&"spawn_index", &"special_spawned", &"next_id", &"souls", &"dust_earned",
 	&"pending_gold", &"pending_xp", &"pending_souls", &"accumulator", &"tick",
-	&"sequence", &"attempt_snapshot", &"last_result"]
+	&"sequence", &"attempt_snapshot", &"last_result", &"projectiles"]
 
 var config: BattleConfig = CONFIG
 var profile: PlayerProfile = PlayerProfile.new()
@@ -43,6 +43,8 @@ var tick: int = 0
 var sequence: Array[int] = []
 var attempt_snapshot: Array[Dictionary] = []
 var last_result: Dictionary = {}
+var offline_running: bool = false
+var projectiles: Array[Dictionary] = []
 
 func _init(seed_value: int = 1) -> void:
 	rng.seed = seed_value
@@ -56,7 +58,14 @@ func unit() -> UnitProgress:
 	return profile.copies[0]
 
 func deployed_units() -> Array[UnitProgress]:
-	return profile.deployed_copies()
+	var result: Array[UnitProgress] = []
+	for copy: UnitProgress in profile.deployed_copies():
+		if not copy.enemy_support:
+			result.append(copy)
+	return result
+
+func allied_limit() -> int:
+	return mini(config.slots.size(), MAX_DEPLOYED_ALLIES + roundi(ShopModifiers.value(0.0, "allied_slots", profile, config)))
 
 func copy_map() -> Dictionary:
 	var result: Dictionary = {}
@@ -66,7 +75,7 @@ func copy_map() -> Dictionary:
 
 func actor_for_copy(copy_id: String) -> CombatantState:
 	for actor: CombatantState in actors:
-		if actor.allied and actor.copy_id == copy_id:
+		if actor.copy_id == copy_id:
 			return actor
 	return null
 
@@ -81,6 +90,7 @@ func preview_actor(copy_id: String) -> CombatantState:
 	if definition == null:
 		return null
 	actor = CombatantState.create(definition, 0, true, config.slots[copy.slot])
+	actor.definition_id = copy.species_id
 	actor.copy_id = copy.id
 	actor.speed = copy.movement_speed
 	_apply_progress(actor)
@@ -109,11 +119,14 @@ func summon() -> Dictionary:
 func _create_allies() -> void:
 	actors.clear()
 	var entity_id: int = 1
-	for copy: UnitProgress in deployed_units():
+	for copy: UnitProgress in profile.deployed_copies():
 		var definition: CombatantDefinition = config.definition_for(copy)
 		if definition == null:
 			continue
-		var actor: CombatantState = CombatantState.create(definition, entity_id, true, config.slots[copy.slot])
+		var positions: PackedVector2Array = config.support_slots if copy.enemy_support else config.slots
+		var actor: CombatantState = CombatantState.create(definition, entity_id, not copy.enemy_support, positions[copy.slot])
+		actor.definition_id = copy.species_id
+		actor.support = copy.enemy_support
 		actor.copy_id = copy.id
 		actor.speed = copy.movement_speed
 		_apply_progress(actor)
@@ -141,7 +154,7 @@ func _begin_attempt() -> void:
 	pending_xp = 0.0
 	pending_souls = 0.0
 	attempt_snapshot.clear()
-	for actor: CombatantState in allied_actors():
+	for actor: CombatantState in owned_actors():
 		var copy: UnitProgress = profile.copy_by_id(actor.copy_id)
 		var definition: CombatantDefinition = config.definition_for(copy)
 		if definition.kit != null:
@@ -164,20 +177,29 @@ func step() -> void:
 	if phase != &"battle":
 		return
 	tick += 1
-	var result: Dictionary = CombatSystem.step(actors, config.definitions(), copy_map(), config, rng, STEP)
-	if not result.events.is_empty():
+	for index: int in range(actors.size() - 1, -1, -1):
+		var actor: CombatantState = actors[index]
+		if not actor.summoner_id.is_empty():
+			actor.summon_remaining = maxf(0.0, actor.summon_remaining - STEP)
+			if actor.summon_remaining <= 0.0:
+				actors.remove_at(index)
+	var result: Dictionary = CombatSystem.step(actors, config.definitions(), copy_map(), config, rng, STEP, projectiles)
+	for request: Dictionary in result.requests:
+		if request.kind == "summon":
+			_spawn_summons(request.actor, request.effect)
+	if not offline_running and not result.events.is_empty():
 		effects_emitted.emit(result.events)
 	for id: int in result.deaths:
 		var actor: CombatantState = Targeting.by_id(actors, id)
-		if not actor.allied:
+		if not actor.allied and not actor.support:
 			var definition: CombatantDefinition = config.definitions()[actor.definition_id]
 			# Price/reward changes affect subsequent kills, never rewards already earned.
-			pending_gold += reward_value(definition, "gold")
-			pending_xp += reward_value(definition, "experience")
-			pending_souls += reward_value(definition, "souls")
+			pending_gold += reward_value(definition, "gold", result.death_statuses[id]) * actor.reward_multiplier
+			pending_xp += reward_value(definition, "experience", result.death_statuses[id]) * actor.reward_multiplier
+			pending_souls += reward_value(definition, "souls", result.death_statuses[id]) * actor.reward_multiplier
 	# Keep the deployed dead unit; defeated enemies can now be removed.
 	for index: int in range(actors.size() - 1, -1, -1):
-		if not actors[index].allied and not actors[index].alive():
+		if not actors[index].alive() and (not actors[index].allied or not actors[index].summoner_id.is_empty()):
 			actors.remove_at(index)
 	if not has_living_allies():
 		_finish(false)
@@ -190,30 +212,42 @@ func step() -> void:
 func allied_actors() -> Array[CombatantState]:
 	var result: Array[CombatantState] = []
 	for actor: CombatantState in actors:
-		if actor.allied:
+		if actor.allied and not actor.copy_id.is_empty():
+			result.append(actor)
+	return result
+
+func owned_actors() -> Array[CombatantState]:
+	var result: Array[CombatantState] = []
+	for actor: CombatantState in actors:
+		if not actor.copy_id.is_empty():
 			result.append(actor)
 	return result
 
 func has_living_allies() -> bool:
 	for actor: CombatantState in actors:
-		if actor.allied and actor.alive():
+		if actor.allied and not actor.copy_id.is_empty() and actor.alive():
 			return true
 	return false
 
 func has_living_enemies() -> bool:
 	for actor: CombatantState in actors:
-		if not actor.allied and actor.alive():
+		if not actor.allied and not actor.support and actor.summoner_id.is_empty() and actor.alive():
 			return true
 	return false
 
-func reward_value(enemy: CombatantDefinition, stat: String) -> float:
+func reward_value(enemy: CombatantDefinition, stat: String, statuses: Array = []) -> float:
 	# Read permanent progress so a deployed copy still contributes after dying.
 	var contribution: float = 0.0
-	for copy: UnitProgress in deployed_units():
+	for copy: UnitProgress in profile.deployed_copies():
 		var definition: CombatantDefinition = config.definitions().get(copy.species_id)
 		if definition != null:
 			contribution += UnitStats.reward_contribution(copy, definition, config, stat)
-	return ShopModifiers.value(float(enemy.get(stat)) + contribution, stat, profile, config)
+	var addition: float = 0.0
+	var percentage: float = 0.0
+	for status: Dictionary in statuses:
+		addition += float(status.additive.get(stat, 0.0)) * status.stacks
+		percentage += float(status.multiplier.get(stat, 0.0)) * status.stacks
+	return maxf(0.0, ShopModifiers.value(float(enemy.get(stat)) + contribution + addition, stat, profile, config) * maxf(0.0, 1.0 + percentage))
 
 func _spawn_due() -> void:
 	while spawn_index < 12 and attempt_time + 0.000001 >= float(spawn_index) * config.spawn_window / 11.0:
@@ -232,6 +266,23 @@ func _spawn(definition: CombatantDefinition, offset: Vector2) -> void:
 	next_id += 1
 	actors.append(actor)
 
+func _spawn_summons(source: CombatantState, effect: AbilityEffectDefinition) -> void:
+	var owner: String = AbilitySystem.owner_id(source)
+	var count: int = 0
+	for actor: CombatantState in actors:
+		if actor.summoner_id == owner and actor.definition_id == effect.summon.id and actor.alive():
+			count += 1
+	for index: int in range(mini(effect.summon_count, effect.summon_limit - count)):
+		var position: Vector2 = (source.position + Vector2(0, (index - 0.5) * config.spawn_spread)).clamp(config.arena.position, config.arena.end)
+		var health_scale: float = 1.0 if source.allied else pow(config.health_growth, wave - 1)
+		var attack_scale: float = 1.0 if source.allied else pow(config.attack_growth, wave - 1)
+		var actor: CombatantState = CombatantState.create(effect.summon, next_id, source.allied, position, health_scale, attack_scale)
+		actor.summoner_id = owner
+		actor.summon_remaining = effect.summon_duration
+		actor.reward_multiplier = effect.summon_reward_multiplier
+		next_id += 1
+		actors.append(actor)
+
 func _finish(victory: bool) -> void:
 	var xp: float = pending_xp if victory and wave > record_wave and wave >= xp_block else 0.0
 	profile.gold += pending_gold
@@ -240,7 +291,7 @@ func _finish(victory: bool) -> void:
 		souls -= config.soul_threshold * (dust_earned + 1)
 		dust_earned += 1
 		profile.dust += 1
-	for copy: UnitProgress in deployed_units():
+	for copy: UnitProgress in profile.deployed_copies():
 		copy.grant_experience(xp, config)
 	last_result = {"victory": victory, "wave": wave, "gold": pending_gold, "xp": xp, "souls": pending_souls}
 	if victory:
@@ -251,6 +302,7 @@ func _finish(victory: bool) -> void:
 		wave = wave + 1 if auto_advance else selected_wave
 	else:
 		xp_block = maxi(xp_block, wave)
+		projectiles.clear()
 		actors.clear()
 		for actor_data: Dictionary in attempt_snapshot:
 			var restored: CombatantState = CombatantState.from_data(actor_data)
@@ -258,7 +310,7 @@ func _finish(victory: bool) -> void:
 			if copy == null:
 				continue
 			_apply_progress(restored)
-			restored.position = config.slots[copy.slot]
+			restored.position = (config.support_slots if copy.enemy_support else config.slots)[copy.slot]
 			restored.anchor = restored.position
 			restored.target_id = 0
 			restored.return_wait = 0.0
@@ -273,7 +325,7 @@ func _finish(victory: bool) -> void:
 	pending_xp = 0.0
 	pending_souls = 0.0
 	phase = &"paused"
-	var should_pause: bool = pause_requested or (not victory and pause_on_defeat)
+	var should_pause: bool = pause_requested or (not victory and (pause_on_defeat or offline_running))
 	pause_requested = false
 	if not should_pause:
 		_begin_attempt()
@@ -313,23 +365,48 @@ func set_copy_priority(copy_id: String, priority: int) -> bool:
 	state_changed.emit()
 	return true
 
+func set_ability_priority(copy_id: String, ability_id: StringName, value: int) -> bool:
+	var copy: UnitProgress = profile.copy_by_id(copy_id)
+	if copy == null or value < 0 or value > 100:
+		return false
+	var definition: CombatantDefinition = config.definition_for(copy)
+	var active: AbilityDefinition = AbilitySystem.definition_for(definition, ability_id)
+	if active == null and (definition.kit == null or ability_id not in definition.kit.available_actions(copy)):
+		return false
+	copy.ability_priorities[ability_id] = value
+	state_changed.emit()
+	return true
+
+func active_ability_ids(copy: UnitProgress) -> Array[StringName]:
+	var definition: CombatantDefinition = config.definition_for(copy)
+	var result: Array[StringName] = []
+	if definition.kit != null:
+		result.assign(definition.kit.available_actions(copy))
+	for active: AbilityDefinition in definition.active_abilities:
+		if copy.evolution >= active.minimum_evolution:
+			result.append(active.id)
+	return result
+
 func set_slot(index: int) -> void:
 	set_copy_slot(unit().id, index)
 
 func set_copy_slot(copy_id: String, index: int) -> bool:
-	if phase == &"battle" or index < 0 or index >= config.slots.size():
+	if phase == &"battle" or index < 0:
 		return false
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
 	if copy == null or not copy.deployed:
 		return false
-	for other: UnitProgress in deployed_units():
-		if other.id != copy_id and other.slot == index:
+	var positions: PackedVector2Array = config.support_slots if copy.enemy_support else config.slots
+	if index >= positions.size():
+		return false
+	for other: UnitProgress in profile.deployed_copies():
+		if other.id != copy_id and other.enemy_support == copy.enemy_support and other.slot == index:
 			return false
 	var actor: CombatantState = actor_for_copy(copy_id)
 	if actor == null:
 		return false
 	copy.slot = index
-	actor.anchor = config.slots[index]
+	actor.anchor = positions[index]
 	actor.position = actor.anchor
 	actor.target_id = 0
 	actor.return_wait = 0.0
@@ -339,20 +416,73 @@ func set_copy_slot(copy_id: String, index: int) -> bool:
 	state_changed.emit()
 	return true
 
+func set_copy_role(copy_id: String, enemy_support: bool, slot: int = 0) -> bool:
+	var copy: UnitProgress = profile.copy_by_id(copy_id)
+	if phase == &"battle" or copy == null or copy.enemy_support == enemy_support:
+		return false
+	if not copy.deployed and phase != &"preparation":
+		return false
+	if enemy_support and (not config.definition_for(copy).enemy_support_role or (copy.deployed and deployed_units().size() <= 1)):
+		return false
+	if copy.deployed and not enemy_support and deployed_units().size() >= allied_limit():
+		return false
+	var positions: PackedVector2Array = config.support_slots if enemy_support else config.slots
+	if slot < 0 or slot >= positions.size():
+		return false
+	if not copy.deployed:
+		copy.enemy_support = enemy_support
+		copy.slot = slot
+		state_changed.emit()
+		return true
+	for other: UnitProgress in profile.deployed_copies():
+		if other.id != copy_id and other.enemy_support == enemy_support and (other.slot == slot or enemy_support):
+			return false
+	var actor: CombatantState = actor_for_copy(copy_id)
+	if actor == null:
+		return false
+	var definition: CombatantDefinition = config.definition_for(copy)
+	if AbilitySystem.definition_for(definition, actor.action) != null:
+		AbilitySystem.interrupt(actor)
+	elif actor.action == &"sweep":
+		actor.cooldown = actor.pending_cooldown
+	actor.clear_action()
+	for index: int in range(projectiles.size() - 1, -1, -1):
+		if projectiles[index].source_id == actor.id:
+			projectiles.remove_at(index)
+	for index: int in range(actors.size() - 1, -1, -1):
+		if actors[index].summoner_id == copy_id:
+			actors.remove_at(index)
+	copy.enemy_support = enemy_support
+	copy.slot = slot
+	actor.allied = not enemy_support
+	actor.support = enemy_support
+	actor.position = positions[slot]
+	actor.anchor = actor.position
+	actor.target_id = 0
+	actor.return_wait = 0.0
+	actor.returning = false
+	state_changed.emit()
+	return true
+
 func set_copy_deployed(copy_id: String, deployed: bool, slot: int = -1) -> bool:
 	if phase != &"preparation":
 		return false
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
 	if copy == null or copy.deployed == deployed:
 		return false
-	var current: Array[UnitProgress] = deployed_units()
-	if deployed and current.size() >= MAX_DEPLOYED_ALLIES:
+	var current: Array[UnitProgress] = []
+	for other: UnitProgress in profile.deployed_copies():
+		if other.enemy_support == copy.enemy_support:
+			current.append(other)
+	var limit: int = 1 if copy.enemy_support else allied_limit()
+	if deployed and current.size() >= limit:
 		return false
-	if not deployed and current.size() <= 1:
+	if not deployed and not copy.enemy_support and current.size() <= 1:
 		return false
 	if deployed:
-		var destination: int = slot if slot >= 0 else _first_free_slot()
-		if destination < 0 or destination >= config.slots.size():
+		var positions: PackedVector2Array = config.support_slots if copy.enemy_support else config.slots
+		var destination: int = slot if slot >= 0 else _first_free_slot(copy.enemy_support)
+		if destination < 0 or destination >= positions.size():
 			return false
 		for other: UnitProgress in current:
 			if other.slot == destination:
@@ -363,11 +493,13 @@ func set_copy_deployed(copy_id: String, deployed: bool, slot: int = -1) -> bool:
 	state_changed.emit()
 	return true
 
-func _first_free_slot() -> int:
+func _first_free_slot(enemy_support: bool = false) -> int:
 	var occupied: Dictionary = {}
-	for copy: UnitProgress in deployed_units():
-		occupied[copy.slot] = true
-	for index: int in range(config.slots.size()):
+	for copy: UnitProgress in profile.deployed_copies():
+		if copy.enemy_support == enemy_support:
+			occupied[copy.slot] = true
+	var positions: PackedVector2Array = config.support_slots if enemy_support else config.slots
+	for index: int in range(positions.size()):
 		if not occupied.has(index):
 			return index
 	return -1
@@ -375,24 +507,48 @@ func _first_free_slot() -> int:
 func purchase_upgrade(upgrade_id: StringName) -> bool:
 	return purchase_copy_upgrade(unit().id, upgrade_id)
 
-func evolution_offer(copy_id: String) -> Dictionary:
+func evolution_choices(copy_id: String) -> Array[Dictionary]:
+	var copy: UnitProgress = profile.copy_by_id(copy_id)
+	var result: Array[Dictionary] = []
+	if copy == null:
+		return result
+	var current: CombatantDefinition = config.definition_for(copy)
+	for option: EvolutionDefinition in current.evolution_options:
+		result.append({"id": option.id, "name": option.form.display_name, "level": option.required_level, "description": option.description})
+	if result.is_empty() and copy.evolution_path.is_empty():
+		var base: CombatantDefinition = config.definitions()[copy.species_id]
+		if copy.evolution < base.forms.size():
+			var next: CombatantDefinition = base.forms[copy.evolution]
+			result.append({"id": &"linear", "name": next.display_name, "level": next.evolution_level})
+	return result
+
+func evolution_offer(copy_id: String, branch_id: StringName = &"") -> Dictionary:
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
 	if copy == null:
 		return {"available": false, "reason": "Unknown copy"}
-	var base: CombatantDefinition = config.definitions()[copy.species_id]
-	if copy.evolution >= base.forms.size():
+	var choices: Array[Dictionary] = evolution_choices(copy_id)
+	if choices.is_empty():
 		return {"available": false, "reason": "Final evolution"}
-	var next: CombatantDefinition = base.forms[copy.evolution]
+	if branch_id.is_empty() and choices.size() > 1:
+		return {"available": false, "reason": "Choose an evolution branch"}
+	var choice: Dictionary = {}
+	for option: Dictionary in choices:
+		if branch_id.is_empty() or option.id == branch_id:
+			choice = option
+			break
+	if choice.is_empty():
+		return {"available": false, "reason": "Unknown evolution branch"}
 	var reason: String = ""
 	if copy.deployed and phase == &"battle":
 		reason = "Pause after the attempt to evolve"
-	elif copy.level < next.evolution_level:
-		reason = "Requires level %d" % next.evolution_level
+	elif copy.level < choice.level:
+		reason = "Requires level %d" % choice.level
 	return {"available": reason.is_empty(), "reason": reason,
-		"name": next.display_name, "level": next.evolution_level}
+		"name": choice.name, "level": choice.level, "id": choice.id, "description": choice.get("description", "")}
 
-func evolve_copy(copy_id: String) -> bool:
-	if not evolution_offer(copy_id).available:
+func evolve_copy(copy_id: String, branch_id: StringName = &"") -> bool:
+	var offer: Dictionary = evolution_offer(copy_id, branch_id)
+	if not offer.available:
 		return false
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
 	for id: Variant in copy.upgrade_ranks:
@@ -400,6 +556,11 @@ func evolve_copy(copy_id: String) -> bool:
 		for rank: int in range(copy.purchased_rank(id)):
 			copy.level_points += upgrade.cost_for_rank(rank)
 	copy.upgrade_ranks.clear()
+	if offer.id != &"linear":
+		if copy.evolution_path.is_empty():
+			for index: int in range(copy.evolution):
+				copy.evolution_path.append("__linear_%d" % (index + 1))
+		copy.evolution_path.append(String(offer.id))
 	copy.evolution += 1
 	var actor: CombatantState = actor_for_copy(copy_id)
 	if actor != null:
@@ -462,6 +623,7 @@ func chrono_break() -> void:
 	sequence.clear()
 	attempt_snapshot.clear()
 	last_result.clear()
+	projectiles.clear()
 	_create_allies()
 	state_changed.emit()
 
@@ -475,6 +637,8 @@ func shop_offer(shop: StringName, upgrade_id: StringName) -> Dictionary:
 	var reason: String = ""
 	if rank >= upgrade.max_ranks:
 		reason = "Maximum rank"
+	elif record_wave < upgrade.required_record:
+		reason = "Requires run record %d" % upgrade.required_record
 	elif not is_finite(cost) or balance < cost:
 		reason = "Not enough Gold" if shop == &"global" else "Not enough Shards"
 	return {"available": reason.is_empty(), "reason": reason, "rank": rank, "cost": cost}
@@ -488,7 +652,7 @@ func purchase_shop_upgrade(shop: StringName, upgrade_id: StringName) -> bool:
 	else:
 		profile.shards -= offer.cost
 	profile.shop_ranks(shop)[upgrade_id] = offer.rank + 1
-	for actor: CombatantState in allied_actors():
+	for actor: CombatantState in owned_actors():
 		_apply_progress(actor)
 	state_changed.emit()
 	return true
@@ -508,14 +672,15 @@ func restore(data: Dictionary) -> void:
 	data = data.duplicate(true)
 	profile = PlayerProfile.from_data(data.profile)
 	for field: StringName in FIELDS:
-		if field != &"attempt_snapshot":
+		if field not in [&"attempt_snapshot", &"projectiles"]:
 			set(field, data[field])
 	attempt_snapshot.assign(data.attempt_snapshot)
+	projectiles.assign(data.get("projectiles", []))
 	actors.clear()
 	for actor_data: Dictionary in data.actors:
 		actors.append(CombatantState.from_data(actor_data))
 	for actor: CombatantState in actors:
-		if actor.allied:
+		if not actor.copy_id.is_empty():
 			_apply_progress(actor)
 	rng.seed = data.rng_seed
 	rng.state = data.rng_state

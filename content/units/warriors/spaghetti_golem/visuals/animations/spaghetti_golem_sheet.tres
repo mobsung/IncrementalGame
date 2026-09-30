@@ -1,14 +1,23 @@
 [gd_resource type="Resource" load_steps=5 format=3]
 [ext_resource type="Script" path="res://content/units/warriors/spaghetti_golem/visuals/animations/sprite_sheet_motion.gd" id="1"]
-[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/spaghetti_golem_locomotion.png" id="2"]
-[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/spaghetti_golem_attacks.png" id="3"]
-[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/spaghetti_golem_abilities.png" id="4"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/refined/spaghetti_golem_locomotion.png" id="2"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/refined/spaghetti_golem_attacks.png" id="3"]
+[ext_resource type="Texture2D" path="res://content/units/warriors/spaghetti_golem/visuals/spritesheets/refined/spaghetti_golem_abilities.png" id="4"]
 [resource]
 script = ExtResource("1")
 locomotion = ExtResource("2")
 attacks = ExtResource("3")
 abilities = ExtResource("4")
 evolution = 2
-locomotion_row_cuts = PackedVector3Array(0.263, 0.506, 0.754, 0.262, 0.518, 0.765, 0.274, 0.518, 0.766, 0.269, 0.51, 0.76)
-locomotion_y_cuts = Vector3(0.263, 0.5, 0.733)
+idle_drip_origins = PackedVector2Array(0.33203125, 0.66875, 0.64296875, 0.68125)
 attack_row_cuts = PackedVector3Array(0.25, 0.5, 0.75, 0.261, 0.509, 0.753, 0.25, 0.5, 0.75, 0.292, 0.518, 0.753)
+locomotion_row_cuts = PackedVector3Array(0.2498078, 0.4996157, 0.7494235, 0.2498078, 0.4996157, 0.7494235, 0.2498078, 0.4996157, 0.7494235, 0.2498078, 0.4996157, 0.7494235)
+locomotion_y_cuts = Vector3(0.2531017, 0.4995864, 0.7427626)
+locomotion_registration = PackedVector3Array(0.1425826, 0.2506203, 1.0750988, 0.3893159, 0.2506203, 1.0750988, 0.6329746, 0.2506203, 1.0750988, 0.9054573, 0.2497932, 1.0750988, 0.1287471, 0.4855252, 1.0750988, 0.3877786, 0.4846981, 1.0750988, 0.6302844, 0.4855252, 1.0750988, 0.8781706, 0.4863524, 1.0750988, 0.131053, 0.7187758, 1.0750988, 0.3685626, 0.7162945, 1.0750988, 0.6325903, 0.7179487, 1.0750988, 0.8839354, 0.7162945, 1.0750988, 0.1468101, 0.9487179, 1.0750988, 0.3958493, 0.9569892, 1.0750988, 0.6348962, 0.9437552, 1.0750988, 0.877402, 0.9454094, 1.0750988)
+attack_row_cuts = PackedVector3Array(0.2496013, 0.5, 0.7496013, 0.2496013, 0.5103668, 0.7496013, 0.2496013, 0.5, 0.7496013, 0.2799043, 0.5127592, 0.7496013)
+attack_y_cuts = Vector3(0.2535885, 0.5, 0.7496013)
+attack_registration = PackedVector3Array(0.1267943, 0.2511962, 1.2769953, 0.3708134, 0.2511962, 1.2769953, 0.6208134, 0.2511962, 1.2769953, 0.8600478, 0.2511962, 1.2769953, 0.1108453, 0.4952153, 1.2769953, 0.3600478, 0.4952153, 1.2769953, 0.6108453, 0.4952153, 1.2769953, 0.872807, 0.4952153, 1.2769953, 0.1279904, 0.7320574, 1.2769953, 0.3779904, 0.7320574, 1.2769953, 0.6208134, 0.7320574, 1.2769953, 0.8648325, 0.7320574, 1.2769953, 0.1160287, 0.9545455, 1.2769953, 0.3716108, 0.9545455, 1.2769953, 0.6164274, 0.9545455, 1.2769953, 0.8740032, 0.9545455, 1.2769953)
+ability_row_cuts = PackedVector3Array(0.2496013, 0.5, 0.7496013, 0.2496013, 0.5, 0.7496013, 0.2496013, 0.5, 0.7496013, 0.2496013, 0.5, 0.7496013)
+ability_y_cuts = Vector3(0.2496013, 0.5, 0.7488038)
+ability_registration = PackedVector3Array(0.145933, 0.2368421, 1.219731, 0.3983254, 0.2368421, 1.219731, 0.6479266, 0.2368421, 1.219731, 0.8967305, 0.2368421, 1.219731, 0.1451356, 0.4657097, 1.219731, 0.3899522, 0.4665072, 1.219731, 0.6395534, 0.4665072, 1.219731, 0.8947368, 0.4665072, 1.219731, 0.1431419, 0.7033493, 1.1623932, 0.3931419, 0.7041467, 1.1623932, 0.6431419, 0.7041467, 1.1623932, 0.8879585, 0.7041467, 1.1623932, 0.1411483, 0.9449761, 1.1623932, 0.3907496, 0.9457735, 1.1623932, 0.6371611, 0.9457735, 1.1623932, 0.888756, 0.9449761, 1.1623932)
+guard_pose_order = PackedInt32Array(4, 6, 5, 7)

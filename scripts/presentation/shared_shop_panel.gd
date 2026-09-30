@@ -30,6 +30,8 @@ func refresh(blocked: bool) -> void:
 			effect = "+%.0f%% area per rank" % (upgrade.increment * 100.0)
 		elif upgrade.stat.ends_with("_chance") and upgrade.operation == "additive":
 			effect = "+%.1f percentage points per rank" % (upgrade.increment * 100.0)
+		elif upgrade.stat == "allied_slots":
+			effect = "+%d deployed ally" % roundi(upgrade.increment)
 		var price: String = "Maximum rank" if offer.rank >= upgrade.max_ranks else "Buy · %.0f %s" % [offer.cost, currency]
 		button.text = "%s  %d/%d\n%s · %s" % [upgrade.display_name, offer.rank, upgrade.max_ranks, effect, price]
 		button.disabled = blocked or not offer.available

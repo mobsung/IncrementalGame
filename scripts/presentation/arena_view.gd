@@ -14,6 +14,7 @@ const GOLD: Color = Color("#edce88")
 var simulation: BattleSimulation
 var selected_id: int = 0
 var formation_visible: bool = false
+var formation_enemy_role: bool = false
 var effects: Array[Dictionary] = []
 var scale_factor: float = 1.0
 var origin: Vector2 = Vector2.ZERO
@@ -123,15 +124,21 @@ func _draw() -> void:
 		var occupied_slots: Dictionary = {}
 		for copy: UnitProgress in simulation.deployed_units():
 			occupied_slots[copy.slot] = true
-		for index: int in range(simulation.config.slots.size()):
-			var point: Vector2 = FieldProjection.project(simulation.config.slots[index])
+		if formation_enemy_role:
+			occupied_slots.clear()
+			for copy: UnitProgress in simulation.profile.deployed_copies():
+				if copy.enemy_support:
+					occupied_slots[copy.slot] = true
+		var positions: PackedVector2Array = simulation.config.support_slots if formation_enemy_role else simulation.config.slots
+		for index: int in range(positions.size()):
+			var point: Vector2 = FieldProjection.project(positions[index])
 			var occupied: bool = occupied_slots.has(index)
 			_ellipse(point, Vector2(30, 11), GOLD if occupied else Color(0.95, 0.9, 0.72, 0.65), false)
 			_text(point + Vector2(-5, 26), str(index + 1), 17, GOLD)
 	var selected: CombatantState = Targeting.by_id(simulation.actors, selected_id)
 	if selected != null:
 		_range(selected.position, selected.attack_range, Color(0.6, 0.95, 0.86, 0.8), false)
-		if selected.allied:
+		if selected.allied and not selected.copy_id.is_empty():
 			_range(selected.anchor, simulation.config.definition_for(simulation.profile.copy_by_id(selected.copy_id)).engagement_radius, Color(0.95, 0.8, 0.5, 0.75), true)
 			draw_dashed_line(FieldProjection.project(selected.anchor), FieldProjection.project(selected.position), GOLD, 2, 8)
 	ordered_actors.assign(simulation.actors)
@@ -152,8 +159,10 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO)
 
 func _visual(actor: CombatantState) -> CombatantVisual:
-	if actor.allied:
-		return simulation.config.definition_for(simulation.profile.copy_by_id(actor.copy_id)).visual
+	var copy: UnitProgress = simulation.profile.copy_by_id(actor.copy_id)
+	var definition: CombatantDefinition = simulation.config.definition_for(copy) if copy != null else simulation.config.definitions()[actor.definition_id]
+	if definition.visual != null:
+		return definition.visual
 	if actor.definition_id == simulation.config.offensive.id:
 		return EMBER
 	if actor.definition_id == simulation.config.special.id:
@@ -207,7 +216,7 @@ func _draw_actor(actor: CombatantState) -> void:
 	draw_rect(bar.grow(2), Color(0.04, 0.04, 0.04, 0.85))
 	bar.size.x *= actor.health / actor.max_health
 	draw_rect(bar, Color("#b7d5a2") if actor.allied else Color("#db7860"))
-	if actor.allied and not actor.kit_state.is_empty():
+	if actor.allied and not actor.copy_id.is_empty() and not actor.kit_state.is_empty():
 		var copy: UnitProgress = simulation.profile.copy_by_id(actor.copy_id)
 		if copy.evolution > 0:
 			for index: int in range(5):
@@ -216,7 +225,8 @@ func _draw_actor(actor: CombatantState) -> void:
 	if actor.id == selected_id:
 		_text(foot + Vector2(-42, 32), "%.0f / %.0f" % [actor.health, actor.max_health], 17, Color.WHITE)
 	if actor.action == &"sweep":
-		var definition: CombatantDefinition = simulation.config.definition_for(simulation.profile.copy_by_id(actor.copy_id)) if actor.allied else simulation.config.definitions()[actor.definition_id]
+		var copy: UnitProgress = simulation.profile.copy_by_id(actor.copy_id)
+		var definition: CombatantDefinition = simulation.config.definition_for(copy) if copy != null else simulation.config.definitions()[actor.definition_id]
 		var progress: float = 1.0 - actor.action_left / definition.ability.cast_time
 		draw_line(foot + Vector2(-32, 15), foot + Vector2(-32 + 64 * progress, 15), GOLD, 4)
 
@@ -249,7 +259,12 @@ func _draw_effect(effect: Dictionary) -> void:
 			polygon.append(FieldProjection.project(effect.position + Vector2.from_angle(facing.angle() - half + half * 2 * index / 24.0) * float(effect.radius)))
 		draw_colored_polygon(polygon, Color(0.96, 0.8, 0.5, alpha * 0.35))
 		draw_polyline(polygon, Color(1, 0.92, 0.7, alpha), 3, true)
-	else:
+	elif effect.kind == "ability":
+		if float(effect.radius) > 0.0:
+			_range(effect.position, effect.radius, Color(0.5, 0.8, 1.0, alpha), false)
+	elif effect.kind == "resurrect":
+		_text(point + Vector2(-32, -110), "Revived", 20, Color(0.6, 1, 0.7, alpha))
+	elif effect.has("amount"):
 		var color: Color = Color(0.65, 1, 0.6, alpha) if effect.kind == "heal" else Color(1, 0.93, 0.8, alpha)
 		_text(point + Vector2(-8, -100 - (0.7 - effect.life) * 50), ("+" if effect.kind == "heal" else "") + "%.0f" % effect.amount, 23, color)
 
@@ -263,8 +278,9 @@ func _gui_input(event: InputEvent) -> void:
 	_update_transform()
 	var point: Vector2 = (event.position - origin) / scale_factor
 	if formation_visible and simulation.phase != &"battle":
-		for index: int in range(simulation.config.slots.size()):
-			if point.distance_to(FieldProjection.project(simulation.config.slots[index])) < 30:
+		var positions: PackedVector2Array = simulation.config.support_slots if formation_enemy_role else simulation.config.slots
+		for index: int in range(positions.size()):
+			if point.distance_to(FieldProjection.project(positions[index])) < 30:
 				slot_selected.emit(index)
 				return
 	# Frontmost sprite gets the click; the lower body is not a top-down token.

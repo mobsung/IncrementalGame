@@ -1,5 +1,7 @@
 # Sprite sheets — 2026-09-29
 
+Revisione attiva del 30 settembre: i visual usano le nove tavole in `refined/`; prompt selezionati, registrazione dei frame e limiti in [refined/ART_NOTES.md](refined/ART_NOTES.md). Queste tavole originali restano conservate.
+
 Generated with the built-in image tool from the existing three character textures. Nine 4×4 sheets, 144 source frames. Source PNG alpha is preserved; no procedural mesh deformation is used in the sheet player. Old portraits are retained.
 
 ## Prompt set

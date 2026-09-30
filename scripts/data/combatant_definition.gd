@@ -4,6 +4,7 @@ extends Resource
 
 @export var id: StringName
 @export var display_name: String
+@export_enum("mage", "healer", "tank", "warrior", "summoner", "ranged") var unit_class: String = "warrior"
 @export var max_health: float = 30.0
 @export var physical_attack: float = 3.0
 @export var magic_attack: float = 0.0
@@ -35,6 +36,9 @@ extends Resource
 @export var evolution_level: int = 1
 @export var kit: Resource
 @export var visual: CombatantVisual
+@export var active_abilities: Array[AbilityDefinition] = []
+@export var enemy_support_role: bool = false
+@export var evolution_options: Array[EvolutionDefinition] = []
 
 func validation_errors() -> PackedStringArray:
 	var errors: PackedStringArray = []
@@ -64,4 +68,19 @@ func validation_errors() -> PackedStringArray:
 		errors.append_array(basic_damage.validation_errors())
 	if ability != null:
 		errors.append_array(ability.validation_errors())
+	var ability_ids: Array[StringName] = []
+	var branch_ids: Array[StringName] = []
+	for option: EvolutionDefinition in evolution_options:
+		if option == null or not option.valid() or option.id in branch_ids:
+			errors.append("Invalid or duplicate evolution option.")
+		else:
+			branch_ids.append(option.id)
+	for active: AbilityDefinition in active_abilities:
+		if active == null:
+			errors.append("Missing active ability.")
+			continue
+		errors.append_array(active.validation_errors())
+		if active.id in ability_ids:
+			errors.append("Duplicate active ability: %s" % active.id)
+		ability_ids.append(active.id)
 	return errors

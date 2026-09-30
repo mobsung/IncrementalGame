@@ -4,7 +4,7 @@ extends RefCounted
 static func opponents(actor: CombatantState, actors: Array[CombatantState]) -> Array[CombatantState]:
 	var result: Array[CombatantState] = []
 	for candidate: CombatantState in actors:
-		if candidate.alive() and candidate.allied != actor.allied:
+		if candidate.alive() and not candidate.support and candidate.allied != actor.allied:
 			result.append(candidate)
 	return result
 

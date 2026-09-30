@@ -24,6 +24,8 @@ I nemici naturali compaiono sul lato destro dell'arena, nello spazio fra i due s
 
 ## Limiti numerici degli slot
 
+**Prima configurazione del 30 settembre 2026:** quarto posto alleato acquistabile per 50 Shards nel Chrono shop. Rimangono nove posizioni alleate. Il sistema per supporti nemici compatibili dispone di tre posizioni configurabili a destra (`BattleConfig.support_slots`) e di un solo posto; nessuna specie disponibile dichiara ancora quel ruolo. La geometria scelta è un dato iniziale della demo, non una nuova mappa. [Implementazione](../implementation/MECCANICHE_BASE.md).
+
 - Gli slot schierabili sono una risorsa importante: sbloccarne altri deve essere impegnativo. All'inizio possono essere schierate contemporaneamente fino a **tre unità** sul lato alleato e fino a **un nemico di supporto** del giocatore sul lato nemico. Il limite numerico non fissa tre specifiche posizioni: ogni unità può usare qualunque slot compatibile libero. I posti non devono essere tutti occupati, ma deve essere sempre schierata almeno un'unità alleata. Un secondo ed eventualmente un terzo posto sul lato nemico possono essere sbloccati con potenziamenti avanzati. La disposizione geometrica esatta degli slot sarà affrontata nel design della mappa e delle unità.
 
 ## Collegamenti

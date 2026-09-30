@@ -20,6 +20,8 @@ Si abbandona la struttura attuale in cui tutte le unità derivano da un'unica un
 
 ## Evoluzioni facoltative
 
+**Stato tecnico del 30 settembre 2026:** sono implementati anche i rami opzionali con ID stabili, soglie configurabili, scelta/confirm nella UI, permanenza per copia e rimborso dei punti. Nessun ramo del Golem o nuova specie è stato introdotto. I contenuti concreti rimangono da approvare. [Tappa dei sistemi di base](../implementation/MECCANICHE_BASE.md).
+
 Le evoluzioni sono **facoltative**: ogni unità viene evocata nello stadio base, ma non tutte le specie devono avere evoluzioni. Il sistema deve consentire di aggiungerle in seguito, sia lineari sia ramificate, anche a specie inizialmente prive di un percorso evolutivo. Non è obbligatorio definire tutte le evoluzioni quando viene introdotta un'unità.
 
 Evolvere cambia l'aspetto ma **non aumenta direttamente le statistiche base**. Influenza le abilità attive e passive: può aggiungerne di nuove, introdurre nuove meccaniche in quelle esistenti, aumentarne l'efficacia oppure alzare i limiti dei loro potenziamenti. Le abilità e passive esistenti restano disponibili.

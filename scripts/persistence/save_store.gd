@@ -2,7 +2,7 @@ class_name SaveStore
 extends RefCounted
 ## Versioned binary snapshots preserve Vector2 and 64-bit RNG state without objects.
 
-const VERSION: int = 8
+const VERSION: int = 9
 const V4_STATS: Array[StringName] = [&"magic_attack", &"magic_resistance", &"ability_power",
 	&"critical_chance", &"critical_multiplier", &"super_critical_chance", &"super_critical_multiplier",
 	&"ultra_critical_chance", &"ultra_critical_multiplier"]
@@ -10,6 +10,8 @@ const MAX_BYTES: int = 4 * 1024 * 1024
 var path: String = "user://first_demo.save"
 var last_error: String = ""
 var recovered: bool = false
+var loaded_saved_at: float = 0.0
+var config: BattleConfig = BattleSimulation.CONFIG
 
 func _init(save_path: String = "user://first_demo.save") -> void:
 	path = save_path
@@ -17,6 +19,7 @@ func _init(save_path: String = "user://first_demo.save") -> void:
 func load_state() -> Dictionary:
 	last_error = ""
 	recovered = false
+	loaded_saved_at = 0.0
 	for candidate: String in [path, path + ".tmp", path + ".bak"]:
 		if not FileAccess.file_exists(candidate):
 			continue
@@ -32,7 +35,7 @@ func load_state() -> Dictionary:
 
 func write_state(data: Dictionary) -> Error:
 	last_error = ""
-	if not validate(data):
+	if not validate(data, config):
 		last_error = "Invalid battle snapshot."
 		return ERR_INVALID_DATA
 	var bytes: PackedByteArray = var_to_bytes(data)
@@ -89,6 +92,8 @@ func _read(candidate: String) -> Dictionary:
 		last_error = "Save checksum mismatch."
 		return {}
 	var data: Variant = bytes_to_var(envelope.payload)
+	if data is Dictionary and envelope.version == 8:
+		data = _migrate_v8(data)
 	if data is Dictionary and envelope.version <= 7:
 		# Authorized roster replacement: one fresh base copy, shared progress retained.
 		data = _replace_legacy_roster(data)
@@ -108,9 +113,15 @@ func _read(candidate: String) -> Dictionary:
 		data = _migrate_v5(data)
 	if data is Dictionary and envelope.version <= 6:
 		data = _migrate_v6(data)
-	if not data is Dictionary or not validate(data):
+	if not data is Dictionary or not validate(data, config):
 		last_error = "Invalid battle snapshot."
 		return {}
+	# Older versions never accrued offline time; start the clock after the upgrade.
+	loaded_saved_at = 0.0
+	if envelope.version >= 9:
+		var timestamp: Variant = envelope.get("saved_at", 0.0)
+		if (timestamp is int or timestamp is float) and is_finite(float(timestamp)):
+			loaded_saved_at = maxf(0.0, float(timestamp))
 	return data
 
 static func _replace_legacy_roster(data: Dictionary) -> Dictionary:
@@ -249,7 +260,31 @@ static func _fields_match(data: Dictionary, template: Dictionary) -> bool:
 			return false
 	return true
 
-static func _actor_valid(data: Dictionary, definitions: Dictionary) -> bool:
+static func _migrate_v8(data: Dictionary) -> Dictionary:
+	data = data.duplicate(true)
+	data[&"projectiles"] = []
+	if not data.get("profile") is Dictionary or not data.profile.get("copies") is Array:
+		return {}
+	for copy: Variant in data.profile.copies:
+		if not copy is Dictionary:
+			return {}
+		copy[&"ability_priorities"] = {}
+		copy[&"enemy_support"] = false
+		copy[&"evolution_path"] = PackedStringArray()
+	if not data.get("actors") is Array or not data.get("attempt_snapshot") is Array:
+		return {}
+	var template: Dictionary = CombatantState.new().to_data()
+	var states: Array = data.actors.duplicate()
+	states.append_array(data.attempt_snapshot)
+	for actor: Variant in states:
+		if not actor is Dictionary:
+			return {}
+		for key: StringName in [&"ability_cooldowns", &"statuses", &"status_base", &"summoner_id", &"summon_remaining", &"reward_multiplier", &"support"]:
+			var value: Variant = template[key]
+			actor[key] = value.duplicate(true) if value is Array or value is Dictionary else value
+	return data
+
+static func _actor_valid(data: Dictionary, definitions: Dictionary, validation_config: BattleConfig = BattleSimulation.CONFIG) -> bool:
 	if not _fields_match(data, CombatantState.new().to_data()):
 		return false
 	for stat: StringName in [&"critical_chance", &"super_critical_chance", &"ultra_critical_chance"]:
@@ -262,11 +297,41 @@ static func _actor_valid(data: Dictionary, definitions: Dictionary) -> bool:
 		return false
 	if data.multi_hit < 1 or data.multi_cast < 1:
 		return false
+	for id: Variant in data.ability_cooldowns:
+		if (not id is String and not id is StringName) or not data.ability_cooldowns[id] is float or not is_finite(data.ability_cooldowns[id]) or data.ability_cooldowns[id] < 0.0:
+			return false
+	for stat: Variant in data.status_base:
+		if stat not in StatusDefinition.STATS or not data.status_base[stat] is float or not is_finite(data.status_base[stat]):
+			return false
+	if data.statuses.size() > 100 or data.summon_remaining < 0.0 or data.reward_multiplier < 0.0:
+		return false
+	for status: Variant in data.statuses:
+		if not status is Dictionary or not status.has_all(["id", "source_id", "stacks", "remaining", "additive", "multiplier", "ends_on_death"]) or not status.ends_on_death is bool:
+			return false
+		if not status.id is StringName or not status.source_id is int or not status.stacks is int or status.stacks < 1 or not status.remaining is float or not is_finite(status.remaining) or status.remaining < 0.0:
+			return false
+		for key: String in ["additive", "multiplier"]:
+			if not status[key] is Dictionary:
+				return false
+			for stat: Variant in status[key]:
+				if (stat not in StatusDefinition.STATS and stat not in StatusDefinition.REWARDS) or not status[key][stat] is float or not is_finite(status[key][stat]):
+					return false
+	var valid_action: bool = data.action in [&"", &"basic", &"sweep", &"guard", &"surge"]
+	var active_ids: Array[StringName] = []
+	for definition: CombatantDefinition in definitions.values():
+		for form: CombatantDefinition in validation_config.forms_for(definition):
+			for active: AbilityDefinition in form.active_abilities:
+				active_ids.append(active.id)
+			if AbilitySystem.definition_for(form, data.action) != null:
+				valid_action = true
+	for id: Variant in data.ability_cooldowns:
+		if id not in active_ids:
+			return false
 	return definitions.has(data.definition_id) and data.id > 0 and data.max_health > 0.0 and (
 		data.health >= 0.0 and data.health <= data.max_health and data.speed > 0.0 and
 		data.attack_speed > 0.0 and data.attack_range >= 0.0 and data.action_left >= -0.1 and
 		data.cooldown >= 0.0 and data.pending_cooldown >= 0.0 and data.passive_count >= 0 and
-		data.action in [&"", &"basic", &"sweep", &"guard", &"surge"] and data.impact_left >= -0.1)
+		valid_action and data.impact_left >= -0.1)
 
 static func _copy_valid(copy_data: Dictionary, template: BattleSimulation) -> bool:
 	if not _fields_match(copy_data, UnitProgress.new().to_data()):
@@ -274,14 +339,52 @@ static func _copy_valid(copy_data: Dictionary, template: BattleSimulation) -> bo
 	if copy_data.id.is_empty() or not template.config.definitions().has(copy_data.species_id) or copy_data.level < 1:
 		return false
 	var base: CombatantDefinition = template.config.definitions()[copy_data.species_id]
-	if copy_data.species_id != template.config.ally.id or copy_data.evolution < 0 or copy_data.evolution > base.forms.size():
+	if copy_data.evolution < 0:
 		return false
-	if copy_data.evolution > 0 and copy_data.level < base.forms[copy_data.evolution - 1].evolution_level:
+	var copy: UnitProgress = UnitProgress.from_data(copy_data)
+	if template.config.definition_for(copy) == null:
 		return false
+	if copy.evolution_path.is_empty():
+		if copy.evolution > base.forms.size() or (copy.evolution > 0 and copy.level < base.forms[copy.evolution - 1].evolution_level):
+			return false
+	else:
+		if copy.evolution_path.size() != copy.evolution:
+			return false
+		var current: CombatantDefinition = base
+		for index: int in range(copy.evolution_path.size()):
+			var branch: String = copy.evolution_path[index]
+			if branch == "__linear_%d" % (index + 1) and index < base.forms.size():
+				current = base.forms[index]
+				if copy.level < current.evolution_level:
+					return false
+				continue
+			var valid_branch: bool = false
+			for option: EvolutionDefinition in current.evolution_options:
+				if String(option.id) == branch and copy.level >= option.required_level:
+					current = option.form
+					valid_branch = true
+					break
+			if not valid_branch:
+				return false
 	if copy_data.experience < 0.0 or copy_data.level_points < 0 or copy_data.movement_speed <= 0.0:
 		return false
-	if copy_data.slot < 0 or copy_data.slot >= template.config.slots.size() or copy_data.priority not in [0, 1, 2, 3]:
+	var positions: PackedVector2Array = template.config.support_slots if copy_data.enemy_support else template.config.slots
+	if copy_data.enemy_support and not template.config.definition_for(UnitProgress.from_data(copy_data)).enemy_support_role:
 		return false
+	if copy_data.slot < 0 or copy_data.slot >= positions.size() or copy_data.priority not in [0, 1, 2, 3]:
+		return false
+	var ability_ids: Array[StringName] = []
+	if base.kit != null:
+		ability_ids.assign([&"sweep", &"guard", &"surge"])
+	for form: CombatantDefinition in template.config.forms_for(base):
+		for active: AbilityDefinition in form.active_abilities:
+			ability_ids.append(active.id)
+	for id: Variant in copy_data.ability_priorities:
+		if (not id is String and not id is StringName) or id not in ability_ids:
+			return false
+		var value: Variant = copy_data.ability_priorities[id]
+		if not value is int or value < 0 or value > 100:
+			return false
 	for id: Variant in copy_data.upgrade_ranks:
 		if not id is StringName and not id is String:
 			return false
@@ -300,8 +403,9 @@ static func _copy_valid(copy_data: Dictionary, template: BattleSimulation) -> bo
 			return false
 	return true
 
-static func validate(data: Dictionary) -> bool:
+static func validate(data: Dictionary, validation_config: BattleConfig = BattleSimulation.CONFIG) -> bool:
 	var template: BattleSimulation = BattleSimulation.new()
+	template.config = validation_config
 	if not _fields_match(data, template.to_data()):
 		return false
 	if data.phase not in [&"preparation", &"battle", &"paused"] or data.wave < 1 or data.record_wave < 0:
@@ -310,6 +414,22 @@ static func validate(data: Dictionary) -> bool:
 		return false
 	if data.accumulator < 0.0 or data.attempt_time < 0.0 or data.tick < 0:
 		return false
+	if data.projectiles.size() > 1000:
+		return false
+	for projectile: Variant in data.projectiles:
+		if not projectile is Dictionary or not projectile.has_all(["target_id", "source_id", "remaining", "packet", "from", "allied"]):
+			return false
+		if not projectile.target_id is int or not projectile.source_id is int or projectile.target_id <= 0 or projectile.source_id <= 0 or not projectile.allied is bool:
+			return false
+		if not projectile.remaining is float or not is_finite(projectile.remaining) or projectile.remaining < 0.0 or not projectile.from is Vector2 or not projectile.from.is_finite():
+			return false
+		if not projectile.packet is Dictionary or not projectile.packet.has_all(["physical", "magic", "critical_stage"]):
+			return false
+		for component: String in ["physical", "magic"]:
+			if not projectile.packet[component] is float or not is_finite(projectile.packet[component]) or projectile.packet[component] < 0.0:
+				return false
+		if not projectile.packet.critical_stage is int or projectile.packet.critical_stage not in [0, 1, 2, 3]:
+			return false
 	for key: String in ["souls", "pending_gold", "pending_xp", "pending_souls"]:
 		if data[key] < 0.0:
 			return false
@@ -329,6 +449,7 @@ static func validate(data: Dictionary) -> bool:
 	var copies_by_id: Dictionary = {}
 	var deployed_ids: Array[String] = []
 	var deployed_slots: Array[int] = []
+	var support_ids: Array[String] = []
 	for copy_data: Variant in data.profile.copies:
 		if not copy_data is Dictionary or not _copy_valid(copy_data, template):
 			return false
@@ -336,33 +457,45 @@ static func validate(data: Dictionary) -> bool:
 			return false
 		copies_by_id[copy_data.id] = copy_data
 		if copy_data.deployed:
+			if copy_data.enemy_support:
+				support_ids.append(copy_data.id)
+				continue
 			if copy_data.slot in deployed_slots:
 				return false
 			deployed_ids.append(copy_data.id)
 			deployed_slots.append(copy_data.slot)
-	if deployed_ids.is_empty() or deployed_ids.size() > BattleSimulation.MAX_DEPLOYED_ALLIES:
+	var saved_profile: PlayerProfile = PlayerProfile.from_data(data.profile)
+	var allied_limit: int = mini(template.config.slots.size(), BattleSimulation.MAX_DEPLOYED_ALLIES + roundi(ShopModifiers.value(0.0, "allied_slots", saved_profile, template.config)))
+	if deployed_ids.is_empty() or deployed_ids.size() > allied_limit:
 		return false
+	if support_ids.size() > 1:
+		return false
+	deployed_ids.append_array(support_ids)
 	if data.actors.is_empty() or data.actors.size() > 1000:
 		return false
 	var ids: Array[int] = []
 	var actor_copy_ids: Array[String] = []
 	for actor_data: Variant in data.actors:
-		if not actor_data is Dictionary or not _actor_valid(actor_data, template.config.definitions()):
+		if not actor_data is Dictionary or not _actor_valid(actor_data, template.config.definitions(), template.config):
 			return false
 		if actor_data.id in ids or actor_data.id >= data.next_id:
 			return false
 		ids.append(actor_data.id)
-		if actor_data.allied:
+		if not actor_data.copy_id.is_empty():
 			if not copies_by_id.has(actor_data.copy_id) or actor_data.copy_id not in deployed_ids or actor_data.copy_id in actor_copy_ids:
 				return false
 			if actor_data.definition_id != copies_by_id[actor_data.copy_id].species_id:
 				return false
+			if actor_data.support != copies_by_id[actor_data.copy_id].enemy_support or actor_data.allied == actor_data.support or not actor_data.summoner_id.is_empty():
+				return false
 			if not _kit_valid(actor_data, copies_by_id[actor_data.copy_id], template):
 				return false
 			actor_copy_ids.append(actor_data.copy_id)
-		elif not actor_data.copy_id.is_empty():
+		elif actor_data.support or not actor_data.kit_state.is_empty() or actor_data.action in [&"guard", &"surge"]:
 			return false
-		elif not actor_data.kit_state.is_empty() or actor_data.action in [&"guard", &"surge"]:
+		elif actor_data.allied and actor_data.summoner_id.is_empty():
+			return false
+		elif not actor_data.summoner_id.is_empty() and actor_data.summon_remaining <= 0.0:
 			return false
 	if actor_copy_ids.size() != deployed_ids.size():
 		return false
@@ -371,9 +504,11 @@ static func validate(data: Dictionary) -> bool:
 			return false
 		var snapshot_ids: Array[String] = []
 		for snapshot: Variant in data.attempt_snapshot:
-			if not snapshot is Dictionary or not _actor_valid(snapshot, template.config.definitions()):
+			if not snapshot is Dictionary or not _actor_valid(snapshot, template.config.definitions(), template.config):
 				return false
-			if not snapshot.allied or snapshot.copy_id not in deployed_ids or snapshot.copy_id in snapshot_ids:
+			if snapshot.copy_id not in deployed_ids or snapshot.copy_id in snapshot_ids:
+				return false
+			if snapshot.support != copies_by_id[snapshot.copy_id].enemy_support or snapshot.allied == snapshot.support:
 				return false
 			if not _kit_valid(snapshot, copies_by_id[snapshot.copy_id], template):
 				return false
@@ -389,8 +524,16 @@ static func validate(data: Dictionary) -> bool:
 
 static func _kit_valid(actor: Dictionary, copy: Dictionary, template: BattleSimulation) -> bool:
 	var definition: CombatantDefinition = template.config.definition_for(UnitProgress.from_data(copy))
+	for id: Variant in actor.ability_cooldowns:
+		if AbilitySystem.definition_for(definition, id) == null:
+			return false
+	if actor.action not in [&"", &"basic", &"sweep", &"guard", &"surge"]:
+		var active: AbilityDefinition = AbilitySystem.definition_for(definition, actor.action)
+		if active == null or copy.evolution < active.minimum_evolution:
+			return false
 	if definition.kit == null:
-		return actor.kit_state.is_empty()
+		return actor.kit_state.is_empty() and actor.action not in [&"guard", &"surge"] and not (
+			actor.action == &"sweep" and definition.ability == null)
 	if not definition.kit.valid_state(actor.kit_state, copy.evolution):
 		return false
 	return not (actor.action == &"guard" and copy.evolution < 1) and not (

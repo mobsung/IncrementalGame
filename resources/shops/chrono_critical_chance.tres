@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StatUpgradeDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://scripts/data/stat_upgrade_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+id = &"chrono_critical_chance"
+display_name = "Critical Insight"
+description = "Permanent critical chance bonus in the Chrono additive stage."
+stat = "critical_chance"
+operation = "additive"
+increment = 0.020
+base_cost = 3.0
+cost_growth = 1.8
+max_ranks = 20

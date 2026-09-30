@@ -4,6 +4,8 @@
 
 ## Decisioni concordate e specifiche
 
+**Stato implementazione, 30 settembre 2026:** regole generali ora supportate da attive configurabili a effetti ordinati (danno, cure, resurrezione, status, evocazioni), cooldown indipendenti, AoE circolare e packet differiti. Priorità per copia nella UI; il kit del Golem conserva la propria temporizzazione specifica e Surge > Guard come default. Status/mark registrano parametri di stacking, refresh, durata e fine alla morte; ricompense con frazioni, stessi esiti simultanei delle regole sotto. Non si assegnano nuovi effetti al roster esistente. [Contratti tecnici e limiti](../implementation/MECCANICHE_BASE.md).
+
 ## Evocazioni in battaglia — punto 25
 
 Alcune unità evocatrici potranno essere schierate su entrambi i lati. Sul lato alleato evocano unità che aiutano la squadra. Sul lato nemico sono considerate entità nemiche di supporto **non attaccabili**: occupano uno slot e applicano gli effetti delle proprie abilità, per esempio generando avversari con ricompense aggiuntive. L'eventuale potenziamento dei nemici naturali è una possibilità da esplorare più avanti. I nemici evocati dalle copie schierate sul lato nemico non fanno parte delle 12 comparizioni naturali né della tredicesima speciale. Le evocazioni continuano attraverso i passaggi fra ondate finché la squadra non viene sconfitta. Quando un'ondata termina per la morte di tutti i nemici naturali, la successiva inizia senza una sosta automatica; resta possibile la pausa richiesta dal giocatore al confine fra i tentativi. Gli evocati ancora vivi, sia alleati sia nemici, rimangono sul campo al passaggio all'ondata successiva e continuano a combattere.

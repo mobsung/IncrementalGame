@@ -27,6 +27,11 @@ const GachaDefinitionType = preload("res://scripts/data/gacha_definition.gd")
 @export var gold_upgrades: Array[GoldUpgradeDefinition] = []
 @export var global_upgrades: Array[StatUpgradeDefinition] = []
 @export var chrono_upgrades: Array[StatUpgradeDefinition] = []
+@export var offline_enabled: bool = true
+@export var offline_max_seconds: float = 900.0
+@export var offline_frame_budget_ms: float = 6.0
+@export var support_slots: PackedVector2Array = PackedVector2Array([Vector2(960, 170), Vector2(960, 320), Vector2(960, 470)])
+@export var extra_definitions: Array[CombatantDefinition] = []
 
 func shop_catalog(shop: StringName) -> Array[StatUpgradeDefinition]:
 	if shop == &"global":
@@ -47,6 +52,24 @@ func definitions() -> Dictionary:
 		for entry: Resource in gacha.entries:
 			if entry != null and entry.unit != null and not result.has(entry.unit.id):
 				result[entry.unit.id] = entry.unit
+	for definition: CombatantDefinition in extra_definitions:
+		result[definition.id] = definition
+	var pending: Array = result.values()
+	var visited: Dictionary = {}
+	while not pending.is_empty():
+		var definition: CombatantDefinition = pending.pop_back()
+		if visited.has(definition.get_instance_id()):
+			continue
+		visited[definition.get_instance_id()] = true
+		pending.append_array(definition.forms)
+		for option: EvolutionDefinition in definition.evolution_options:
+			if option.form != null:
+				pending.append(option.form)
+		for ability: AbilityDefinition in definition.active_abilities:
+			for effect: AbilityEffectDefinition in ability.effects:
+				if effect.summon != null:
+					result[effect.summon.id] = effect.summon
+					pending.append(effect.summon)
 	return result
 
 func upgrade_by_id(upgrade_id: StringName) -> LevelUpgradeDefinition:
@@ -57,9 +80,40 @@ func upgrade_by_id(upgrade_id: StringName) -> LevelUpgradeDefinition:
 
 func definition_for(copy: UnitProgress) -> CombatantDefinition:
 	var base: CombatantDefinition = definitions().get(copy.species_id)
+	if base != null and not copy.evolution_path.is_empty():
+		var current: CombatantDefinition = base
+		for index: int in range(copy.evolution_path.size()):
+			var id: String = copy.evolution_path[index]
+			if id == "__linear_%d" % (index + 1) and index < base.forms.size():
+				current = base.forms[index]
+				continue
+			var next: CombatantDefinition = null
+			for option: EvolutionDefinition in current.evolution_options:
+				if String(option.id) == id:
+					next = option.form
+					break
+			if next == null:
+				return null
+			current = next
+		return current
 	if base != null and copy.evolution > 0 and copy.evolution <= base.forms.size():
 		return base.forms[copy.evolution - 1] as CombatantDefinition
 	return base
+
+func forms_for(base: CombatantDefinition) -> Array[CombatantDefinition]:
+	var result: Array[CombatantDefinition] = []
+	var pending: Array[CombatantDefinition] = [base]
+	while not pending.is_empty():
+		var current: CombatantDefinition = pending.pop_back()
+		if current in result:
+			continue
+		result.append(current)
+		for form: CombatantDefinition in current.forms:
+			pending.append(form)
+		for option: EvolutionDefinition in current.evolution_options:
+			if option.form != null:
+				pending.append(option.form)
+	return result
 
 func gold_upgrade_by_id(upgrade_id: StringName) -> GoldUpgradeDefinition:
 	for upgrade: GoldUpgradeDefinition in gold_upgrades:
@@ -82,6 +136,8 @@ func validation_errors() -> PackedStringArray:
 		errors.append("Missing gacha definition.")
 	else:
 		errors.append_array(gacha.validation_errors())
+	if not is_finite(offline_max_seconds) or offline_max_seconds < 0.0 or not is_finite(offline_frame_budget_ms) or offline_frame_budget_ms <= 0.0:
+		errors.append("Invalid offline simulation limits.")
 	if slots.size() != 9 or not arena.has_point(spawn_position):
 		errors.append("Invalid first arena geometry.")
 	for upgrade: LevelUpgradeDefinition in upgrades:

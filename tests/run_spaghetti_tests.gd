@@ -24,6 +24,7 @@ func _run(quit_after: bool = false) -> void:
 	_defense_and_passives()
 	_boundaries()
 	_shared_systems()
+	load("res://tests/base_mechanics_tests.gd").new().run(self)
 	_persistence()
 	_animations()
 	await _ui()
@@ -367,13 +368,17 @@ func _animations() -> void:
 		var player: RefCounted = visual.animation.create_player()
 		var before: Dictionary = sim.to_data()
 		player.update(sim.hero(), 0.1)
-		var idle: int = player.frame_index
+		var idle: Texture2D = player.current_texture()
+		var idle_clock: float = player.clock
 		player.update(sim.hero(), 0.3)
-		check(player.frame_index != idle, "Idle advances authored frames")
+		check(player.current_texture() == idle and player.sprite_frames.get_frame_count(&"idle") == 1, "Idle keeps one planted source pose")
+		check(player.clock > idle_clock, "Idle breathing and drip time advances")
 		check(sim.to_data() == before, "Animation does not mutate simulation or RNG")
 		var frozen: int = player.frame_index
+		var frozen_clock: float = player.clock
 		player.update(sim.hero(), 10.0, false)
 		check(player.frame_index == frozen, "Paused animation freezes")
+		near(player.clock, frozen_clock, "Pause freezes breathing and drips")
 		sim.hero().position.x += 2
 		player.update(sim.hero(), BattleSimulation.STEP)
 		check(player.moving > 0 and player.state == &"walk", "Actual displacement drives walk")
@@ -406,6 +411,8 @@ func _animations() -> void:
 			for index: int in range(player.sprite_frames.get_frame_count(animation)):
 				var frame: AtlasTexture = player.sprite_frames.get_frame_texture(animation, index)
 				check(frame != null and Rect2(Vector2.ZERO, frame.atlas.get_size()).encloses(frame.region), "Frame region stays inside sheet")
+				check(frame.get_size() == visual.animation.canvas_size, "Every pose preserves the same presentation canvas")
+				check(float(frame.get_meta(&"pose_scale", 0.0)) > 0.5 and float(frame.get_meta(&"pose_scale", 0.0)) < 2.0, "Drawn pose uses a finite uniform scale")
 		for sheet: Texture2D in [visual.animation.locomotion, visual.animation.attacks, visual.animation.abilities]:
 			check(sheet.get_image().detect_alpha() != Image.ALPHA_NONE, "Sprite sheet has real alpha")
 		var second: RefCounted = visual.animation.create_player()
@@ -414,7 +421,14 @@ func _animations() -> void:
 		var idle_frame: AtlasTexture = second.sprite_frames.get_frame_texture(&"idle", 0)
 		var punch_frame: AtlasTexture = second.sprite_frames.get_frame_texture(&"basic", 4)
 		check(idle_frame.get_size() == punch_frame.get_size(), "Wide attack retains fixed virtual canvas")
-		check(punch_frame.region.size.x > punch_frame.atlas.get_width() / 4.0, "Extended fist region exceeds nominal cell")
+		check(punch_frame.filter_clip and punch_frame.margin.position.x >= 0, "Extended fist stays within its clipped virtual canvas")
+		for registration: PackedVector3Array in [visual.animation.locomotion_registration, visual.animation.attack_registration, visual.animation.ability_registration]:
+			check(registration.size() == 16, "All sixteen source poses have authored ground registration")
+		var idle_anchor: Vector3 = visual.animation.locomotion_registration[0]
+		var punch_anchor: Vector3 = visual.animation.attack_registration[4]
+		var idle_ground: Vector2 = idle_frame.margin.position + Vector2(idle_anchor.x, idle_anchor.y) * idle_frame.atlas.get_size() - idle_frame.region.position
+		var punch_ground: Vector2 = punch_frame.margin.position + Vector2(punch_anchor.x, punch_anchor.y) * punch_frame.atlas.get_size() - punch_frame.region.position
+		check(idle_ground.distance_to(punch_ground) < 1.5, "Idle and impact preserve the actor ground pivot despite different source framing")
 		var actor: CombatantState = model(stage).hero()
 		actor.action = &"sweep"
 		actor.action_left = 0.21
@@ -433,6 +447,9 @@ func _animations() -> void:
 			second.react({"kind":"heal", "ability":&"guard"})
 			second.update(actor, 0.0)
 			check(second.state == &"guard" and second.frame_index == (4 if stage == 1 else 2), "Guard effect starts after cast frames")
+			if stage == 2:
+				var activation: AtlasTexture = second.current_texture()
+				check(activation.region.position.x < activation.atlas.get_width() * 0.5, "Final Guard activation uses the crossed-fist source pose")
 
 func _ui() -> void:
 	var scene: Control = load("res://scenes/main.tscn").instantiate()
@@ -452,6 +469,9 @@ func _ui() -> void:
 	scene.evolve_dialog.confirmed.emit()
 	check(scene.simulation.unit().evolution == 1, "Confirmed evolution changes selected copy")
 	check(scene.get_node("%Name").text == "Saucebound Knight", "UI updates evolved name")
+	scene.ability_priority_controls[&"guard"].value = 77
+	check(scene.simulation.unit().ability_priorities[&"guard"] == 77, "Priority UI updates selected copy")
+	check(scene.chrono_shop.buttons.size() == 23, "Chrono UI renders full catalog")
 	check(scene.get_node("%Portrait").texture == scene.simulation.config.definition_for(scene.simulation.unit()).visual.texture, "Portrait matches current form")
 	scene.get_node("%MenuShop").pressed.emit()
 	check(scene.panels.current_section == &"shop", "Shop navigation preserved")

@@ -58,7 +58,8 @@ func advance_timers(actor: CombatantState, copy: UnitProgress, delta: float) -> 
 	ensure_state(actor)
 	for key: String in ["guard_cooldown", "surge_cooldown", "guard_duration", "surge_duration"]:
 		actor.kit_state[key] = maxf(0.0, float(actor.kit_state[key]) - delta)
-	actor.kit_state.simmer_elapsed += delta
+	if actor.alive():
+		actor.kit_state.simmer_elapsed += delta
 	apply_stats(actor, copy)
 
 func periodic_healing(actor: CombatantState, copy: UnitProgress, healing: Dictionary, events: Array[Dictionary]) -> void:
@@ -75,11 +76,31 @@ func periodic_healing(actor: CombatantState, copy: UnitProgress, healing: Dictio
 	_add_heal(actor, amount, healing, events, &"simmer")
 
 func select_action(actor: CombatantState, copy: UnitProgress) -> StringName:
-	if surge.available(actor, copy):
-		return &"surge"
-	if guard.available(actor, copy):
-		return &"guard"
-	return &""
+	var best: StringName = &""
+	for id: StringName in [&"guard", &"surge"]:
+		if self_ability(id).available(actor, copy) and (best.is_empty() or priority(copy, id) > priority(copy, best)):
+			best = id
+	return best
+
+func priority(copy: UnitProgress, id: StringName) -> int:
+	var defaults: Dictionary = {&"surge": 30, &"guard": 20, &"sweep": 10}
+	return int(copy.ability_priorities.get(id, defaults.get(id, 0)))
+
+func available_actions(copy: UnitProgress) -> Array[StringName]:
+	var result: Array[StringName] = [&"sweep"]
+	if copy.evolution >= 1:
+		result.append(&"guard")
+	if copy.evolution >= 2:
+		result.append(&"surge")
+	return result
+
+func action_name(id: StringName) -> String:
+	if id == &"sweep":
+		return "Meatball Sweep"
+	return self_ability(id).display_name
+
+func action_priority(copy: UnitProgress, id: StringName) -> int:
+	return priority(copy, id)
 
 func self_ability(action: StringName) -> SelfBuffDefinition:
 	return surge if action == &"surge" else guard

@@ -1,5 +1,5 @@
 extends RefCounted
-## Frame selection only. No mesh deformation, generated poses, combat writes or RNG.
+## Frame selection, registered poses and planted idle breathing. No combat writes or RNG.
 
 var rig: Resource
 var sprite_frames: SpriteFrames
@@ -102,7 +102,7 @@ func update(actor: CombatantState, delta: float, animate: bool = true) -> void:
 	elif hurt > 0.0:
 		_select(&"hit", 0)
 	else:
-		_select(&"idle", int(clock * 5.0) % 4)
+		_select(&"idle", 0)
 
 func _select(animation: StringName, index: int) -> void:
 	state = animation
@@ -113,11 +113,57 @@ func current_texture() -> Texture2D:
 
 func draw(canvas: CanvasItem, _texture: Texture2D, rect: Rect2, tint: Color, flip: bool) -> void:
 	var frame: Texture2D = current_texture()
-	var height: float = rect.size.y / rig.body_fraction * 2.0
+	var height: float = rect.size.y / rig.body_fraction * 2.0 * float(frame.get_meta(&"pose_scale", 1.0))
 	var size: Vector2 = Vector2(height * frame.get_width() / frame.get_height(), height)
 	var foot: Vector2 = rect.position + Vector2(rect.size.x * 0.5, rect.size.y)
 	var destination: Rect2 = Rect2(foot - Vector2(size.x * 0.5, size.y * (rig.ground_fraction + 0.5) / 2.0), size)
+	if state == &"idle":
+		if flip:
+			canvas.draw_set_transform(Vector2(foot.x * 2.0, 0), 0.0, Vector2(-1, 1))
+		_draw_idle(canvas, frame as AtlasTexture, destination, tint)
+		if flip:
+			canvas.draw_set_transform(Vector2.ZERO)
+		return
 	if flip:
 		destination.position.x += size.x
 		destination.size.x = -size.x
 	canvas.draw_texture_rect(frame, destination, false, tint)
+
+func _draw_idle(canvas: CanvasItem, frame: AtlasTexture, destination: Rect2, tint: Color) -> void:
+	var scale: Vector2 = destination.size / frame.get_size()
+	var join: float = roundf(frame.get_height() * rig.idle_breath_split)
+	var upper_height: float = clampf(join - frame.margin.position.y, 0.0, frame.region.size.y)
+	var source_top: Rect2 = Rect2(frame.region.position, Vector2(frame.region.size.x, upper_height))
+	var source_bottom: Rect2 = Rect2(frame.region.position + Vector2(0, upper_height), frame.region.size - Vector2(0, upper_height))
+	var top: Rect2 = Rect2(destination.position + frame.margin.position * scale, source_top.size * scale)
+	var bottom: Rect2 = Rect2(top.position + Vector2(0, top.size.y), source_bottom.size * scale)
+	# The join and entire lower slice stay fixed; breathing never changes horizontal scale.
+	var breath: float = 1.0 + sin(clock * TAU / 3.2) * rig.idle_breath_amount
+	top.position.y -= top.size.y * (breath - 1.0)
+	top.size.y *= breath
+	canvas.draw_texture_rect_region(frame.atlas, top, source_top, tint, false, true)
+	canvas.draw_texture_rect_region(frame.atlas, bottom, source_bottom, tint, false, true)
+	_draw_idle_drips(canvas, destination, frame.get_size(), join, breath, tint)
+
+func _draw_idle_drips(canvas: CanvasItem, destination: Rect2, canvas_size: Vector2, join: float, breath: float, tint: Color) -> void:
+	var scale: Vector2 = destination.size / canvas_size
+	for index: int in range(rig.idle_drip_origins.size()):
+		var phase: float = fposmod(clock / 2.4 + index * 0.48, 1.0)
+		if phase >= 0.62:
+			continue
+		var origin: Vector2 = rig.idle_drip_origins[index] * canvas_size
+		if origin.y < join:
+			origin.y = join + (origin.y - join) * breath
+		var falling: float = clampf((phase - 0.24) / 0.38, 0.0, 1.0)
+		origin.y += 16.0 * falling * falling
+		var center: Vector2 = destination.position + origin * scale
+		var radius: float = 2.6 * absf(scale.x) * lerpf(0.4, 1.0, minf(phase / 0.24, 1.0))
+		var color: Color = Color("a73513") * tint
+		color.a *= 1.0 - smoothstep(0.6, 1.0, falling)
+		var points: PackedVector2Array = PackedVector2Array()
+		points.append(center - Vector2(0, radius * 2.3))
+		for step: int in range(9):
+			var angle: float = step * PI / 8.0
+			points.append(center + Vector2(cos(angle), sin(angle)) * radius)
+		canvas.draw_colored_polygon(points, color)
+		canvas.draw_circle(center + Vector2(-radius * 0.35, -radius * 0.15), radius * 0.28, Color(1.0, 0.67, 0.28, color.a) * tint, true, -1.0, true)

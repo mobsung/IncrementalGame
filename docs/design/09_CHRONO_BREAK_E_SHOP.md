@@ -20,6 +20,8 @@ Questo crea una scelta ricorrente: continuare a ottenere valuta senza XP per ten
 
 ## Chrono shop — prima demo
 
+**Configurazione iniziale autorizzata il 30 settembre 2026:** catalogo implementato di 23 voci, prezzi e incrementi nelle Resource; Multi Hit e Multi Cast costano inizialmente 25 Shards ciascuno, un solo grado (+1 ripetizione compatibile). Un posto alleato a 50 Shards porta il limite da tre a quattro senza cambiare i nove slot fisici. I requisiti di record sono configurabili e inizialmente zero. [Tabella completa e limiti della verifica](../implementation/MECCANICHE_BASE.md). Questi dati sostituiscono i rinvii al catalogo/prezzi ancora da definire della fotografia storica qui sotto; il bilanciamento definitivo resta da verificare.
+
 Il primo utilizzo dei **Chrono Shards** è il **Chrono shop**. Tutti i suoi potenziamenti sono **globali e permanenti**: si applicano alle unità e alle abilità pertinenti, comprese quelle ottenute successivamente, e rimangono acquistati e attivi attraverso i Chrono break. Lo shop offre potenziamenti generici delle statistiche. Offre sia bonus **additivi**, che entrano nella fase additiva del calcolo della statistica pertinente, sia bonus **moltiplicativi** che introducono un **pool dedicato al Chrono shop**, distinto dagli altri pool della stessa statistica. I bonus percentuali applicabili alla stessa statistica all'interno di questo pool si sommano; il moltiplicatore risultante si moltiplica con quelli degli altri pool secondo la regola generale.
 
 Lo shop deve inoltre offrire, a **costi elevati**:

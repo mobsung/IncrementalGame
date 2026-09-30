@@ -28,6 +28,8 @@ Il blocco dell'esperienza dipende dal record/progresso della squadra, non dalla 
 
 ## Criterio per le prossime decisioni
 
+**Priorità di sviluppo, 30 settembre 2026:** l'utente ha chiesto di completare le meccaniche base prima di introdurre nuove specie e ha autorizzato una prima configurazione delle parti aperte di Chrono/offline. [Tappa dei sistemi di base](../implementation/MECCANICHE_BASE.md): Chrono shop completo per la configurazione iniziale, priorità attive, abilità/effetti generali, cure/resurrezione, evocazioni/supporti, rami evolutivi e offline. I sistemi futuri sono testati con contenuto sintetico; il roster disponibile resta il solo Spaghetti Golem. Riprendere le schede delle altre specie dopo questa base e il suo playtest.
+
 Ogni nuova meccanica deve contribuire al ciclo di combattimento, crescita e avanzamento. Deve offrire una scelta comprensibile al giocatore e lasciare spazio a nuove unità o abilità senza richiedere eccezioni arbitrarie per ogni contenuto.
 
 ## Come usare questi documenti

@@ -40,6 +40,13 @@ var impact_left: float = 0.0
 var impacted: bool = false
 var unbuffed_attack: float = 0.0
 var unbuffed_armor: float = 0.0
+var ability_cooldowns: Dictionary = {}
+var statuses: Array[Dictionary] = []
+var status_base: Dictionary = {}
+var summoner_id: String = ""
+var summon_remaining: float = 0.0
+var reward_multiplier: float = 1.0
+var support: bool = false
 
 # Derived from owned progress on creation/load/purchase; not snapshot state.
 var basic_bonus: float = 0.0
@@ -58,7 +65,8 @@ const FIELDS: Array[StringName] = [
 	&"super_critical_chance", &"super_critical_multiplier", &"ultra_critical_chance", &"ultra_critical_multiplier",
 	&"target_id", &"action", &"action_left", &"cooldown", &"pending_cooldown",
 	&"passive_count", &"return_wait", &"returning", &"facing",
-	&"kit_state", &"impact_left", &"impacted"]
+	&"kit_state", &"impact_left", &"impacted", &"ability_cooldowns", &"statuses", &"status_base",
+	&"summoner_id", &"summon_remaining", &"reward_multiplier", &"support"]
 
 static func create(definition: CombatantDefinition, entity_id: int, is_ally: bool,
 		spawn: Vector2, health_scale: float = 1.0, attack_scale: float = 1.0) -> CombatantState:
@@ -95,11 +103,16 @@ func clear_action() -> void:
 func to_data() -> Dictionary:
 	var data: Dictionary = {}
 	for field: StringName in FIELDS:
-		data[field] = get(field).duplicate(true) if field == &"kit_state" else get(field)
+		var value: Variant = get(field)
+		data[field] = value.duplicate(true) if value is Dictionary or value is Array else value
 	return data
 
 static func from_data(data: Dictionary) -> CombatantState:
 	var actor: CombatantState = CombatantState.new()
 	for field: StringName in FIELDS:
-		actor.set(field, data[field].duplicate(true) if field == &"kit_state" else data[field])
+		var value: Variant = data.get(field, actor.get(field))
+		if field == &"statuses":
+			actor.statuses.assign(value.duplicate(true))
+		else:
+			actor.set(field, value.duplicate(true) if value is Dictionary or value is Array else value)
 	return actor
