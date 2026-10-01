@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_visual.gd" id="script"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/spritesheets/makeshift.png" id="sheet"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/makeshift_sheet.tres" id="motion"]
+
+[sub_resource type="AtlasTexture" id="portrait"]
+atlas = ExtResource("sheet")
+region = Rect2(95, 6, 155, 205)
+
+[resource]
+script = ExtResource("script")
+texture = SubResource("portrait")
+animation = ExtResource("motion")
+height = 155.0
+faces_right = true

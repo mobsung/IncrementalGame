@@ -1,0 +1,17 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="script"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/mirror_decoy.tres" id="visual"]
+
+[resource]
+script = ExtResource("script")
+id = &"mirror_decoy"
+display_name = "Mirror Decoy"
+max_health = 80.0
+physical_attack = 0.0
+attack_range = 0.0
+attack_speed = 0.1
+movement_speed = 50.0
+gold = 0.0
+experience = 0.0
+souls = 0.0
+visual = ExtResource("visual")

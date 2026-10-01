@@ -9,6 +9,7 @@ var shards: float = 0.0
 var global_ranks: Dictionary = {}
 var chrono_ranks: Dictionary = {}
 var next_copy_serial: int = 2
+var content_grants: Dictionary = {}
 
 func shop_ranks(shop: StringName) -> Dictionary:
 	return global_ranks if shop == &"global" else chrono_ranks
@@ -48,6 +49,7 @@ func to_data() -> Dictionary:
 	for copy: UnitProgress in copies:
 		units.append(copy.to_data())
 	return {"copies": units, "gold": gold, "dust": dust, "shards": shards,
+		"content_grants": content_grants.duplicate(),
 		"next_copy_serial": next_copy_serial,
 		"global_ranks": global_ranks.duplicate(), "chrono_ranks": chrono_ranks.duplicate()}
 
@@ -60,6 +62,7 @@ static func from_data(data: Dictionary) -> PlayerProfile:
 	profile.dust = data.dust
 	profile.shards = data.shards
 	profile.next_copy_serial = data.next_copy_serial
+	profile.content_grants = data.get("content_grants", {}).duplicate()
 	profile.global_ranks = data.global_ranks.duplicate()
 	profile.chrono_ranks = data.chrono_ranks.duplicate()
 	return profile

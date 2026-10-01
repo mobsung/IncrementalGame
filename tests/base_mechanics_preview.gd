@@ -12,7 +12,10 @@ func _ready() -> void:
 	simulation.evolve_copy(simulation.unit().id)
 	simulation.evolve_copy(simulation.unit().id)
 	for index: int in range(3):
-		var copy: UnitProgress = simulation.profile.create_copy(simulation.unit().species_id)
+		var definition: CombatantDefinition = simulation.config.ally.duplicate(true)
+		definition.id = StringName("preview_species_%d" % index)
+		simulation.config.extra_definitions.append(definition)
+		var copy: UnitProgress = simulation.profile.create_copy(definition.id)
 		simulation.set_copy_deployed(copy.id, true)
 	panels.show_section(&"units")
 	_open_copy(simulation.unit().id)

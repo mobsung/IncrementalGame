@@ -39,6 +39,13 @@ extends Resource
 @export var active_abilities: Array[AbilityDefinition] = []
 @export var enemy_support_role: bool = false
 @export var evolution_options: Array[EvolutionDefinition] = []
+@export var wizard_role: String = ""
+@export var basic_name: String = "Basic attack"
+@export var basic_projectile_speed: float = 0.0
+@export var passive_names: PackedStringArray = []
+@export var knockback_immune: bool = false
+@export var basic_icon: Texture2D
+@export var passive_icons: Array[Texture2D] = []
 
 func validation_errors() -> PackedStringArray:
 	var errors: PackedStringArray = []

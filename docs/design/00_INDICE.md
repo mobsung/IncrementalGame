@@ -28,7 +28,7 @@ Il blocco dell'esperienza dipende dal record/progresso della squadra, non dalla 
 
 ## Criterio per le prossime decisioni
 
-**Priorità di sviluppo, 30 settembre 2026:** l'utente ha chiesto di completare le meccaniche base prima di introdurre nuove specie e ha autorizzato una prima configurazione delle parti aperte di Chrono/offline. [Tappa dei sistemi di base](../implementation/MECCANICHE_BASE.md): Chrono shop completo per la configurazione iniziale, priorità attive, abilità/effetti generali, cure/resurrezione, evocazioni/supporti, rami evolutivi e offline. I sistemi futuri sono testati con contenuto sintetico; il roster disponibile resta il solo Spaghetti Golem. Riprendere le schede delle altre specie dopo questa base e il suo playtest.
+**Priorità di sviluppo, 30 settembre 2026:** l'utente ha chiesto di completare le meccaniche base prima di introdurre nuove specie e ha autorizzato una prima configurazione delle parti aperte di Chrono/offline. [Tappa dei sistemi di base](../implementation/MECCANICHE_BASE.md): Chrono shop completo per la configurazione iniziale, priorità attive, abilità/effetti generali, cure/resurrezione, evocazioni/supporti, rami evolutivi e offline. La base è implementata e verificata. Il 1 ottobre l’utente ha autorizzato la seconda specie, The Would-Be Wizard, con cinque forme, tutte le abilità e una configurazione di test completa delegata. [Nuova tappa](../implementation/WOULD_BE_WIZARD.md). Restano le altre specie e il playtest di bilanciamento.
 
 Ogni nuova meccanica deve contribuire al ciclo di combattimento, crescita e avanzamento. Deve offrire una scelta comprensibile al giocatore e lasciare spazio a nuove unità o abilità senza richiedere eccezioni arbitrarie per ogni contenuto.
 
@@ -52,7 +52,7 @@ Leggere prima questo indice e poi soltanto i documenti pertinenti al lavoro. Con
 | [Visuale e UI](10_DIREZIONE_VISIVA_E_UI.md) | Riferimenti, scala, leggibilità e indicatori | 27.1, 27.5 |
 | [Bilanciamento e offline](11_BILANCIAMENTO_E_OFFLINE.md) | Configurabilità, ritmo e progressione offline | 21, 28 |
 
-I punti 22, 23, 25 e 26 hanno regole generali chiarite; alcuni dati concreti restano aperti. Il punto 27.1 e le regole del movimento sono concordati per la demo. **Riprendere dal 27.2: rosa iniziale di sei specie.** [Spaghetti Golem](../../content/units/warriors/spaghetti_golem/concepts/SPAGHETTI_GOLEM_CONCEPT.md) sostituisce John su richiesta del 27 settembre: tre forme Rare implementate, base Noodle Squire. [Stato tecnico e migrazione](../implementation/SPAGHETTI_GOLEM.md). Le altre specie e le schede complete restano da concordare.
+I punti 22, 23, 25 e 26 hanno regole generali chiarite; alcuni dati concreti restano aperti. Il punto 27.1 e le regole del movimento sono concordati per la demo. **Riprendere dal 27.2: rosa iniziale di sei specie.** [Spaghetti Golem](../../content/units/warriors/spaghetti_golem/concepts/SPAGHETTI_GOLEM_CONCEPT.md) sostituisce John su richiesta del 27 settembre: tre forme Rare implementate, base Noodle Squire. [Stato tecnico e migrazione](../implementation/SPAGHETTI_GOLEM.md). The Would-Be Wizard è ora implementato su due rami; le altre quattro specie e le relative schede restano da concordare.
 
 ## Metodo di lavoro
 

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/grand_illusion.tres" id="icon_grand_illusion"]
+[ext_resource type="Script" path="res://scripts/data/ability_definition.gd" id="script"]
+
+
+[resource]
+script = ExtResource("script")
+id = &"grand_illusion"
+display_name = "Grand Illusion"
+wizard_action = "illusion"
+description = "Against a group: smoke, mirror decoys, delayed charges and physical retreat."
+target_kind = "opponent"
+range_radius = 500.0
+area_radius = 160.0
+supports_area = true
+supports_multi_cast = false
+cast_time = 1.0
+cooldown = 18.0
+minimum_cooldown = 1.0
+icon = ExtResource("icon_grand_illusion")

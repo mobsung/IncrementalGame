@@ -141,11 +141,13 @@ func _apply_progress(actor: CombatantState) -> void:
 		UnitStats.apply(actor, copy, config, profile)
 
 func start() -> void:
-	if phase == &"preparation" or phase == &"paused":
+	if not deployed_units().is_empty() and (phase == &"preparation" or phase == &"paused"):
 		_begin_attempt()
 		state_changed.emit()
 
 func _begin_attempt() -> void:
+	for index: int in range(actors.size() - 1, -1, -1):
+		if actors[index].definition_id in [&"clockwork_familiar", &"mirror_decoy"]: actors.remove_at(index)
 	phase = &"battle"
 	attempt_time = 0.0
 	spawn_index = 0
@@ -159,6 +161,9 @@ func _begin_attempt() -> void:
 		var definition: CombatantDefinition = config.definition_for(copy)
 		if definition.kit != null:
 			definition.kit.reset_wave(actor, copy)
+		elif not definition.wizard_role.is_empty():
+			actor.kit_state.clear()
+			WizardSystem.ensure_state(actor, definition.wizard_role)
 		attempt_snapshot.append(actor.to_data())
 	sequence = WaveSequence.generate(rng)
 	_spawn_due()
@@ -187,6 +192,8 @@ func step() -> void:
 	for request: Dictionary in result.requests:
 		if request.kind == "summon":
 			_spawn_summons(request.actor, request.effect)
+		elif request.kind == "wizard_summon":
+			_spawn_wizard_summon(request)
 	if not offline_running and not result.events.is_empty():
 		effects_emitted.emit(result.events)
 	for id: int in result.deaths:
@@ -282,6 +289,24 @@ func _spawn_summons(source: CombatantState, effect: AbilityEffectDefinition) -> 
 		actor.reward_multiplier = effect.summon_reward_multiplier
 		next_id += 1
 		actors.append(actor)
+
+func _spawn_wizard_summon(request: Dictionary) -> void:
+	var source: CombatantState = request.source
+	var count: int = 0
+	for member: CombatantState in actors:
+		if member.summoner_id == source.copy_id and member.alive(): count += 1
+	if count >= 5: return
+	var definition: CombatantDefinition = config.definitions().get(StringName(request.definition_id))
+	if definition == null: return
+	var actor: CombatantState = CombatantState.create(definition, next_id, source.allied, request.position.clamp(config.arena.position, config.arena.end))
+	actor.summoner_id = source.copy_id
+	actor.summon_remaining = request.duration
+	actor.max_health = (source.max_health * 0.25 + source.ability_power * 2.0) * request.multiplier if request.definition_id == "clockwork_familiar" else source.max_health * 0.06
+	actor.health = actor.max_health
+	actor.reward_multiplier = 0.0
+	actor.kit_state = {"split": request.split}
+	next_id += 1
+	actors.append(actor)
 
 func _finish(victory: bool) -> void:
 	var xp: float = pending_xp if victory and wave > record_wave and wave >= xp_block else 0.0
@@ -477,9 +502,10 @@ func set_copy_deployed(copy_id: String, deployed: bool, slot: int = -1) -> bool:
 	var limit: int = 1 if copy.enemy_support else allied_limit()
 	if deployed and current.size() >= limit:
 		return false
-	if not deployed and not copy.enemy_support and current.size() <= 1:
-		return false
 	if deployed:
+		for other: UnitProgress in profile.deployed_copies():
+			if other.species_id == copy.species_id:
+				return false
 		var positions: PackedVector2Array = config.support_slots if copy.enemy_support else config.slots
 		var destination: int = slot if slot >= 0 else _first_free_slot(copy.enemy_support)
 		if destination < 0 or destination >= positions.size():
@@ -565,6 +591,7 @@ func evolve_copy(copy_id: String, branch_id: StringName = &"") -> bool:
 	var actor: CombatantState = actor_for_copy(copy_id)
 	if actor != null:
 		actor.clear_action()
+		if copy.species_id == &"would_be_wizard": actor.ability_cooldowns.clear()
 		_apply_progress(actor)
 		# An evolution made between attempts must also update rollback state.
 		for index: int in range(attempt_snapshot.size()):
@@ -576,7 +603,7 @@ func evolve_copy(copy_id: String, branch_id: StringName = &"") -> bool:
 func purchase_copy_upgrade(copy_id: String, upgrade_id: StringName) -> bool:
 	var upgrade: LevelUpgradeDefinition = config.upgrade_by_id(upgrade_id)
 	var copy: UnitProgress = profile.copy_by_id(copy_id)
-	if upgrade == null or copy == null or not copy.purchase_upgrade(upgrade):
+	if upgrade == null or copy == null or not upgrade.applies_to(copy, config.definition_for(copy)) or not copy.purchase_upgrade(upgrade):
 		return false
 	var actor: CombatantState = actor_for_copy(copy_id)
 	if actor != null:
@@ -605,6 +632,13 @@ func purchase_copy_gold_upgrade(copy_id: String, upgrade_id: StringName) -> bool
 	return true
 
 func chrono_break() -> void:
+	profile.content_grants.erase("legacy_duplicate_formation")
+	var species: Dictionary = {}
+	for copy: UnitProgress in profile.deployed_copies():
+		if species.has(copy.species_id):
+			copy.deployed = false
+		else:
+			species[copy.species_id] = true
 	profile.shards += pow(float(record_wave) / 10.0, 2.0)
 	phase = &"preparation"
 	wave = 1

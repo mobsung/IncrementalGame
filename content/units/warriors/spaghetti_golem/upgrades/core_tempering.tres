@@ -11,3 +11,4 @@ required_levels = PackedInt32Array(1, 1)
 evolution_caps = PackedInt32Array(0, 0, 2)
 description = "+1% max health to Glassheart Surge healing."
 effects = Dictionary[StringName, float]({&"surge_fraction": 0.01})
+species_id = &"spaghetti_golem"

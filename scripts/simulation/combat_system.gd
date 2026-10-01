@@ -28,6 +28,7 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 	var healing: Dictionary = {}
 	var events: Array[Dictionary] = []
 	var requests: Array[Dictionary] = []
+	WizardSystem.advance(actors, delta, rng, damage, events, definitions)
 	for index: int in range(projectiles.size() - 1, -1, -1):
 		var projectile: Dictionary = projectiles[index]
 		projectile.remaining = maxf(0.0, projectile.remaining - delta)
@@ -72,7 +73,8 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 		if actor.action == &"sweep":
 			_complete_sweep(actor, actors, definition, copy, rng, damage, events)
 		else:
-			var completed: bool = _complete_basic(actor, target, actors, definition, copy, rng, damage, events)
+			var completed: bool = _complete_basic(actor, target, actors, definition, copy, rng, damage, events, requests)
+			if completed and not definition.wizard_role.is_empty(): WizardSystem.basic(actor, target)
 			if completed and definition.heal_every_attacks > 0:
 				actor.passive_count += 1
 				if actor.passive_count >= definition.heal_every_attacks:
@@ -80,6 +82,10 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 					healing[actor.id] = actor.max_health * definition.heal_fraction
 					events.append({"kind": "heal", "position": actor.position, "amount": healing[actor.id]})
 		actor.clear_action()
+	WizardSystem.decoy_events(actors, damage, events, requests, rng)
+	WizardSystem.before_resolve(actors, damage, healing, events)
+	for actor: CombatantState in actors:
+		actor.position = actor.position.clamp(config.arena.position, config.arena.end)
 	var deaths: Array[int] = CombatMath.resolve(actors, damage, healing)
 	var death_statuses: Dictionary = {}
 	for id: int in deaths:
@@ -91,6 +97,10 @@ static func step(actors: Array[CombatantState], definitions: Dictionary, copies:
 			AbilitySystem.interrupt(actor)
 		if definition.kit != null:
 			definition.kit.on_death(actor, copy)
+			events.append({"kind": "death", "target_id": actor.id, "position": actor.position})
+		elif not definition.wizard_role.is_empty():
+			actor.kit_state.clear()
+			WizardSystem.ensure_state(actor, definition.wizard_role)
 			events.append({"kind": "death", "target_id": actor.id, "position": actor.position})
 		elif actor.action == &"sweep":
 			actor.cooldown = actor.pending_cooldown
@@ -120,6 +130,11 @@ static func _prepare(actor: CombatantState, actors: Array[CombatantState],
 		rng: RandomNumberGenerator, delta: float) -> Vector2:
 	var target: CombatantState = Targeting.by_id(actors, actor.target_id)
 	var priority_return: bool = actor.allied and copy != null and not copy.mobile and not actor.position.is_equal_approx(actor.anchor)
+	if actor.kit_state.get("retreat", false) and actor.action.is_empty():
+		actor.target_id = 0
+		var destination: Vector2 = actor.position.move_toward(actor.anchor, actor.speed * delta)
+		if destination.is_equal_approx(actor.anchor): actor.kit_state.retreat = false
+		return destination
 	if not definition.active_abilities.is_empty():
 		if not actor.action.is_empty() and actor.action != &"basic":
 			return actor.position
@@ -263,7 +278,7 @@ static func _complete_sweep(actor: CombatantState, actors: Array[CombatantState]
 
 static func _complete_basic(actor: CombatantState, target: CombatantState,
 		actors: Array[CombatantState], definition: CombatantDefinition, copy: UnitProgress,
-		rng: RandomNumberGenerator, damage: Dictionary, events: Array[Dictionary]) -> bool:
+		rng: RandomNumberGenerator, damage: Dictionary, events: Array[Dictionary], requests: Array[Dictionary] = []) -> bool:
 	if target == null or not Targeting.in_range(actor, target):
 		return false
 	var hits: int = actor.multi_hit if definition.basic_damage.supports_multi_hit else 1
@@ -273,7 +288,17 @@ static func _complete_basic(actor: CombatantState, target: CombatantState,
 		if current == null:
 			break
 		var remaining: float = float(virtual_health.get(current.id, current.health))
-		remaining -= _add_damage(actor, current, definition.basic_damage, actor.basic_bonus, rng, damage, events)
+		if definition.basic_projectile_speed > 0.0:
+			var basic: DamageDefinition = definition.basic_damage
+			if not definition.wizard_role.is_empty() and basic.magic_coefficient > 0.0:
+				basic = basic.duplicate()
+				basic.magic_coefficient += actor.basic_bonus
+			var packet: Dictionary = CombatMath.create_damage(actor, basic, actor.basic_bonus, rng)
+			var travel: float = actor.position.distance_to(current.position) / definition.basic_projectile_speed
+			requests.append({"kind": "projectile", "data": {"target_id": current.id, "source_id": actor.id, "remaining": travel, "duration": travel, "packet": packet, "from": actor.position, "allied": actor.allied, "visual": "dart" if definition.wizard_role == "archmage" else "ink"}})
+			remaining -= CombatMath.damage_amount(packet, current)
+		else:
+			remaining -= _add_damage(actor, current, definition.basic_damage, actor.basic_bonus, rng, damage, events)
 		virtual_health[current.id] = remaining
 		if remaining <= 0.0 and hit + 1 < hits:
 			current = _acquire_basic_target(actor, actors, copy, rng, virtual_health)

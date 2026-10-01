@@ -1,0 +1,15 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_visual.gd" id="script"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/spritesheets/archmage.png" id="sheet"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/archmage_sheet.tres" id="motion"]
+
+[sub_resource type="AtlasTexture" id="portrait"]
+atlas = ExtResource("sheet")
+region = Rect2(40, 2, 171, 183)
+
+[resource]
+script = ExtResource("script")
+texture = SubResource("portrait")
+animation = ExtResource("motion")
+height = 155.0
+faces_right = true

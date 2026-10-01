@@ -11,3 +11,4 @@ required_levels = PackedInt32Array(1, 1, 1)
 evolution_caps = PackedInt32Array(0, 2, 3)
 description = "+2 percentage points to Sauce Guard armor."
 effects = Dictionary[StringName, float]({&"guard_armor": 0.02})
+species_id = &"spaghetti_golem"

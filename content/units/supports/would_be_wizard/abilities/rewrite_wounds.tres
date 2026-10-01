@@ -1,0 +1,20 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/rewrite_wounds.tres" id="icon_rewrite_wounds"]
+[ext_resource type="Script" path="res://scripts/data/ability_definition.gd" id="script"]
+
+
+[resource]
+script = ExtResource("script")
+id = &"rewrite_wounds"
+display_name = "Rewrite Wounds"
+wizard_action = "rewrite"
+description = "Heal and inscribe a budget of Written Recovery for future nonlethal wounds."
+target_kind = "injured_ally"
+range_radius = 700.0
+area_radius = 0.0
+supports_area = false
+supports_multi_cast = true
+cast_time = 0.65
+cooldown = 5.0
+minimum_cooldown = 1.0
+icon = ExtResource("icon_rewrite_wounds")

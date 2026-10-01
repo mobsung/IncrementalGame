@@ -1,0 +1,41 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/loaded_staff.tres" id="icon_loaded_staff"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/misdirection.tres" id="icon_misdirection"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/encore.tres" id="icon_encore"]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="script"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/archmage.tres" id="visual"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/physical_basic.tres" id="basic"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/rigged_sigil.tres" id="rigged_sigil"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/clockwork_familiar.tres" id="clockwork_familiar"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/grand_illusion.tres" id="grand_illusion"]
+[ext_resource type="Script" path="res://scripts/data/ability_definition.gd" id="ability_type"]
+
+
+[resource]
+script = ExtResource("script")
+id = &"wizard_archmage"
+display_name = "False Archmage"
+unit_class = "ranged"
+wizard_role = "archmage"
+basic_name = "Loaded Staff"
+max_health = 250.0
+physical_attack = 18.0
+magic_attack = 16.0
+ability_power = 24.0
+armor = 6.0
+magic_resistance = 8.0
+attack_speed = 1.0
+movement_speed = 220.0
+engagement_radius = 350.0
+attack_range = 260.0
+gold = 0.0
+experience = 0.0
+souls = 0.0
+critical_chance = 0.05
+basic_damage = ExtResource("basic")
+visual = ExtResource("visual")
+basic_projectile_speed = 700.0
+active_abilities = Array[ExtResource("ability_type")]([ExtResource("rigged_sigil"),ExtResource("clockwork_familiar"),ExtResource("grand_illusion")])
+passive_names = PackedStringArray("Perfect Misdirection","Nothing Up My Sleeve")
+basic_icon = ExtResource("icon_loaded_staff")
+passive_icons = Array[Texture2D]([ExtResource("icon_misdirection"),ExtResource("icon_encore")])

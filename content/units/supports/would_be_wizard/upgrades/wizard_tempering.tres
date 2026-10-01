@@ -1,0 +1,14 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/level_upgrade_definition.gd" id="script"]
+
+[resource]
+script = ExtResource("script")
+id = &"wizard_tempering"
+species_id = &"would_be_wizard"
+display_name = "Weathered Robes"
+description = "Amplifies individual Gold health and armor gains by 10%."
+max_ranks = 5
+base_cost = 1
+cost_increment = 0
+required_levels = PackedInt32Array(1, 5, 10, 20, 30)
+effects = {&"gold_health": 0.1, &"gold_armor": 0.1}

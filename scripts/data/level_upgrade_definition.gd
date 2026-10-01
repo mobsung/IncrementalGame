@@ -10,6 +10,11 @@ extends Resource
 @export var description: String
 @export var effects: Dictionary[StringName, float] = {}
 @export var evolution_caps: PackedInt32Array = PackedInt32Array()
+@export var species_id: StringName = &""
+@export var wizard_roles: PackedStringArray = []
+
+func applies_to(copy: UnitProgress, definition: CombatantDefinition) -> bool:
+	return (species_id.is_empty() or copy.species_id == species_id) and (wizard_roles.is_empty() or definition.wizard_role in wizard_roles)
 
 func cap_for(evolution: int) -> int:
 	return evolution_caps[clampi(evolution, 0, evolution_caps.size() - 1)] if not evolution_caps.is_empty() else max_ranks

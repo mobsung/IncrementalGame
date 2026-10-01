@@ -1,0 +1,9 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/summon_entry_definition.gd" id="script"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/forms/apprentice.tres" id="unit"]
+
+[resource]
+script = ExtResource("script")
+unit = ExtResource("unit")
+rarity = &"rare"
+pool_weight = 1.0

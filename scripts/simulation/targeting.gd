@@ -44,6 +44,11 @@ static func acquire(actor: CombatantState, actors: Array[CombatantState],
 		only_range: bool = false) -> CombatantState:
 	var candidates: Array[CombatantState] = opponents(actor, actors)
 	if not actor.allied and not only_range:
+		var decoys: Array[CombatantState] = []
+		for candidate: CombatantState in candidates:
+			if candidate.definition_id in [&"clockwork_familiar", &"mirror_decoy"] and actor.position.distance_to(candidate.position) <= 280.0:
+				decoys.append(candidate)
+		if not decoys.is_empty(): return choose(actor, decoys, 0, rng, actor.target_id)
 		return choose(actor, candidates, 0, rng, actor.target_id)
 	var nearby: Array[CombatantState] = []
 	for candidate: CombatantState in candidates:

@@ -2,7 +2,7 @@ class_name SaveStore
 extends RefCounted
 ## Versioned binary snapshots preserve Vector2 and 64-bit RNG state without objects.
 
-const VERSION: int = 9
+const VERSION: int = 10
 const V4_STATS: Array[StringName] = [&"magic_attack", &"magic_resistance", &"ability_power",
 	&"critical_chance", &"critical_multiplier", &"super_critical_chance", &"super_critical_multiplier",
 	&"ultra_critical_chance", &"ultra_critical_multiplier"]
@@ -33,13 +33,14 @@ func load_state() -> Dictionary:
 			return {}
 	return {}
 
-func write_state(data: Dictionary) -> Error:
+func write_state(data: Dictionary, saved_at: float = -1.0) -> Error:
 	last_error = ""
 	if not validate(data, config):
 		last_error = "Invalid battle snapshot."
 		return ERR_INVALID_DATA
 	var bytes: PackedByteArray = var_to_bytes(data)
-	var envelope: Dictionary = {"version": VERSION, "saved_at": Time.get_unix_time_from_system(),
+	# Content-only grants can preserve the last play timestamp and pending offline time.
+	var envelope: Dictionary = {"version": VERSION, "saved_at": saved_at if saved_at >= 0.0 else Time.get_unix_time_from_system(),
 		"payload": bytes, "checksum": _hash(bytes)}
 	var file: FileAccess = FileAccess.open(path + ".tmp", FileAccess.WRITE)
 	if file == null:
@@ -92,6 +93,8 @@ func _read(candidate: String) -> Dictionary:
 		last_error = "Save checksum mismatch."
 		return {}
 	var data: Variant = bytes_to_var(envelope.payload)
+	if data is Dictionary and envelope.version <= 9 and data.get("profile") is Dictionary:
+		data.profile["content_grants"] = {}
 	if data is Dictionary and envelope.version == 8:
 		data = _migrate_v8(data)
 	if data is Dictionary and envelope.version <= 7:
@@ -113,6 +116,8 @@ func _read(candidate: String) -> Dictionary:
 		data = _migrate_v5(data)
 	if data is Dictionary and envelope.version <= 6:
 		data = _migrate_v6(data)
+	if data is Dictionary and envelope.version <= 9:
+		data = _migrate_v9(data)
 	if not data is Dictionary or not validate(data, config):
 		last_error = "Invalid battle snapshot."
 		return {}
@@ -284,6 +289,29 @@ static func _migrate_v8(data: Dictionary) -> Dictionary:
 			actor[key] = value.duplicate(true) if value is Array or value is Dictionary else value
 	return data
 
+static func _migrate_v9(data: Dictionary) -> Dictionary:
+	data = data.duplicate(true)
+	if not data.get("profile") is Dictionary or not data.profile.get("copies") is Array: return {}
+	data.profile["content_grants"] = {}
+	var seen: Dictionary = {}
+	var removed: Array[String] = []
+	for copy: Variant in data.profile.copies:
+		if not copy is Dictionary or not copy.has_all(["deployed", "species_id", "id"]): return {}
+		if not copy.deployed: continue
+		if seen.has(copy.species_id):
+			if data.get("phase") == &"preparation":
+				copy.deployed = false
+				removed.append(copy.id)
+			else:
+				# Preserve an already running old attempt until its next Chrono preparation.
+				data.profile.content_grants["legacy_duplicate_formation"] = true
+		seen[copy.species_id] = true
+	if not removed.is_empty():
+		for index: int in range(data.actors.size() - 1, -1, -1):
+			if data.actors[index].copy_id in removed or data.actors[index].summoner_id in removed: data.actors.remove_at(index)
+		data.attempt_snapshot.clear()
+	return data
+
 static func _actor_valid(data: Dictionary, definitions: Dictionary, validation_config: BattleConfig = BattleSimulation.CONFIG) -> bool:
 	if not _fields_match(data, CombatantState.new().to_data()):
 		return false
@@ -447,6 +475,9 @@ static func validate(data: Dictionary, validation_config: BattleConfig = BattleS
 			if upgrade == null or not rank is int or rank < 0 or rank > upgrade.max_ranks:
 				return false
 	var copies_by_id: Dictionary = {}
+	var deployed_species: Dictionary = {}
+	for key: Variant in data.profile.content_grants:
+		if not key is String or not data.profile.content_grants[key] is bool: return false
 	var deployed_ids: Array[String] = []
 	var deployed_slots: Array[int] = []
 	var support_ids: Array[String] = []
@@ -457,6 +488,8 @@ static func validate(data: Dictionary, validation_config: BattleConfig = BattleS
 			return false
 		copies_by_id[copy_data.id] = copy_data
 		if copy_data.deployed:
+			if deployed_species.has(copy_data.species_id) and not (data.phase != &"preparation" and data.profile.content_grants.get("legacy_duplicate_formation", false)): return false
+			deployed_species[copy_data.species_id] = true
 			if copy_data.enemy_support:
 				support_ids.append(copy_data.id)
 				continue
@@ -466,12 +499,12 @@ static func validate(data: Dictionary, validation_config: BattleConfig = BattleS
 			deployed_slots.append(copy_data.slot)
 	var saved_profile: PlayerProfile = PlayerProfile.from_data(data.profile)
 	var allied_limit: int = mini(template.config.slots.size(), BattleSimulation.MAX_DEPLOYED_ALLIES + roundi(ShopModifiers.value(0.0, "allied_slots", saved_profile, template.config)))
-	if deployed_ids.is_empty() or deployed_ids.size() > allied_limit:
+	if (deployed_ids.is_empty() and data.phase != &"preparation") or deployed_ids.size() > allied_limit:
 		return false
 	if support_ids.size() > 1:
 		return false
 	deployed_ids.append_array(support_ids)
-	if data.actors.is_empty() or data.actors.size() > 1000:
+	if (data.actors.is_empty() and data.phase != &"preparation") or data.actors.size() > 1000:
 		return false
 	var ids: Array[int] = []
 	var actor_copy_ids: Array[String] = []
@@ -491,6 +524,8 @@ static func validate(data: Dictionary, validation_config: BattleConfig = BattleS
 			if not _kit_valid(actor_data, copies_by_id[actor_data.copy_id], template):
 				return false
 			actor_copy_ids.append(actor_data.copy_id)
+		elif actor_data.definition_id in [&"clockwork_familiar", &"mirror_decoy"]:
+			if actor_data.summoner_id.is_empty() or not copies_by_id.has(actor_data.summoner_id) or actor_data.kit_state.keys() != ["split"] or not actor_data.kit_state.split is bool: return false
 		elif actor_data.support or not actor_data.kit_state.is_empty() or actor_data.action in [&"guard", &"surge"]:
 			return false
 		elif actor_data.allied and actor_data.summoner_id.is_empty():
@@ -532,6 +567,8 @@ static func _kit_valid(actor: Dictionary, copy: Dictionary, template: BattleSimu
 		if active == null or copy.evolution < active.minimum_evolution:
 			return false
 	if definition.kit == null:
+		if not definition.wizard_role.is_empty():
+			return WizardSystem.valid_state(actor.kit_state, definition.wizard_role)
 		return actor.kit_state.is_empty() and actor.action not in [&"guard", &"surge"] and not (
 			actor.action == &"sweep" and definition.ability == null)
 	if not definition.kit.valid_state(actor.kit_state, copy.evolution):

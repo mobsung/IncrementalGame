@@ -52,9 +52,12 @@ static func select(actor: CombatantState, actors: Array[CombatantState], definit
 			continue
 		if float(actor.ability_cooldowns.get(ability.id, 0.0)) > 0.0:
 			continue
+		if not ability.wizard_action.is_empty() and not WizardSystem.eligible(actor, actors, ability):
+			continue
 		if candidates(actor, actors, ability).is_empty() or not can_summon(actor, actors, ability):
 			continue
-		var priority: int = int(copy.ability_priorities.get(ability.id, 0)) if copy != null else 0
+		var default_priority: int = WizardSystem.priority(ability.id) if not ability.wizard_action.is_empty() else 0
+		var priority: int = int(copy.ability_priorities.get(ability.id, default_priority)) if copy != null else default_priority
 		if best == null or priority > best_priority:
 			best = ability
 			best_priority = priority
@@ -82,6 +85,7 @@ static func begin(actor: CombatantState, ability: AbilityDefinition) -> void:
 	actor.action = ability.id
 	actor.action_left = ability.cast_time
 	actor.pending_cooldown = maxf(ability.minimum_cooldown, ability.cooldown * 100.0 / (100.0 + actor.haste))
+	if not ability.wizard_action.is_empty(): WizardSystem.begin(actor, ability)
 
 static func interrupt(actor: CombatantState) -> void:
 	actor.ability_cooldowns[actor.action] = actor.pending_cooldown
@@ -90,6 +94,9 @@ static func interrupt(actor: CombatantState) -> void:
 static func complete(actor: CombatantState, actors: Array[CombatantState], ability: AbilityDefinition,
 		copy: UnitProgress, rng: RandomNumberGenerator, damage: Dictionary, healing: Dictionary,
 		requests: Array[Dictionary], events: Array[Dictionary]) -> void:
+	if not ability.wizard_action.is_empty():
+		WizardSystem.complete(actor, actors, ability, copy, rng, damage, healing, requests, events)
+		return
 	actor.ability_cooldowns[ability.id] = actor.pending_cooldown
 	var target: CombatantState = Targeting.by_id(actors, actor.target_id)
 	# Range is checked at acquisition; a surviving locked target can move away.

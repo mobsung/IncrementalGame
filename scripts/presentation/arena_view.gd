@@ -10,6 +10,7 @@ const STONE: CombatantVisual = preload("res://content/enemies/balanced/visuals/s
 const EMBER: CombatantVisual = preload("res://content/enemies/offensive/visuals/ember_visual.tres")
 const WARDEN: CombatantVisual = preload("res://content/enemies/special/visuals/warden_visual.tres")
 const GOLD: Color = Color("#edce88")
+const WIZARD_EFFECTS: Texture2D = preload("res://content/units/supports/would_be_wizard/visuals/spritesheets/effects.png")
 
 var simulation: BattleSimulation
 var selected_id: int = 0
@@ -154,6 +155,7 @@ func _draw() -> void:
 		return _visual_position(a).y < _visual_position(b).y)
 	for actor: CombatantState in ordered_actors:
 		_draw_actor(actor)
+	_draw_wizard_field()
 	for effect: Dictionary in effects:
 		_draw_effect(effect)
 	draw_set_transform(Vector2.ZERO)
@@ -197,9 +199,9 @@ func _draw_actor(actor: CombatantState) -> void:
 	rect.position.y += bob
 	var tint: Color = visual.tint if actor.alive() else Color(0.45, 0.45, 0.45, 0.65)
 	if actor.alive() and not actor.kit_state.is_empty():
-		if actor.kit_state.surge_duration > 0.0:
+		if float(actor.kit_state.get("surge_duration", 0.0)) > 0.0:
 			tint = Color(1.2, 0.8, 0.65, 1.0)
-		elif actor.kit_state.guard_duration > 0.0:
+		elif float(actor.kit_state.get("guard_duration", 0.0)) > 0.0:
 			tint = Color(1.05, 0.85, 0.8, 1.0)
 	var flip: bool = (actor.facing.x > 0.0) != visual.faces_right
 	var player: RefCounted = _motion(actor)
@@ -218,10 +220,13 @@ func _draw_actor(actor: CombatantState) -> void:
 	draw_rect(bar, Color("#b7d5a2") if actor.allied else Color("#db7860"))
 	if actor.allied and not actor.copy_id.is_empty() and not actor.kit_state.is_empty():
 		var copy: UnitProgress = simulation.profile.copy_by_id(actor.copy_id)
-		if copy.evolution > 0:
+		if copy.species_id == &"spaghetti_golem" and copy.evolution > 0:
 			for index: int in range(5):
 				draw_circle(foot + Vector2(-24 + index * 12, -absf(rect.size.y) - 22), 3.5,
 					Color("#e54d2f") if index < int(actor.kit_state.sauce) else Color("#42332b"))
+		if actor.kit_state.has("wizard_role"):
+			var value: int = actor.kit_state.resource
+			_text(foot + Vector2(-25, -absf(rect.size.y) - 22), "%d / 10%s" % [value, "  Encore" if actor.kit_state.encore_left > 0.0 else ""], 13, GOLD)
 	if actor.id == selected_id:
 		_text(foot + Vector2(-42, 32), "%.0f / %.0f" % [actor.health, actor.max_health], 17, Color.WHITE)
 	if actor.action == &"sweep":
@@ -238,6 +243,34 @@ func _ellipse(center: Vector2, radius: Vector2, color: Color, filled: bool) -> v
 		draw_colored_polygon(points, color)
 	else:
 		draw_polyline(points, color, 2.0, true)
+
+func _wizard_asset(index: int, point: Vector2, height: float, alpha: float = 1.0) -> void:
+	var cuts: Array[float] = [0.0, 250.0, 510.0, 750.0, 1024.0]
+	var row: int = floori(index / 4.0)
+	var region: Rect2 = Rect2(index % 4 * 384.0, cuts[row], 384.0, cuts[row + 1] - cuts[row])
+	var dimensions: Vector2 = Vector2(height * region.size.x / region.size.y, height)
+	draw_texture_rect_region(WIZARD_EFFECTS, Rect2(point - dimensions * 0.5, dimensions), region, Color(1, 1, 1, alpha), false, true)
+
+func _draw_wizard_field() -> void:
+	for projectile: Dictionary in simulation.projectiles:
+		if not projectile.has("visual"): continue
+		var target: CombatantState = Targeting.by_id(simulation.actors, projectile.target_id)
+		if target == null: continue
+		var progress: float = 1.0 - projectile.remaining / maxf(0.001, float(projectile.get("duration", 1.0)))
+		var projectile_position: Vector2 = projectile.from.lerp(target.position, clampf(progress, 0.0, 1.0))
+		_wizard_asset(1 if projectile.visual == "dart" else 0, FieldProjection.project(projectile_position) + Vector2(0, -65), 34.0)
+	for actor: CombatantState in simulation.actors:
+		if not actor.kit_state.has("wizard_role"): continue
+		for trap: Dictionary in actor.kit_state.traps:
+			_wizard_asset(3, FieldProjection.project(trap.position), 45.0)
+			_range(trap.position, trap.radius, Color(0.7, 0.6, 0.4, 0.25), true)
+		if actor.kit_state.link_left > 0.0:
+			for id: int in actor.kit_state.links:
+				var target: CombatantState = Targeting.by_id(simulation.actors, id)
+				if target != null and target.alive(): draw_dashed_line(FieldProjection.project(actor.position) + Vector2(0, -60), FieldProjection.project(target.position) + Vector2(0, -60), Color(1.0, 0.8, 0.4, 0.5), 2.0, 10.0)
+		for entry: Dictionary in actor.kit_state.recoveries:
+			var target: CombatantState = Targeting.by_id(simulation.actors, entry.target_id)
+			if target != null and target.alive() and entry.budget > 0.0: _wizard_asset(8, FieldProjection.project(target.position) + Vector2(0, -65), 55.0, 0.5)
 
 func _range(center: Vector2, radius: float, color: Color, dashed: bool) -> void:
 	for index: int in range(96):
@@ -259,6 +292,15 @@ func _draw_effect(effect: Dictionary) -> void:
 			polygon.append(FieldProjection.project(effect.position + Vector2.from_angle(facing.angle() - half + half * 2 * index / 24.0) * float(effect.radius)))
 		draw_colored_polygon(polygon, Color(0.96, 0.8, 0.5, alpha * 0.35))
 		draw_polyline(polygon, Color(1, 0.92, 0.7, alpha), 3, true)
+	elif effect.kind == "wizard_vfx":
+		var frame: int = clampi(int((0.7 - effect.life) / 0.7 * 4.0), 0, 3)
+		var magical: bool = String(effect.ability) in ["first_remedy", "rewrite_wounds", "shared_margins", "final_revision", "the_story_continues", "written_recovery"]
+		if String(effect.ability) == "rigged_sigil":
+			_wizard_asset(2, point, 55.0, alpha)
+		elif String(effect.ability) == "clockwork_familiar":
+			_wizard_asset(12, point + Vector2(0, -50), 75.0, alpha)
+		else:
+			_wizard_asset((8 if magical else 4) + frame, point + Vector2(0, -45), 130.0 if magical else 95.0, alpha)
 	elif effect.kind == "ability":
 		if float(effect.radius) > 0.0:
 			_range(effect.position, effect.radius, Color(0.5, 0.8, 1.0, alpha), false)

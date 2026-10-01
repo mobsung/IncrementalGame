@@ -15,12 +15,15 @@ extends Resource
 @export var include_summons: bool = false
 @export_enum("opponent", "injured_ally", "dead_ally", "ally", "self") var target_kind: String = "opponent"
 @export var effects: Array[AbilityEffectDefinition] = []
+@export var wizard_action: String = ""
+@export var description: String = ""
+@export var icon: Texture2D
 
 func validation_errors() -> PackedStringArray:
 	var errors: PackedStringArray = []
 	if id.is_empty() or display_name.is_empty() or id in [&"basic", &"sweep", &"guard", &"surge"]:
 		errors.append("Missing or reserved ability ID/name.")
-	if minimum_evolution < 0 or effects.is_empty():
+	if minimum_evolution < 0 or (effects.is_empty() and wizard_action.is_empty()):
 		errors.append("Ability needs effects and a valid evolution gate.")
 	for value: float in [cast_time, cooldown, minimum_cooldown, range_radius, area_radius]:
 		if not is_finite(value) or value < 0.0:

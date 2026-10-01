@@ -10,3 +10,4 @@ cost_increment = 1
 required_levels = PackedInt32Array(5, 8, 11)
 description = "-0.5 s base Sweep cooldown. Current timers keep their duration."
 effects = Dictionary[StringName, float]({&"sweep_cooldown": 0.5})
+species_id = &"spaghetti_golem"

@@ -1,0 +1,48 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/ink_spark.tres" id="icon_ink_spark"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/margin_notes.tres" id="icon_margin_notes"]
+[ext_resource type="Script" path="res://scripts/data/combatant_definition.gd" id="script"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/acolyte.tres" id="visual"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/magic_basic.tres" id="basic"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/abilities/first_remedy.tres" id="first_remedy"]
+[ext_resource type="Script" path="res://scripts/data/ability_definition.gd" id="ability_type"]
+[ext_resource type="Script" path="res://scripts/data/evolution_definition.gd" id="evolution_type"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/forms/archsage.tres" id="archsage"]
+
+[sub_resource type="Resource" id="evolve_archsage"]
+script = ExtResource("evolution_type")
+id = &"archsage"
+required_level = 30
+form = ExtResource("archsage")
+description = "Permanent branch. Refunds level points; preserves level, XP and Gold purchases."
+
+
+[resource]
+script = ExtResource("script")
+id = &"wizard_acolyte"
+display_name = "Grimoire Acolyte"
+unit_class = "healer"
+wizard_role = "acolyte"
+basic_name = "Ink Spark"
+max_health = 250.0
+physical_attack = 18.0
+magic_attack = 16.0
+ability_power = 24.0
+armor = 6.0
+magic_resistance = 8.0
+attack_speed = 1.0
+movement_speed = 220.0
+engagement_radius = 350.0
+attack_range = 230.0
+gold = 0.0
+experience = 0.0
+souls = 0.0
+critical_chance = 0.05
+basic_damage = ExtResource("basic")
+visual = ExtResource("visual")
+basic_projectile_speed = 700.0
+active_abilities = Array[ExtResource("ability_type")]([ExtResource("first_remedy")])
+passive_names = PackedStringArray("Margin Notes")
+evolution_options = Array[ExtResource("evolution_type")]([SubResource("evolve_archsage")])
+basic_icon = ExtResource("icon_ink_spark")
+passive_icons = Array[Texture2D]([ExtResource("icon_margin_notes")])

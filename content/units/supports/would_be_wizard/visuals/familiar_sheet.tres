@@ -1,0 +1,10 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://content/units/supports/would_be_wizard/visuals/wizard_sheet.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/spritesheets/effects.png" id="2"]
+[resource]
+script = ExtResource("1")
+sheet = ExtResource("2")
+role = "familiar"
+body_pixels = 260.0
+regions = Array[Rect2]([Rect2(0, 750, 384, 274), Rect2(384, 750, 384, 274), Rect2(768, 750, 384, 274)])
+pivots = PackedVector2Array(192, 265, 192, 265, 192, 265)

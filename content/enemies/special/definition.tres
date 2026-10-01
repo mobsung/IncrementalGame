@@ -4,6 +4,7 @@
 script = ExtResource("1")
 id = &"special"
 display_name = "Stone Warden"
+knockback_immune = true
 max_health = 200.0
 physical_attack = 10.0
 attack_speed = 0.6

@@ -52,7 +52,11 @@ func tick(sim: BattleSimulation, count: int = 1) -> Dictionary:
 	return result
 
 func second(sim: BattleSimulation) -> CombatantState:
-	var copy: UnitProgress = sim.profile.create_copy(sim.unit().species_id)
+	sim.config = sim.config.duplicate(true)
+	var species: CombatantDefinition = sim.config.ally.duplicate(true)
+	species.id = &"synthetic_second"
+	sim.config.extra_definitions.append(species)
+	var copy: UnitProgress = sim.profile.create_copy(species.id)
 	check(sim.set_copy_deployed(copy.id, true), "Fixture deploys independent second copy")
 	return sim.actor_for_copy(copy.id)
 
@@ -66,9 +70,13 @@ func _chrono() -> void:
 	check(not sim.purchase_shop_upgrade(&"chrono", &"chrono_multi_hit"), "Multi Hit has one rank")
 	check(sim.purchase_shop_upgrade(&"chrono", &"chrono_allied_slot") and sim.allied_limit() == 4, "Fourth allied position unlocks")
 	for index: int in range(3):
-		var copy: UnitProgress = sim.profile.create_copy(sim.unit().species_id)
+		if index == 0: sim.config = sim.config.duplicate(true)
+		var species: CombatantDefinition = sim.config.ally.duplicate(true)
+		species.id = StringName("synthetic_slot_%d" % index)
+		sim.config.extra_definitions.append(species)
+		var copy: UnitProgress = sim.profile.create_copy(species.id)
 		check(sim.set_copy_deployed(copy.id, true), "Expanded squad deploys")
-	check(SaveStore.validate(sim.to_data()), "Four-copy snapshot validates")
+	check(SaveStore.validate(sim.to_data(), sim.config), "Four-species snapshot validates")
 	sim.chrono_break()
 	check(sim.allied_limit() == 4 and sim.hero().multi_hit == 2, "Chrono keeps structural purchases")
 	var cost: float = sim.profile.shards
@@ -115,6 +123,7 @@ func _healing_and_resurrection() -> void:
 	var heal: AbilityDefinition = action(&"fixture_heal", "heal", "injured_ally")
 	heal.effects[0].flat_healing = 10.0
 	sim.config.ally.active_abilities.append(heal)
+	sim.config.extra_definitions.back().active_abilities.append(heal)
 	sim.hero().health = 160
 	other.health = 32
 	tick(sim)
@@ -302,6 +311,7 @@ func _branches() -> void:
 		# Evolution cannot silently increase authored base stats.
 		branch.form.max_health = 9999.0
 		sim.config.ally.evolution_options.append(branch)
+		sim.config.extra_definitions.back().evolution_options.append(branch)
 	check(sim.evolution_choices(sim.unit().id).size() == 2, "Branch choices are visible")
 	check(not sim.evolve_copy(sim.unit().id, &"left"), "Branch level gate")
 	sim.unit().level = 2
@@ -415,6 +425,7 @@ func _death_and_reward_effects() -> void:
 	near(sim.reward_value(sim.config.balanced, "gold", sim.hero().statuses), (base + 0.5) * 1.25, "Reward marks preserve fractional additive and multiplier pools")
 	var other: CombatantState = second(sim)
 	sim.config.ally.enemy_support_role = true
+	sim.config.extra_definitions.back().enemy_support_role = true
 	check(sim.set_copy_role(other.copy_id, true), "Reward fixture switches support role")
 	sim.profile.copy_by_id(other.copy_id).gold_ranks[&"gold_income"] = 1
 	var gold_upgrade: GoldUpgradeDefinition = null

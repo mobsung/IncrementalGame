@@ -1,0 +1,13 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Script" path="res://scripts/data/combatant_visual.gd" id="1"]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/spritesheets/effects.png" id="2"]
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/visuals/familiar_sheet.tres" id="3"]
+[sub_resource type="AtlasTexture" id="owl"]
+atlas = ExtResource("2")
+region = Rect2(0, 750, 384, 274)
+[resource]
+script = ExtResource("1")
+texture = SubResource("owl")
+animation = ExtResource("3")
+height = 90.0
+faces_right = true

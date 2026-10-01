@@ -53,6 +53,7 @@ func refresh(blocked: bool) -> void:
 	%Points.text = "Level upgrades · %d points" % copy.level_points
 	for upgrade: LevelUpgradeDefinition in simulation.config.upgrades:
 		var button: Button = level_buttons[upgrade.id]
+		button.visible = upgrade.applies_to(copy, simulation.config.definition_for(copy))
 		var rank: int = copy.purchased_rank(upgrade.id)
 		var cap: int = upgrade.cap_for(copy.evolution)
 		var capped: bool = rank >= cap

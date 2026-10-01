@@ -10,3 +10,4 @@ cost_increment = 1
 required_levels = PackedInt32Array(3, 6, 9)
 description = "+15 percentage points to Sweep damage coefficient."
 effects = Dictionary[StringName, float]({&"sweep_coefficient": 0.15})
+species_id = &"spaghetti_golem"

@@ -25,6 +25,7 @@ func _run(quit_after: bool = false) -> void:
 	_boundaries()
 	_shared_systems()
 	load("res://tests/base_mechanics_tests.gd").new().run(self)
+	load("res://tests/wizard_tests.gd").new().run(self)
 	_persistence()
 	_animations()
 	await _ui()
@@ -41,6 +42,13 @@ func model(stage: int = 0) -> BattleSimulation:
 			check(sim.evolve_copy(sim.unit().id), "Fixture evolves")
 	sim.hero().critical_chance = 0.0
 	return sim
+
+func synthetic_copy(sim: BattleSimulation, index: int) -> UnitProgress:
+	sim.config = sim.config.duplicate(true)
+	var species: CombatantDefinition = sim.config.ally.duplicate(true)
+	species.id = StringName("synthetic_copy_%d" % index)
+	sim.config.extra_definitions.append(species)
+	return sim.profile.create_copy(species.id)
 
 func enemy(sim: BattleSimulation, distance: float = 80.0) -> CombatantState:
 	var actor: CombatantState = CombatantState.create(sim.config.balanced, sim.next_id, false,
@@ -258,14 +266,16 @@ func _boundaries() -> void:
 	sim._finish(false)
 	check(sim.hero().kit_state.sauce == 0, "Defeat restoration clears Sauce")
 	sim = model(2)
-	sim.profile.dust = 5
-	var result: Dictionary = sim.summon()
-	sim.set_copy_deployed(result.copy_id, true)
+	var second_copy: UnitProgress = synthetic_copy(sim, 0)
+	sim.set_copy_deployed(second_copy.id, true)
 	sim.hero().kit_state.sauce = 5
 	check(sim.allied_actors()[1].kit_state.sauce == 0, "Copies do not share Sauce")
 
 func _shared_systems() -> void:
 	var sim: BattleSimulation = model()
+	sim.config = sim.config.duplicate(true)
+	sim.config.gacha = sim.config.gacha.duplicate(true)
+	sim.config.gacha.entries.assign([sim.config.gacha.entries[0]])
 	for index: int in range(30):
 		check(WaveSequence.valid(WaveSequence.generate(sim.rng)), "Valid spawn sequence")
 	near(CombatMath.mitigate(30, 20), 25, "Armor formula")
@@ -282,6 +292,11 @@ func _shared_systems() -> void:
 		check(sim.profile.copy_by_id(result.copy_id).evolution == 0, "Summon always base form")
 	check(sim.rng.state == rng_state, "Separate summon RNG")
 	check(not sim.summon().success, "Insufficient Dust rejected")
+	for index: int in range(1, 4):
+		var species: CombatantDefinition = sim.config.ally.duplicate(true)
+		species.id = StringName("synthetic_golem_%d" % index)
+		sim.config.extra_definitions.append(species)
+		sim.profile.copies[index].species_id = species.id
 	check(sim.set_copy_deployed(sim.profile.copies[1].id, true), "Second copy deploys")
 	check(sim.set_copy_deployed(sim.profile.copies[2].id, true), "Third copy deploys")
 	check(not sim.set_copy_deployed(sim.profile.copies[3].id, true), "Fourth copy blocked")
@@ -459,7 +474,7 @@ func _ui() -> void:
 	await host_tree.process_frame
 	scene._open_copy(scene.simulation.unit().id)
 	check(scene.get_node("%Name").text == "Noodle Squire", "UI names base form")
-	check(scene.upgrades.level_buttons.size() == 4, "UI shows four new upgrades")
+	check(scene.upgrades.level_buttons.size() == 7, "UI catalogs include four Golem and three Wizard upgrades")
 	check(scene.evolve_button.disabled, "Evolution UI locked at level one")
 	scene.simulation.unit().level = 10
 	scene._refresh()
@@ -495,5 +510,16 @@ func _ui() -> void:
 	check(scene.arena.death_echoes[0].player.death > 0, "Death echo survives immediate model rollback")
 	scene.arena._process(1.0)
 	check(scene.arena.death_echoes.is_empty(), "Death echo expires without accumulation")
+	scene.simulation.chrono_break()
+	check(scene.simulation.set_copy_deployed(scene.simulation.unit().id, false), "UI preparation permits empty field")
+	scene._refresh()
+	check(scene.start_button.disabled, "UI disables Start for empty formation")
+	var wizard_copy: UnitProgress = scene.simulation.profile.create_copy(&"would_be_wizard")
+	scene._open_copy(wizard_copy.id)
+	scene._select_slot(0)
+	check(wizard_copy.deployed and wizard_copy.slot == 0, "UI places selected reserve in clicked slot")
+	check(not scene.start_button.disabled, "UI enables Start after first deployment")
+	check(scene.ability_order.get_node("KitIcons").get_child_count() == 2, "UI renders Wizard basic and passive icons")
+	check(scene.ability_priority_controls.has(&"headlong_swing"), "UI renders Wizard active priority")
 	scene.queue_free()
 	await host_tree.process_frame

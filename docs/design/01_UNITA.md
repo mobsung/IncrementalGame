@@ -16,7 +16,7 @@ Statistiche, attacco, abilità, passive, potenziamenti ed eventuali evoluzioni s
 
 ## Copie
 
-Si abbandona la struttura attuale in cui tutte le unità derivano da un'unica unità iniziale. Un sistema di evocazioni in stile gacha assegna il primo stadio di un'unità; si possono ottenere più copie della stessa specie. Ogni copia ha la propria esperienza, i propri livelli, i propri punti investiti e i propri acquisti Gold individuali.
+Si abbandona la struttura attuale in cui tutte le unità derivano da un'unica unità iniziale. Un sistema di evocazioni in stile gacha assegna il primo stadio di un'unità; si possono ottenere più copie della stessa specie. Ogni copia ha la propria esperienza, i propri livelli, i propri punti investiti e i propri acquisti Gold individuali. **Decisione del 1 ottobre 2026:** una sola copia per specie può essere schierata nell’intero campo, anche con evoluzioni, rami o ruoli differenti. Vale anche per Spaghetti Golem. Le copie aggiuntive restano nella collezione e possono essere alternate al Chrono break.
 
 ## Evoluzioni facoltative
 
@@ -34,6 +34,8 @@ Nella **prima demo**, l'unico requisito per evolvere è raggiungere una **soglia
 
 Se l'evoluzione presenta più rami, la scelta vale per la singola copia ed è **permanente**: non può essere annullata o cambiata. Copie diverse della stessa specie possono seguire rami diversi. In futuro un **bestiario** mostrerà tutte le unità e le rispettive evoluzioni. Quando il giocatore decide di evolvere una copia, deve poter vedere e valutare dalla schermata di quella unità le opzioni disponibili, comprese le alternative ramificate. Le soglie, gli stadi e i contenuti concreti dei rami saranno definiti unità per unità.
 
+**Seconda specie, 1 ottobre 2026:** The Would-Be Wizard ha cinque forme su due rami, con configurazione completa di test delegata dall’utente. [Implementazione e valori provvisori](../implementation/WOULD_BE_WIZARD.md).
+
 ## Statistiche, potenziamenti e comportamento della copia
 
 Per il significato delle statistiche e le formule usare [Combattimento](05_COMBATTIMENTO_E_ABILITA.md); per il catalogo statistico individuale e i punti livello usare [Economia](07_ECONOMIA_E_POTENZIAMENTI.md). La postura e la velocità della singola copia sono definite in [Movimento](04_MOVIMENTO_ALLEATO.md), il raggio della zona resta per specie. L'ottenimento delle copie è in [Collezione](08_COLLEZIONE_E_GACHA.md).
@@ -46,7 +48,7 @@ Ogni scheda di specie raccoglie statistiche base, attacco, abilità e passive, p
 
 ## Questioni aperte — 18, 27.2 e 27.3
 
-Obiettivo concordato: sei specie base per coprire versatilità, difesa, area, cure/resurrezione, evocazione sui due lati e marchi/ricompense. Questa copertura non costituisce una suddivisione in classi obbligatorie. John the Meatball (nome provvisorio dello Spaghetti Golem) è il personaggio iniziale confermato. Restano da scegliere le altre specie, distribuzione effettiva dei ruoli, assegnazione delle classi, assegnazione delle rarità e traguardi di sblocco con Collezione. Le quattro rarità della demo sono definite in Collezione. Per le altre specie restano statistiche, attacco, abilità, passive, potenziamenti e contenuti evolutivi; John dispone della prima configurazione nella sua scheda. Il bestiario è previsto in futuro; l'accessibilità delle opzioni evolutive è già concordata.
+Obiettivo concordato: sei specie base per coprire versatilità, difesa, area, cure/resurrezione, evocazione sui due lati e marchi/ricompense. Questa copertura non costituisce una suddivisione in classi obbligatorie. John the Meatball (nome provvisorio dello Spaghetti Golem) è il personaggio iniziale confermato. The Would-Be Wizard � la seconda specie implementata, con configurazione di test delegata il 1 ottobre. Restano da scegliere le altre quattro specie, distribuzione effettiva dei ruoli, assegnazione delle classi, assegnazione delle rarità e traguardi di sblocco con Collezione. Le quattro rarità della demo sono definite in Collezione. Per le altre specie restano statistiche, attacco, abilità, passive, potenziamenti e contenuti evolutivi; John dispone della prima configurazione nella sua scheda. Il bestiario è previsto in futuro; l'accessibilità delle opzioni evolutive è già concordata.
 
 ## Proposte non confermate
 

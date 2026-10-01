@@ -10,3 +10,4 @@ cost_increment = 1
 required_levels = PackedInt32Array(3, 6, 9)
 description = "+15% Sweep area. Radius scales with the square root."
 effects = Dictionary[StringName, float]({&"sweep_area": 0.15})
+species_id = &"spaghetti_golem"

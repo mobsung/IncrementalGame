@@ -1,9 +1,11 @@
-[gd_resource type="Resource" script_class="GachaDefinition" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="GachaDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/gacha_definition.gd" id="1"]
 [ext_resource type="Resource" path="res://content/units/warriors/spaghetti_golem/gacha/spaghetti_rare.tres" id="2"]
 
+[ext_resource type="Resource" path="res://content/units/supports/would_be_wizard/gacha/wizard_rare.tres" id="3"]
+
 [resource]
 script = ExtResource("1")
 cost_dust = 5
-entries = Array[Resource]([ExtResource("2")])
+entries = Array[Resource]([ExtResource("2"), ExtResource("3")])

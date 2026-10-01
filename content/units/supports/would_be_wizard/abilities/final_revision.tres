@@ -1,0 +1,20 @@
+[gd_resource type="Resource" format=3]
+[ext_resource type="Texture2D" path="res://content/units/supports/would_be_wizard/visuals/icons/final_revision.tres" id="icon_final_revision"]
+[ext_resource type="Script" path="res://scripts/data/ability_definition.gd" id="script"]
+
+
+[resource]
+script = ExtResource("script")
+id = &"final_revision"
+display_name = "Final Revision"
+wizard_action = "revision"
+description = "In a crisis, restore 50% of unhealed wounds from the last four seconds."
+target_kind = "self"
+range_radius = 700.0
+area_radius = 0.0
+supports_area = false
+supports_multi_cast = false
+cast_time = 1.0
+cooldown = 18.0
+minimum_cooldown = 1.0
+icon = ExtResource("icon_final_revision")

@@ -60,6 +60,10 @@ func _ready() -> void:
 		blocked = true
 		save_status.text = save_store.last_error + " Original files preserved."
 	selected_copy_id = simulation.unit().id
+	if persist_progress and not blocked and not simulation.profile.content_grants.get("wizard_first_copy", false):
+		simulation.profile.create_copy(&"would_be_wizard")
+		simulation.profile.content_grants["wizard_first_copy"] = true
+		save_pending = true
 	arena.bind(simulation)
 	upgrades.bind(simulation)
 	global_shop.bind(simulation)
@@ -199,7 +203,11 @@ func _show_formation() -> void:
 
 func _select_slot(index: int) -> void:
 	if not blocked:
-		simulation.set_copy_slot(selected_copy_id, index)
+		var copy: UnitProgress = simulation.profile.copy_by_id(selected_copy_id)
+		if copy != null and not copy.deployed:
+			simulation.set_copy_deployed(selected_copy_id, true, index)
+		else:
+			simulation.set_copy_slot(selected_copy_id, index)
 
 func _physics_process(delta: float) -> void:
 	if not blocked:
@@ -334,9 +342,10 @@ func _refresh() -> void:
 		hero.critical_chance * 100.0, hero.critical_multiplier,
 		hero.super_critical_chance * 100.0, hero.super_critical_multiplier,
 		hero.ultra_critical_chance * 100.0, hero.ultra_critical_multiplier]
-	stats.text += "\nAttack speed  %.2f / s  ·  Range  %.0f\nHaste  %.0f  ·  Sweep area  +%.0f%%\nNext Sweep cooldown  %.2f s" % [
-		hero.attack_speed, hero.attack_range, hero.haste, hero.area_bonus * 100.0,
-		maxf(definition.kit.sweep_minimum_cooldown, hero.ability_cooldown(definition.ability.cooldown)) if definition.kit != null else 0.0]
+	stats.text += "\nAttack speed  %.2f / s  ·  Range  %.0f\nHaste  %.0f  ·  Ability area  +%.0f%%" % [
+		hero.attack_speed, hero.attack_range, hero.haste, hero.area_bonus * 100.0]
+	if definition.kit != null:
+		stats.text += "\nNext Sweep cooldown  %.2f s" % maxf(definition.kit.sweep_minimum_cooldown, hero.ability_cooldown(definition.ability.cooldown))
 	stats.text += "\nMulti Hit  %d  ·  Multi Cast  %d" % [hero.multi_hit, hero.multi_cast]
 	stats.text += "\nContribution per enemy defeated\n(before shared bonuses)\nGold +%.2f  ·  XP +%.2f  ·  Souls +%.2f" % [
 		UnitStats.reward_contribution(copy, definition, simulation.config, "gold"),
@@ -359,7 +368,8 @@ func _refresh() -> void:
 	evolve_button.text = "Evolve → %s (Lv %d)" % [evolution.name, evolution.level] if evolution.has("name") else evolution.reason
 	evolve_button.disabled = blocked or not evolution.available
 	evolve_button.tooltip_text = "Refunds invested level points. Keeps level, XP and Gold upgrades." if evolution.available else evolution.reason
-	start_button.disabled = in_battle or blocked
+	start_button.disabled = in_battle or blocked or simulation.deployed_units().is_empty()
+	start_button.tooltip_text = "Deploy at least one allied unit to begin." if simulation.deployed_units().is_empty() else ""
 	start_button.text = "Resume" if simulation.phase == &"paused" else "Begin run"
 	pause_button.disabled = not in_battle or blocked
 	pause_button.text = "Cancel queued pause" if simulation.pause_requested else "Pause after attempt"
@@ -383,9 +393,12 @@ func _refresh() -> void:
 	%InspectJohn.disabled = selected_actor == null
 	%DeployToggle.text = "Move to reserve" if copy.deployed else "Deploy to first free slot"
 	%DeployToggle.disabled = blocked or simulation.phase != &"preparation" or (
-		copy.deployed and not copy.enemy_support and simulation.deployed_units().size() <= 1) or (
 		not copy.deployed and ((not copy.enemy_support and simulation.deployed_units().size() >= simulation.allied_limit()) or (
 			copy.enemy_support and simulation.profile.deployed_copies().size() > simulation.deployed_units().size())))
+	for other: UnitProgress in simulation.profile.deployed_copies():
+		if not copy.deployed and other.species_id == copy.species_id:
+			%DeployToggle.disabled = true
+	%DeployToggle.tooltip_text = "One copy per species. Composition changes during Chrono preparation only."
 	%Name.text = definition.display_name
 	%Portrait.texture = definition.visual.texture
 	%Class.text = "%s · %s" % [_rarity_for_species(copy.species_id).to_upper(), definition.unit_class.to_upper()]
@@ -474,12 +487,43 @@ func _change_role(index: int) -> void:
 	_refresh()
 
 func _refresh_ability_order(copy: UnitProgress, definition: CombatantDefinition) -> void:
+	var kit_row: HBoxContainer = ability_order.get_node_or_null("KitIcons")
+	if kit_row == null:
+		kit_row = HBoxContainer.new()
+		kit_row.name = "KitIcons"
+		ability_order.add_child(kit_row)
+		ability_order.move_child(kit_row, 0)
+	if kit_row.get_meta("form", &"") != definition.id:
+		for child: Node in kit_row.get_children():
+			kit_row.remove_child(child)
+			child.queue_free()
+		kit_row.set_meta("form", definition.id)
+		var textures: Array[Texture2D] = [definition.basic_icon]
+		textures.append_array(definition.passive_icons)
+		for index: int in range(textures.size()):
+			if textures[index] == null: continue
+			var icon: TextureRect = TextureRect.new()
+			icon.texture = textures[index]
+			icon.custom_minimum_size = Vector2(40, 40)
+			icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			icon.tooltip_text = definition.basic_name if index == 0 else definition.passive_names[index - 1]
+			kit_row.add_child(icon)
+	kit_row.visible = definition.basic_icon != null
 	var available: Array[StringName] = simulation.active_ability_ids(copy)
 	for id: StringName in available:
 		if not ability_priority_controls.has(id):
 			var row: HBoxContainer = HBoxContainer.new()
 			var label: Label = Label.new()
 			var active: AbilityDefinition = AbilitySystem.definition_for(definition, id)
+			if active != null and active.icon != null:
+				var icon: TextureRect = TextureRect.new()
+				icon.texture = active.icon
+				icon.custom_minimum_size = Vector2(32, 32)
+				icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				icon.tooltip_text = active.description
+				row.add_child(icon)
 			label.text = active.display_name if active != null else definition.kit.action_name(id)
 			label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			row.add_child(label)
@@ -496,6 +540,7 @@ func _refresh_ability_order(copy: UnitProgress, definition: CombatantDefinition)
 		value.get_parent().visible = id in available
 		value.editable = not blocked
 		var default_priority: int = definition.kit.action_priority(copy, id) if definition.kit != null and AbilitySystem.definition_for(definition, id) == null else 0
+		if not definition.wizard_role.is_empty(): default_priority = WizardSystem.priority(id)
 		value.set_value_no_signal(int(copy.ability_priorities.get(id, default_priority)))
 
 func _change_ability_priority(value: float, id: StringName) -> void:
@@ -504,10 +549,18 @@ func _change_ability_priority(value: float, id: StringName) -> void:
 
 func _generic_ability_description(actor: CombatantState, definition: CombatantDefinition) -> String:
 	var lines: PackedStringArray = []
+	if not definition.wizard_role.is_empty():
+		lines.append(definition.basic_name + " · " + ("Magic projectile" if definition.wizard_role in ["acolyte", "archsage"] else ("Physical projectile" if definition.wizard_role == "archmage" else "Physical melee")))
+		lines.append("Passives: " + ", ".join(definition.passive_names))
+		var label: String = "Notes" if definition.wizard_role in ["acolyte", "archsage"] else ("Misdirection" if definition.wizard_role == "archmage" else ("Setup" if definition.wizard_role == "makeshift" else "Hard Lessons"))
+		lines.append("%s · %d / %d" % [label, actor.kit_state.resource, WizardSystem.TUNE.notes_cap])
+		if definition.wizard_role == "archsage": lines.append("The Story Continues · %.1f s" % actor.kit_state.rescue_left)
+		if definition.wizard_role == "archmage": lines.append("Encore · %.1f s · %d / 3 different tricks" % [actor.kit_state.encore_left, actor.kit_state.sequence.size()])
 	for active: AbilityDefinition in definition.active_abilities:
 		var left: float = actor.ability_cooldowns.get(active.id, 0.0)
 		lines.append("%s · %s · range %.0f" % [active.display_name,
 			"Casting" if actor.action == active.id else ("Ready" if left <= 0.0 else "%.1f s" % left), active.range_radius])
+		if not active.description.is_empty(): lines.append(active.description)
 	for status: Dictionary in actor.statuses:
 		lines.append("%s · %d stacks · %.1f s" % [status.id, status.stacks, status.remaining])
 	return "\n".join(lines)
